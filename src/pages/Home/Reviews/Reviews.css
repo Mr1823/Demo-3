@@ -1,0 +1,21 @@
+.reviews-slick-dots {
+  bottom: -40px !important;
+}
+.reviews-slick-dots li {
+  width: 12px !important;
+}
+.reviews-slick-dots li button:before {
+  width: 12px !important;
+  height: 13px !important;
+  content: "" !important;
+  background-color: black !important;
+  border: 1px solid transparent !important;
+  border-radius: 5px !important;
+  transition: all 0.4s !important;
+}
+.reviews-slick-dots .slick-active {
+  margin-right: 10px !important;
+}
+.reviews-slick-dots .slick-active button::before {
+  padding-inline: 10px !important;
+}

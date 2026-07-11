@@ -1,0 +1,18 @@
+.auth-input-con input {
+  outline: none;
+  transition: all 0.3s ease-out;
+}
+
+.auth-input-con input:focus {
+  border-bottom: 2px solid black;
+  transition: all 0.3s ease-in;
+}
+
+.auth-input-con textarea {
+  outline: none;
+  transition: all 0.3s ease-out;
+}
+.auth-input-con textarea:focus {
+  border: 2px solid black;
+  transition: all 0.3s ease-in;
+}

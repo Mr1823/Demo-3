@@ -1,0 +1,13 @@
+.category-container {
+  transition: all 0.3s;
+}
+
+.category-container:focus {
+  box-shadow: 0px 0px 3px blue;
+  transition: all 0.3s;
+}
+
+.badge-container > div > div {
+  border-radius: 0.25rem !;
+  padding: 6px 8px !important;
+}

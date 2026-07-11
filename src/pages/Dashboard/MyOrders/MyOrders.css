@@ -1,0 +1,8 @@
+.order-history-tr td {
+  font-size: 16px;
+}
+
+div:where(.swal2-container)
+  button:where(.swal2-styled).swal2-default-outline:focus {
+  box-shadow: none !important;
+}

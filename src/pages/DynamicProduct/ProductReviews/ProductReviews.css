@@ -1,0 +1,11 @@
+.product-reviews-con > div {
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgb(147, 143, 143);
+}
+.product-reviews-con > div:first-child {
+  padding-top: 0;
+}
+.product-reviews-con > div:last-child {
+  border: none;
+}

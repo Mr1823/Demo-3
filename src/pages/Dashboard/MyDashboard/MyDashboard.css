@@ -1,0 +1,87 @@
+.profile-details-con > div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.profile-details-con > div h6:nth-child(1) {
+  min-width: 30%;
+  font-size: 1.2rem;
+}
+.profile-details-con > div h6:nth-child(2) {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.profile-details-con > div img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.gradient-shadow {
+  background: linear-gradient(0deg, #000, #262626);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.gradient-shadow::before,
+.gradient-shadow::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    45deg,
+    #363536,
+    #95523d,
+    #dbca0e,
+    #d4647c,
+    #eebfab
+  );
+  background-size: 400%;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  z-index: -1;
+  animation: animateShadow 20s linear infinite;
+  border-radius: 50%;
+}
+.gradient-shadow::after {
+  filter: blur(10px);
+}
+@keyframes animateShadow {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.profile-details-con button {
+  margin-top: 50px !important;
+}
+
+@media screen and (max-width: 480px) {
+  .profile-details-con > div {
+    display: block;
+  }
+}
+
+@keyframes animateShadow {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 300% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}

@@ -1,0 +1,49 @@
+.sidebar-menu-con li a,
+.product-collapse-link,
+.sidebar-menu-con .logout-btn {
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease-in-out;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.sidebar-menu-con li a.active,
+.sidebar-menu-con li button.active {
+  background-color: #d0cece62;
+  color: var(--pink-gold);
+  border-left: 4px solid var(--pink-gold);
+}
+
+.sidebar-menu-con li a:hover,
+.product-collapse-link:hover,
+.sidebar-menu-con .logout-btn:hover {
+  background-color: #d0cece62;
+  border-left: 4px solid var(--pink-gold);
+}
+
+.sidebar-menu-con li .submenu {
+  padding-left: 50px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: rgba(93, 86, 86, 0.463);
+}
+.sidebar-menu-con li .submenu a {
+  padding: 6px 0 6px 5px;
+}
+
+.sidebar-menu-con > ul::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-menu-con > ul::-webkit-scrollbar-thumb {
+  background: var(--pink-gold);
+  border-radius: 1rem;
+  visibility: hidden;
+  transition: all 0.9s;
+}
+
+.sidebar-menu-con > ul:hover::-webkit-scrollbar-thumb {
+  visibility: visible;
+}

@@ -1,0 +1,25 @@
+/* user dashboard navbar styles */
+.dashboard-nav a {
+  padding: 20px 0;
+  border-bottom: 2px solid rgb(241, 239, 239);
+  font-size: 1.2rem;
+}
+
+.dashboard-nav a:last-child {
+  border-bottom: none;
+}
+
+.dashboard-nav a.active {
+  font-weight: bolder;
+}
+
+@media screen and (max-width: 480px) {
+  .dashboard-nav a {
+    min-width: fit-content;
+    margin-right: 40px;
+    border: none;
+  }
+  .dashboard-nav a.active {
+    border-bottom: 2px solid rgb(79, 74, 74);
+  }
+}

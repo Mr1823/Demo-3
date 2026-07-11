@@ -1,0 +1,51 @@
+.shop-container h3 {
+  font-family: var(--italiana);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.shop-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.shop-container > div.shop-lg-left-side {
+  width: 20%;
+}
+.shop-container > div.shop-lg-right-side {
+  width: 80%;
+}
+
+/* pagination custom styles */
+.rpb-root {
+  display: block !important;
+  margin-inline: auto !important;
+  margin-top: 30px !important;
+}
+.shop-pagination {
+  margin-top: 60px !important;
+}
+.rpb-item {
+  box-shadow: 0px 1px 5px lightgrey !important;
+}
+.rpb-item--active {
+  background-color: var(--pink-gold) !important;
+}
+
+@media screen and (max-width: 480px) {
+  .shop-container {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 0;
+  }
+
+  .shop-container > div:first-child {
+    width: 100%;
+  }
+  .shop-container > div:last-child {
+    width: 100%;
+  }
+}

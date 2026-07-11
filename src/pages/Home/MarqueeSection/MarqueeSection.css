@@ -1,0 +1,7 @@
+.single-marquee-slide {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 20px !important;
+  border: 2px solid;
+}

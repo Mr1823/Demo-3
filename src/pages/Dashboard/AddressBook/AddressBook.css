@@ -1,0 +1,30 @@
+.address-form > div {
+  margin-bottom: 2.5rem;
+  padding-inline: 10px;
+}
+
+.address-form > div p {
+  font-size: 1rem;
+}
+
+.address-form input:not(input[type="radio"]) {
+  margin-top: 5px;
+  height: 40px;
+  border-bottom: 2px solid rgb(63, 58, 58);
+  width: 100%;
+  outline: 0;
+  font-size: 1.1rem;
+}
+
+.address-form select {
+  width: 100%;
+  border-bottom: 2px solid rgb(63, 58, 58);
+  outline: none;
+  margin-top: 5px;
+  height: 40px;
+  font-size: 1.1rem;
+}
+
+.address-form button {
+  margin-left: 10px;
+}

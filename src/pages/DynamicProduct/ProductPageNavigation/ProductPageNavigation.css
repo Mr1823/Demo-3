@@ -1,0 +1,11 @@
+.product-navbar a {
+  font-size: 1.5rem;
+  padding: 5px;
+  transition: all 0.3s ease-out;
+  border: 2px solid transparent;
+}
+.product-navbar .active {
+  border-bottom: 2px solid var(--light-pink);
+  transition: all 0.3s ease-in;
+  color: var(--light-pink);
+}

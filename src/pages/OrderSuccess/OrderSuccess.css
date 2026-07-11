@@ -1,0 +1,27 @@
+.order-info-con h1 {
+  font-family: var(--italiana);
+  font-weight: bolder;
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  letter-spacing: 4px;
+}
+
+.order-info-con .left-side > div div,
+.order-info-con .right-side > div div {
+  border: 1px solid rgba(211, 211, 211, 0.718);
+  padding: 1rem;
+}
+
+.order-info-con .right-side table,
+.order-info-con .right-side tr,
+.order-info-con .right-side td,
+.order-info-con .right-side th {
+  border: 1px solid rgb(211, 211, 211);
+  border-collapse: collapse;
+  font-size: 1.1rem;
+}
+
+.order-info-con .right-side td,
+th {
+  padding: 1rem 1.5rem;
+}
