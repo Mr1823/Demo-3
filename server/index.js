@@ -13,10 +13,18 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:3000"],
+  origin: true,
   credentials: true,
 }));
 app.use(express.json());
+
+// Normalize URL prefix for Vercel Serverless (if Vercel stripped /api)
+app.use((req, res, next) => {
+  if (!req.url.startsWith("/api") && req.url !== "/favicon.ico") {
+    req.url = "/api" + (req.url.startsWith("/") ? req.url : "/" + req.url);
+  }
+  next();
+});
 
 // API Routes
 app.use("/api/products", productsRouter);

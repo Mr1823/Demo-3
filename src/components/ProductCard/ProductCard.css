@@ -84,5 +84,16 @@
   font-family: var(--poppins);
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 768px) {
+  .add-to-cart-con {
+    height: 40px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .eye-icon-con,
+  .edit-icon-con {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
 }

@@ -27,13 +27,13 @@ const DashboardLayout = () => {
                   sidebarCollapsed={sidebarCollapsed}
                   setSidebarCollapsed={setSidebarCollapsed}
                 />
-                <div className="mt-20 mb-24">
+                <div className="mt-20 mb-24 overflow-x-hidden">
                   <div
-                    className={`w-[calc(100vw-80px)] ml-[70px] ${
+                    className={`w-[calc(100vw-70px)] ml-[65px] ${
                       !sidebarCollapsed
                         ? "md:w-[calc(100vw-280px)] md:ml-[260px]"
                         : "md:ml-[85px] md:w-[calc(100vw-110px)]"
-                    } py-5 transition-all duration-500 ease-in-out md:px-6`}
+                    } py-5 px-3 transition-all duration-500 ease-in-out md:px-6 overflow-x-auto`}
                   >
                     <Outlet />
                   </div>

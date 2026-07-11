@@ -95,9 +95,6 @@ const AuthProvider = ({ children }) => {
 
   // Auth State Observer
   useEffect(() => {
-    // If dev user is already logged in, skip Firebase observer setup
-    if (isDevUser) return;
-
     // Check if dev session exists in localStorage on mount
     const storedToken = localStorage.getItem("the-jewel-store-jwt-token");
     if (storedToken && storedToken.startsWith("dev-jwt-token-")) {
@@ -113,6 +110,13 @@ const AuthProvider = ({ children }) => {
     }
 
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      // Check again if we logged in as Dev Admin
+      const token = localStorage.getItem("the-jewel-store-jwt-token");
+      if (token && token.startsWith("dev-jwt-token-")) {
+        setIsAuthLoading(false);
+        return;
+      }
+
       if (currentUser?.uid !== undefined) {
         setUser(currentUser);
         const apiBaseUrl = getApiBaseUrl();
@@ -130,7 +134,7 @@ const AuthProvider = ({ children }) => {
           })
           .catch((err) => {
             console.error("JWT fetch failed:", err);
-            setIsAuthLoading(false); // don't hang forever
+            setIsAuthLoading(false);
           });
       } else {
         localStorage.removeItem("the-jewel-store-jwt-token");
@@ -139,7 +143,7 @@ const AuthProvider = ({ children }) => {
       }
     });
     return () => unsubscribe();
-  }, [isDevUser]);
+  }, []);
 
   const value = {
     user,

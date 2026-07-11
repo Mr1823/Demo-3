@@ -1,16 +1,34 @@
-/* Global styles for smooth rendering */
+/* Global styles for smooth rendering & mobile optimization */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html {
+  html, body {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent auto-zoom on iOS inputs when tapping on mobile */
+  @media screen and (max-width: 768px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
   }
 }
 
 .auth-input-con input:focus {
   border-color: #000000;
+}
+
+/* Touch-friendly mobile improvements */
+@media screen and (max-width: 640px) {
+  button {
+    touch-action: manipulation;
+  }
 }
 
 /* Custom scrollbars */

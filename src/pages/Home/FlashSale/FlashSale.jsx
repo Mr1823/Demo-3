@@ -18,8 +18,8 @@ const FlashSale = () => {
   }, [products]);
   const isMobile = useMediaQuery({ maxWidth: 480 });
 
-  // countdown timer values
-  const targetDate = new Date(2024, 10, 10, 12, 0, 0, 0);
+  // countdown timer values (dynamically active 3 days ahead)
+  const [targetDate] = useState(() => new Date(Date.now() + 3 * 24 * 60 * 60 * 1000));
 
   // slick slider settings
   const sliderRef = useRef(null);
@@ -32,16 +32,23 @@ const FlashSale = () => {
   };
 
   const settings = {
-    arrow: false,
+    arrows: false,
     infinite: true,
     speed: 500,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 3500,
     slidesToShow: 3,
-    slidesToScroll: 3,
+    slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 600,
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 768,
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -60,24 +67,24 @@ const FlashSale = () => {
   return (
     <div
       id="flashSale"
-      className="mt-6 mb-12 container shadow-xl shadow-gray-300 rounded-xl flex flex-col md:flex-row border items-center py-8 gap-8"
+      className="mt-6 mb-12 container shadow-xl shadow-gray-300 rounded-xl flex flex-col md:flex-row border items-center py-8 px-4 md:px-8 gap-8"
     >
       <div
-        className="md:w-[30%] text-center px-4 md:px-6"
+        className="w-full md:w-[35%] text-center px-2 md:px-6"
         style={{ fontFamily: "var(--montserrat)" }}
       >
         <img
           src={flashSaleIcon}
           alt="flash sale icon"
-          className="w-[70%] block mx-auto"
+          className="w-[60%] md:w-[70%] block mx-auto"
         />
         <h4
-          className="mt-6 font-bold text-2xl text-black"
+          className="mt-6 font-bold text-2xl md:text-3xl text-black"
           style={{ fontFamily: "var(--italiana)" }}
         >
           Flash Sale Going On!
         </h4>
-        <p className="mt-4 text-gray-500 font-medium">
+        <p className="mt-3 text-gray-500 text-sm md:text-base font-medium">
           🌟 Ready, set, shop! Flash Sale Going On! So Hurry, dive into the
           excitement, and let the savings party begin!💸🚀
         </p>
@@ -86,29 +93,33 @@ const FlashSale = () => {
       </div>
 
       {isProductsLoading ? (
-        <div className="mx-auto flex flex-col md:flex-row items-center gap-2">
+        <div className="mx-auto flex flex-col md:flex-row items-center gap-4 w-full justify-center">
           {[...Array(isMobile ? 1 : 3)].map((item, idx) => (
             <CardSkeleton key={idx} height={"280px"} width={"270px"} />
           ))}
         </div>
       ) : (
-        <div className="w-[80%] md:w-[70%] relative">
+        <div className="w-full md:w-[65%] px-6 md:px-10 relative">
           <Slider ref={sliderRef} {...settings}>
             {flashSaleData?.map((cardData, idx) => (
-              <ProductCard key={idx + 1} cardData={cardData} flashSale={true} />
+              <div key={idx + 1} className="px-2">
+                <ProductCard cardData={cardData} flashSale={true} />
+              </div>
             ))}
           </Slider>
           <button
-            className="button absolute bottom-1/2 -right-16 translate-x-[-50%] translate-y-[-50%] bg-[#f8da2e] rounded-badge p-5 active:bg-yellow-400 transition-all duration-200"
+            aria-label="Next Slide"
+            className="absolute top-1/2 -right-1 md:-right-4 -translate-y-1/2 bg-[#f8da2e] rounded-full p-3 md:p-4 shadow-md active:scale-95 hover:bg-yellow-400 transition-all z-10"
             onClick={next}
           >
-            <FaArrowRight className="" />
+            <FaArrowRight className="text-black text-sm md:text-base" />
           </button>
           <button
-            className="md:hidden button absolute bottom-1/2 left-0 translate-x-[-50%] translate-y-[-50%] bg-[#f8da2e] rounded-badge p-5 active:bg-yellow-400 transition-all duration-200"
+            aria-label="Previous Slide"
+            className="absolute top-1/2 -left-1 md:-left-4 -translate-y-1/2 bg-[#f8da2e] rounded-full p-3 md:p-4 shadow-md active:scale-95 hover:bg-yellow-400 transition-all z-10"
             onClick={prev}
           >
-            <FaArrowLeft className="" />
+            <FaArrowLeft className="text-black text-sm md:text-base" />
           </button>
         </div>
       )}

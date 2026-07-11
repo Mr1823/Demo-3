@@ -55,6 +55,28 @@
   margin-inline: auto;
 }
 
+@media screen and (max-width: 640px) {
+  .hero-slide {
+    height: 420px;
+  }
+  .hero-slide div h1 {
+    font-size: 3.8rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-slide {
+    height: 380px;
+  }
+  .hero-slide div h1 {
+    font-size: 2.8rem;
+  }
+  .hero-slide div button {
+    width: 150px;
+    height: 42px;
+  }
+}
+
 /* active slide animations */
 .slick-active .hero-text h1 {
   -webkit-animation: tracking-in-contract 2.4s
