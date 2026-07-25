@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
-import "./ProductCard.css";
-import useDynamicRating from "../../hooks/useDynamicRating";
-import StarRatings from "react-star-ratings";
-import { FaRegHeart, FaRegEye, FaHeart, FaPen } from "react-icons/fa6";
-import { FaShoppingCart, FaCheckDouble } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
 import useCart from "../../hooks/useCart";
 import useWishlist from "../../hooks/useWishlist";
 import useUserInfo from "../../hooks/useUserInfo";
-import { TfiClose } from "react-icons/tfi";
-import { useMediaQuery } from "react-responsive";
+import StarRatings from "react-star-ratings";
+import useDynamicRating from "../../hooks/useDynamicRating";
 
-const ProductCard = ({ cardData, flashSale, counter }) => {
+const ProductCard = ({ cardData, counter }) => {
   const { user, isAuthLoading } = useAuthContext();
   const [userFromDB] = useUserInfo();
   const { cartData, isCartLoading, addToCart } = useCart();
@@ -20,28 +15,19 @@ const ProductCard = ({ cardData, flashSale, counter }) => {
   const [presentInCart, setPresentInCart] = useState(false);
   const [presentInWishlist, setPresentInWishlist] = useState(false);
 
-  // check if item already exist in cart and wishlist
   useEffect(() => {
     if (!isAuthLoading && user?.uid) {
       const itemInCart = cartData?.find((p) => p.productId === cardData._id);
       const itemInWishlist = wishlistData?.find(
         (p) => p.productId === cardData._id
       );
-
-      itemInCart ? setPresentInCart(true) : setPresentInCart(false);
-      itemInWishlist ? setPresentInWishlist(true) : setPresentInWishlist(false);
+      setPresentInCart(!!itemInCart);
+      setPresentInWishlist(!!itemInWishlist);
     } else {
       setPresentInCart(false);
       setPresentInWishlist(false);
     }
-  }, [
-    cartData,
-    isCartLoading,
-    cardData._id,
-    wishlistData,
-    user,
-    isAuthLoading,
-  ]);
+  }, [cartData, isCartLoading, cardData._id, wishlistData, user, isAuthLoading]);
 
   const {
     _id,
@@ -54,12 +40,14 @@ const ProductCard = ({ cardData, flashSale, counter }) => {
     discountPercentage,
     badge,
     stock,
+    carate,
   } = cardData;
 
   const { averageRating } = useDynamicRating(review);
 
-  // add to cart function
-  const handleAddToCartWishlist = (where) => {
+  const handleAddToCartWishlist = (e, where) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (user) {
       if (where === "cart") {
         addToCart(cardData);
@@ -67,153 +55,115 @@ const ProductCard = ({ cardData, flashSale, counter }) => {
         addToWishlist(cardData);
       }
     } else {
-      // show modal to login if not logged in
       document.getElementById("loginModalTextContent").innerText =
         "to add products into Cart or Wishlist.";
       document.getElementById("takeToLoginModal").showModal();
     }
   };
 
-  const isMobile = useMediaQuery({ maxWidth: 480 });
-  const shopRoute = useLocation().pathname.toLowerCase().includes("shop");
-
   return (
-    <div
-      className={`${
-        flashSale
-          ? "w-[270px]"
-          : isMobile && shopRoute
-          ? "w-[200px]"
-          : "w-full max-w-[330px]"
-      } product-card mx-auto rounded-lg bg-white shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100`}
-      style={{ fontFamily: "var(--poppins)" }}
-      data-aos="fade-up"
-      data-aos-delay={counter && `${counter * 200}`}
+    <article 
+      className="group flex flex-col gap-5 cursor-pointer relative"
     >
-      <div className="relative overflow-hidden rounded-t-lg bg-[#ebebed] aspect-[4/5] flex items-center justify-center">
-        <Link to={`/products/${_id}/description`} state={{ from: "/" }} className="absolute inset-0 z-10">
-          <div className="product-img-overlay w-full h-full rounded-t-lg"></div>
-        </Link>
-        <img
-          src={img}
-          alt={name}
-          className="w-full h-full object-cover rounded-t-lg product-img mix-blend-multiply"
+      <Link to={`/products/${_id}/description`} state={{ from: "/" }} className="absolute inset-0 z-0"></Link>
+      
+      <div className="relative aspect-[4/5] bg-surface-container-low overflow-hidden border border-[#D4AF37]/30 group-hover:border-[#D4AF37]/60 transition-colors duration-500 rounded-sm">
+        <img 
+          alt={name} 
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+          src={img} 
         />
-
-        <div>
+        
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10 pointer-events-none">
           {discountPercentage && (
-            <div className="badge badge-error rounded-full py-3 absolute top-3 left-3">
-              <h6 className="text-white text-xs">-{discountPercentage}%</h6>
+            <div className="bg-[#93000a] text-white text-[10px] font-bold px-2 py-1 rounded-sm tracking-widest">
+              -{discountPercentage}%
             </div>
           )}
-
           {badge && (
-            <div
-              className={`badge bg-[red] rounded-full py-3 absolute ${
-                discountPercentage ? "top-10" : "top-3"
-              } left-3 font-bold`}
-            >
-              <h6 className="text-white text-xs uppercase">{badge}</h6>
+            <div className="bg-[#353026] text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-widest">
+              {badge}
             </div>
           )}
         </div>
 
-        {/* icons */}
-        <div className="absolute top-3 right-3 space-y-3">
-          <button
-            className={`heart-icon-con tooltip tooltip-left block`}
-            data-tip={
-              presentInWishlist ? "Added to Wishlist" : "Add to Wishlist"
-            }
-            onClick={() => handleAddToCartWishlist("wishlist")}
-            disabled={presentInWishlist}
-          >
-            {presentInWishlist ? (
-              <FaHeart className="text-xl text-[var(--light-pink)]" />
-            ) : (
-              <FaRegHeart className="text-xl text-gray-600" />
-            )}
-          </button>
+        {/* Favorite Icon */}
+        <button 
+          className="absolute top-4 right-4 text-on-surface-variant hover:text-primary transition-colors z-20 bg-white/60 p-2 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 duration-300"
+          onClick={(e) => handleAddToCartWishlist(e, "wishlist")}
+          disabled={presentInWishlist}
+          title={presentInWishlist ? "Added to Wishlist" : "Add to Wishlist"}
+        >
+          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: presentInWishlist ? "'FILL' 1" : "'FILL' 0", color: presentInWishlist ? "#93000a" : "inherit" }}>
+            favorite_border
+          </span>
+        </button>
 
-          <Link
-            to={{
-              pathname: `/products/${_id}/description`,
-            }}
-            className="eye-icon-con tooltip tooltip-left block"
-            data-tip="View Details"
-            state={{ from: "/" }}
-          >
-            <FaRegEye className="text-xl text-gray-600" />
-          </Link>
-
-          {userFromDB?.admin && (
+        {/* Edit Product (Admin) */}
+        {userFromDB?.admin && (
+          <div className="absolute top-16 right-4 z-20">
             <Link
-              to={{
-                pathname: `/dashboard/adminAddProducts`,
-              }}
-              className="edit-icon-con tooltip tooltip-left block"
-              data-tip="Edit Product"
+              to={{ pathname: `/dashboard/adminAddProducts` }}
               state={{ from: "/", id: _id }}
+              className="text-on-surface-variant hover:text-primary transition-colors bg-white/60 p-2 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 duration-300 shadow-sm flex items-center justify-center"
+              title="Edit Product"
             >
-              <FaPen className="text-xl text-gray-600" />
+              <span className="material-symbols-outlined text-[20px]">edit</span>
             </Link>
+          </div>
+        )}
+
+        {/* Out of Stock Overlay */}
+        {stock === 0 && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10 pointer-events-none">
+            <span className="bg-white/90 text-black px-4 py-2 font-body text-xs tracking-widest uppercase rounded-sm">Out of Stock</span>
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col items-center text-center gap-2 z-20">
+        <span className="font-body text-[10px] text-outline uppercase tracking-widest line-clamp-1">
+          {carate ? `${carate}K ` : ""}{category}
+        </span>
+        <h3 className="font-display text-[22px] text-on-background leading-tight line-clamp-1">
+          {name}
+        </h3>
+        
+        <div className="flex items-center gap-3 mt-1">
+          <span className="font-body text-[16px] text-primary font-medium">
+            ₹{discountPrice || price}
+          </span>
+          {discountPrice && (
+            <span className="text-sm text-outline-variant line-through">₹{price}</span>
           )}
         </div>
 
-        <button
-          className="add-to-cart-con absolute bottom-0 left-0 right-0 w-full bg-black text-white flex justify-center gap-2 py-2 rounded-b-lg"
-          onClick={() => handleAddToCartWishlist("cart")}
+        {review?.length > 0 && (
+          <div className="flex items-center justify-center gap-1 mt-1 scale-90 pointer-events-none">
+             <StarRatings
+              rating={averageRating}
+              starDimension="14px"
+              starSpacing="1px"
+              starRatedColor="#c8a684"
+              starEmptyColor="#ebe1d2"
+              svgIconPath="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7c0.1,0.1,0.3,0.1,0.5,0.1v0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1"
+              svgIconViewBox="0 0 24 24"
+            />
+            <span className="text-[10px] text-outline-variant ml-1">({review.length})</span>
+          </div>
+        )}
+
+        {/* Add to Cart Button (Only hoverable because z-20) */}
+        <button 
+          className="mt-2 font-body text-[13px] font-semibold uppercase tracking-widest text-primary border border-primary/40 px-8 py-2.5 hover:bg-primary hover:text-white transition-all duration-300 rounded-sm w-full md:w-auto disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-primary z-20"
+          onClick={(e) => handleAddToCartWishlist(e, "cart")}
           disabled={presentInCart || stock === 0}
         >
-          {stock ? (
-            <>
-              {presentInCart ? <FaCheckDouble /> : <FaShoppingCart />}
-
-              <p className="text-sm">
-                {presentInCart ? "Added to Cart" : "Add to Cart"}
-              </p>
-            </>
-          ) : (
-            <>
-              <TfiClose />
-              <p className="text-sm">Out of Stock</p>
-            </>
-          )}
+          {presentInCart ? "Added to Bag" : "Add to Bag"}
         </button>
       </div>
-      <div className="mt-2 product-text">
-        <Link
-          to={`/products/${_id}/description`}
-          className="md:text-lg font-bold text-[#3b3b3b]"
-          state={{ from: "/" }}
-        >
-          {name}
-        </Link>
-        <p className="text-gray-600 mt-1 mb-3">{category}</p>
-        <div className="flex items-baseline justify-start gap-3">
-          <h4 className="md:text-lg font-bold mb-2">
-            ${discountPrice || price}
-          </h4>
-          {discountPrice && (
-            <h5 className="text-base text-gray-400 line-through">{price}</h5>
-          )}
-        </div>
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-          <StarRatings
-            rating={averageRating}
-            starDimension="20px"
-            starSpacing="4px"
-            starRatedColor="#d4647c"
-            starEmptyColor="#c7c7c7"
-            svgIconPath="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7c0.1,0.1,0.3,0.1,0.5,0.1v0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1"
-            svgIconViewBox="0 0 24 24"
-          />
-          <p className="text-gray-500">
-            {review?.length && `(${review?.length} reviews)`}
-          </p>
-        </div>
-      </div>
-    </div>
+    </article>
   );
 };
 

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kanakku Pulla - Activity Log</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#FFD600",
+                        "background-light": "#FAF9F6",
+                        "background-dark": "#231f0f",
+                        "surface": "#FFFFFF",
+                        "text-main": "#0F0F0F",
+                        "muted": "#E0E0E0",
+                        "income": "#00E5FF",
+                        "expense": "#FF4B4B",
+                        "special": "#B478FF"
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                        "mono": ["DM Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "4px",
+                        "sm": "4px",
+                        "md": "8px",
+                        "lg": "12px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        "neo": "4px 4px 0px #0F0F0F",
+                        "neo-lg": "8px 8px 0px #0F0F0F",
+                        "neo-none": "0px 0px 0px #0F0F0F"
+                    },
+                    borderWidth: {
+                        "thick": "3px"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom base styles for Neobrutalism */
+        body {
+            background-color: theme('colors.background-light');
+            color: theme('colors.text-main');
+            font-family: theme('fontFamily.body');
+        }
+
+        .border-neo {
+            border: theme('borderWidth.thick') solid theme('colors.text-main');
+        }
+
+        .border-neo-b {
+            border-bottom: theme('borderWidth.thick') solid theme('colors.text-main');
+        }
+        
+        .border-thin-b {
+            border-bottom: 2px solid theme('colors.text-main');
+        }
+
+        /* Interactive element press effect */
+        .neo-interactive {
+            transition: all 0.1s ease-in-out;
+        }
+        
+        .neo-interactive:active {
+            transform: translate(4px, 4px);
+            box-shadow: none !important;
+        }
+
+        /* Hide scrollbar for horizontal scroll areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Swipe to delete simulation (visual setup) */
+        .swipe-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .swipe-action {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100px;
+            background-color: theme('colors.expense');
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 0;
+        }
+        .swipe-content {
+            position: relative;
+            z-index: 10;
+            background-color: theme('colors.background-light');
+            transition: transform 0.3s ease;
+        }
+        /* Hover effect to simulate swipe for prototype purposes */
+        .swipe-container:hover .swipe-content {
+            transform: translateX(80px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-primary selection:text-text-main overflow-x-hidden">
+<!-- Sticky Header Area -->
+<header class="sticky top-0 z-50 bg-background-light border-neo-b">
+<!-- Top App Bar equivalent (Custom for context) -->
+<div class="flex items-center justify-between px-4 py-4 border-b-2 border-text-main/20">
+<h1 class="text-2xl font-display font-bold uppercase tracking-tight">Ledger</h1>
+<button class="w-10 h-10 border-neo bg-surface flex items-center justify-center shadow-neo neo-interactive rounded">
+<span class="material-symbols-outlined font-bold">search</span>
+</button>
+</div>
+<!-- Month Selector (Horizontal Scroll) -->
+<div class="flex overflow-x-auto no-scrollbar px-4 py-3 gap-3 border-b-2 border-text-main/20">
+<button class="flex-none px-4 py-1.5 border-neo bg-surface font-display font-bold text-sm shadow-neo neo-interactive rounded whitespace-nowrap">Jan</button>
+<button class="flex-none px-4 py-1.5 border-neo bg-surface font-display font-bold text-sm shadow-neo neo-interactive rounded whitespace-nowrap">Feb</button>
+<button class="flex-none px-4 py-1.5 border-neo bg-text-main text-surface font-display font-bold text-sm shadow-neo neo-interactive rounded whitespace-nowrap">Mar</button>
+<button class="flex-none px-4 py-1.5 border-neo bg-surface font-display font-bold text-sm shadow-neo neo-interactive rounded whitespace-nowrap">Apr</button>
+<button class="flex-none px-4 py-1.5 border-neo bg-surface font-display font-bold text-sm shadow-neo neo-interactive rounded whitespace-nowrap">May</button>
+<button class="flex-none px-4 py-1.5 border-neo bg-surface font-display font-bold text-sm shadow-neo neo-interactive rounded whitespace-nowrap">Jun</button>
+</div>
+<!-- Filter Bar -->
+<div class="flex px-4 py-3 gap-3 bg-surface">
+<button class="flex-1 px-3 py-2 border-neo bg-primary font-display font-bold text-sm uppercase shadow-neo neo-interactive rounded">All</button>
+<button class="flex-1 px-3 py-2 border-neo bg-surface font-display font-bold text-sm uppercase shadow-neo neo-interactive rounded">In</button>
+<button class="flex-1 px-3 py-2 border-neo bg-surface font-display font-bold text-sm uppercase shadow-neo neo-interactive rounded">Out</button>
+</div>
+</header>
+<!-- Main Content: Transaction List -->
+<main class="flex-1 pb-24">
+<!-- Date Group: Today -->
+<div class="px-4 py-2 bg-muted/30 border-thin-b">
+<span class="font-mono text-xs font-bold uppercase tracking-wider text-text-main/60">Today, Mar 24</span>
+</div>
+<!-- Transaction Row (Expense) - Swipeable -->
+<div class="swipe-container border-thin-b h-16 w-full cursor-grab active:cursor-grabbing">
+<!-- Hidden Swipe Background -->
+<div class="swipe-action border-r-2 border-text-main">
+<span class="material-symbols-outlined text-surface text-3xl">delete</span>
+</div>
+<!-- Visible Content -->
+<div class="swipe-content h-full w-full flex items-center px-4 gap-3">
+<!-- Icon Box -->
+<div class="w-10 h-10 border-neo bg-surface flex items-center justify-center shadow-[2px_2px_0px_#0F0F0F] rounded-sm flex-none">
+<span class="material-symbols-outlined text-text-main">restaurant</span>
+</div>
+<!-- Details -->
+<div class="flex-1 min-w-0 flex flex-col justify-center">
+<p class="font-display font-bold text-base truncate">Lunch at Joe's</p>
+<p class="font-mono text-xs text-text-main/60">12:30 PM</p>
+</div>
+<!-- Amount -->
+<div class="flex-none text-right">
+<p class="font-display font-bold text-lg text-expense">- $15.50</p>
+</div>
+</div>
+</div>
+<!-- Transaction Row (Expense) -->
+<div class="swipe-container border-thin-b h-16 w-full cursor-grab active:cursor-grabbing">
+<div class="swipe-action border-r-2 border-text-main">
+<span class="material-symbols-outlined text-surface text-3xl">delete</span>
+</div>
+<div class="swipe-content h-full w-full flex items-center px-4 gap-3">
+<div class="w-10 h-10 border-neo bg-surface flex items-center justify-center shadow-[2px_2px_0px_#0F0F0F] rounded-sm flex-none">
+<span class="material-symbols-outlined text-text-main">local_cafe</span>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-center">
+<p class="font-display font-bold text-base truncate">Morning Coffee</p>
+<p class="font-mono text-xs text-text-main/60">08:15 AM</p>
+</div>
+<div class="flex-none text-right">
+<p class="font-display font-bold text-lg text-expense">- $4.20</p>
+</div>
+</div>
+</div>
+<!-- Date Group: Yesterday -->
+<div class="px-4 py-2 bg-muted/30 border-thin-b">
+<span class="font-mono text-xs font-bold uppercase tracking-wider text-text-main/60">Yesterday, Mar 23</span>
+</div>
+<!-- Transaction Row (Income) -->
+<div class="swipe-container border-thin-b h-16 w-full cursor-grab active:cursor-grabbing">
+<div class="swipe-action border-r-2 border-text-main">
+<span class="material-symbols-outlined text-surface text-3xl">delete</span>
+</div>
+<div class="swipe-content h-full w-full flex items-center px-4 gap-3">
+<div class="w-10 h-10 border-neo bg-surface flex items-center justify-center shadow-[2px_2px_0px_#0F0F0F] rounded-sm flex-none">
+<span class="material-symbols-outlined text-text-main">work</span>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-center">
+<p class="font-display font-bold text-base truncate">Freelance Client - Logo</p>
+<p class="font-mono text-xs text-text-main/60">04:00 PM</p>
+</div>
+<div class="flex-none text-right">
+<p class="font-display font-bold text-lg text-income">+ $500.00</p>
+</div>
+</div>
+</div>
+<!-- Transaction Row (Expense) -->
+<div class="swipe-container border-thin-b h-16 w-full cursor-grab active:cursor-grabbing">
+<div class="swipe-action border-r-2 border-text-main">
+<span class="material-symbols-outlined text-surface text-3xl">delete</span>
+</div>
+<div class="swipe-content h-full w-full flex items-center px-4 gap-3">
+<div class="w-10 h-10 border-neo bg-surface flex items-center justify-center shadow-[2px_2px_0px_#0F0F0F] rounded-sm flex-none">
+<span class="material-symbols-outlined text-text-main">directions_subway</span>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-center">
+<p class="font-display font-bold text-base truncate">Metro Pass Reload</p>
+<p class="font-mono text-xs text-text-main/60">09:10 AM</p>
+</div>
+<div class="flex-none text-right">
+<p class="font-display font-bold text-lg text-expense">- $30.00</p>
+</div>
+</div>
+</div>
+<!-- Date Group: Older -->
+<div class="px-4 py-2 bg-muted/30 border-thin-b">
+<span class="font-mono text-xs font-bold uppercase tracking-wider text-text-main/60">Mar 20</span>
+</div>
+<!-- Transaction Row (Special/Debt related) -->
+<div class="swipe-container border-thin-b h-16 w-full cursor-grab active:cursor-grabbing">
+<div class="swipe-action border-r-2 border-text-main">
+<span class="material-symbols-outlined text-surface text-3xl">delete</span>
+</div>
+<div class="swipe-content h-full w-full flex items-center px-4 gap-3">
+<div class="w-10 h-10 border-neo bg-special flex items-center justify-center shadow-[2px_2px_0px_#0F0F0F] rounded-sm flex-none">
+<span class="material-symbols-outlined text-text-main">group</span>
+</div>
+<div class="flex-1 min-w-0 flex flex-col justify-center">
+<p class="font-display font-bold text-base truncate">Split Dinner w/ Sarah</p>
+<p class="font-mono text-xs text-text-main/60">08:45 PM</p>
+</div>
+<div class="flex-none text-right">
+<p class="font-display font-bold text-lg text-expense">- $45.00</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Shared Component) -->
+<div class="fixed bottom-0 left-0 right-0 z-50">
+<!-- Re-using the exact shared component structure provided, wrapped to position fixed -->
+<div class="relative flex h-auto w-full flex-col bg-[#fcfbf8] border-neo-t" style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'>
+<div class="flex gap-2 bg-[#fcfbf8] px-4 pb-3 pt-2">
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#9e9047]" href="#">
+<div class="text-[#9e9047] flex h-8 items-center justify-center" data-icon="SquaresFour" data-size="24px" data-weight="regular">
+<span class="material-symbols-outlined">square</span>
+</div>
+<p class="text-[#9e9047] text-xs font-medium leading-normal tracking-[0.015em]">Dashboard</p>
+</a>
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#9e9047]" href="#">
+<div class="text-[#9e9047] flex h-8 items-center justify-center" data-icon="Plus" data-size="24px" data-weight="regular">
+<span class="material-symbols-outlined">plus_one</span>
+</div>
+<p class="text-[#9e9047] text-xs font-medium leading-normal tracking-[0.015em]">Add</p>
+</a>
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-[#1c1a0d]" href="#">
+<div class="text-[#1c1a0d] flex h-8 items-center justify-center" data-icon="ListDashes" data-size="24px" data-weight="fill">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lists</span>
+</div>
+<p class="text-[#1c1a0d] text-xs font-medium leading-normal tracking-[0.015em]">Activity</p>
+</a>
+<a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#9e9047]" href="#">
+<div class="text-[#9e9047] flex h-8 items-center justify-center" data-icon="Users" data-size="24px" data-weight="regular">
+<span class="material-symbols-outlined">user_attributes</span>
+</div>
+<p class="text-[#9e9047] text-xs font-medium leading-normal tracking-[0.015em]">Debts</p>
+</a>
+</div>
+<!-- Bottom safe area padding -->
+<div class="h-5 bg-[#fcfbf8]"></div>
+</div>
+</div>
+</body></html>

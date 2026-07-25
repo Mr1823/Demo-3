@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard - Modern Editorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#06e07a",
+              "background-light": "#f5f8f7",
+              "background-dark": "#0f231a",
+              "danger": "#FF3366",
+              "text-black": "#0A0A0A",
+              "surface-gray": "#F7F7F7",
+              "muted-gray": "#828282"
+            },
+            fontFamily: {
+              "display": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem", "sm": "2px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFFFF;
+            color: #0A0A0A;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            font-feature-settings: 'liga';
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFFFFF; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0A0A0A; 
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen font-display">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 pt-6 pb-4 border-b border-text-black bg-white sticky top-0 z-10">
+<h1 class="text-2xl font-bold tracking-tight text-text-black">Morning, User</h1>
+<span class="text-sm font-medium tracking-widest uppercase text-text-black border border-text-black px-2 py-1 rounded-sm">Oct 24</span>
+</header>
+<!-- Main Content Scrollable Area -->
+<main class="flex-1 overflow-y-auto pb-24">
+<!-- Hero Balance Card -->
+<section class="p-4">
+<div class="border border-text-black rounded-sm p-4 bg-white relative">
+<div class="absolute top-4 right-4 text-xs font-bold uppercase tracking-wider text-muted-gray">Total Net</div>
+<div class="mb-6">
+<span class="text-sm text-muted-gray block mb-1">Current Balance</span>
+<h2 class="text-5xl font-black tracking-tighter text-text-black">$14,200.00</h2>
+</div>
+<div class="grid grid-cols-2 gap-4 border-t border-text-black pt-4">
+<div>
+<span class="text-xs text-muted-gray uppercase tracking-wider block mb-1">Bank</span>
+<span class="text-lg font-bold text-text-black">$13,850.00</span>
+</div>
+<div>
+<span class="text-xs text-muted-gray uppercase tracking-wider block mb-1">Cash</span>
+<span class="text-lg font-bold text-text-black">$350.00</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Summary Strip -->
+<section class="px-4 pb-4">
+<div class="grid grid-cols-2 gap-0 border border-text-black rounded-sm bg-surface-gray">
+<div class="p-3 border-r border-text-black">
+<span class="text-xs text-muted-gray uppercase tracking-wider block mb-1">Income</span>
+<span class="text-xl font-bold text-primary">+$4,200.00</span>
+</div>
+<div class="p-3">
+<span class="text-xs text-muted-gray uppercase tracking-wider block mb-1">Expense</span>
+<span class="text-xl font-bold text-danger">-$1,840.00</span>
+</div>
+</div>
+</section>
+<!-- Action Grid -->
+<section class="px-4 pb-6">
+<h3 class="text-xs font-bold uppercase tracking-widest text-text-black mb-3 border-b border-text-black pb-1">Quick Log</h3>
+<div class="grid grid-cols-2 gap-2">
+<!-- Income Button -->
+<button class="flex flex-col items-center justify-center p-4 border border-text-black rounded-sm bg-white hover:bg-text-black hover:text-white transition-colors group h-24">
+<span class="material-symbols-outlined mb-2 group-hover:text-white" style="font-variation-settings: 'FILL' 0;">arrow_downward</span>
+<span class="text-sm font-bold uppercase tracking-wider">Income</span>
+</button>
+<!-- Expense Button -->
+<button class="flex flex-col items-center justify-center p-4 border border-text-black rounded-sm bg-white hover:bg-text-black hover:text-white transition-colors group h-24">
+<span class="material-symbols-outlined mb-2 group-hover:text-white" style="font-variation-settings: 'FILL' 0;">arrow_upward</span>
+<span class="text-sm font-bold uppercase tracking-wider">Expense</span>
+</button>
+<!-- Debt Button -->
+<button class="flex flex-col items-center justify-center p-4 border border-text-black rounded-sm bg-white hover:bg-text-black hover:text-white transition-colors group h-24">
+<span class="material-symbols-outlined mb-2 group-hover:text-white" style="font-variation-settings: 'FILL' 0;">credit_card</span>
+<span class="text-sm font-bold uppercase tracking-wider">Debt</span>
+</button>
+<!-- Trip Button -->
+<button class="flex flex-col items-center justify-center p-4 border border-text-black rounded-sm bg-white hover:bg-text-black hover:text-white transition-colors group h-24">
+<span class="material-symbols-outlined mb-2 group-hover:text-white" style="font-variation-settings: 'FILL' 0;">flight_takeoff</span>
+<span class="text-sm font-bold uppercase tracking-wider">Trip</span>
+</button>
+</div>
+</section>
+<!-- History Ledger -->
+<section class="px-4">
+<h3 class="text-xs font-bold uppercase tracking-widest text-text-black mb-3 border-b border-text-black pb-1 sticky top-0 bg-white z-10 pt-2">Recent Entries</h3>
+<div class="flex flex-col">
+<!-- Entry 1 -->
+<div class="flex justify-between items-center py-4 border-b border-text-black">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 border border-text-black rounded-sm flex items-center justify-center bg-surface-gray">
+<span class="material-symbols-outlined text-text-black" style="font-size: 20px;">restaurant</span>
+</div>
+<div>
+<p class="font-bold text-text-black text-sm">Blue Bottle Coffee</p>
+<p class="text-xs text-muted-gray">Food &amp; Drink • 08:42 AM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-danger">-$12.50</p>
+</div>
+</div>
+<!-- Entry 2 -->
+<div class="flex justify-between items-center py-4 border-b border-text-black">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 border border-text-black rounded-sm flex items-center justify-center bg-surface-gray">
+<span class="material-symbols-outlined text-text-black" style="font-size: 20px;">directions_subway</span>
+</div>
+<div>
+<p class="font-bold text-text-black text-sm">Metro Transit</p>
+<p class="text-xs text-muted-gray">Transport • Yesterday</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-danger">-$4.00</p>
+</div>
+</div>
+<!-- Entry 3 -->
+<div class="flex justify-between items-center py-4 border-b border-text-black">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 border border-text-black rounded-sm flex items-center justify-center bg-surface-gray">
+<span class="material-symbols-outlined text-text-black" style="font-size: 20px;">work</span>
+</div>
+<div>
+<p class="font-bold text-text-black text-sm">Tech Corp Inc.</p>
+<p class="text-xs text-muted-gray">Salary • Oct 15</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary">+$4,200.00</p>
+</div>
+</div>
+<!-- Entry 4 -->
+<div class="flex justify-between items-center py-4 border-b border-text-black">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 border border-text-black rounded-sm flex items-center justify-center bg-surface-gray">
+<span class="material-symbols-outlined text-text-black" style="font-size: 20px;">shopping_bag</span>
+</div>
+<div>
+<p class="font-bold text-text-black text-sm">Uniqlo</p>
+<p class="text-xs text-muted-gray">Shopping • Oct 14</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-danger">-$120.00</p>
+</div>
+</div>
+</div>
+<button class="w-full py-4 mt-4 text-xs font-bold uppercase tracking-widest text-text-black border border-text-black rounded-sm hover:bg-text-black hover:text-white transition-colors">
+                View Full Ledger
+            </button>
+</section>
+</main>
+<!-- BottomNavBar (Shared Component) -->
+<div class="fixed bottom-0 left-0 right-0 border-t border-text-black bg-white z-50 pb-safe">
+<div class="flex justify-around items-center py-2 px-4">
+<!-- Dashboard Link (Active state styling applied logically) -->
+<a class="flex flex-col items-center justify-center gap-1 p-2 w-16 text-text-black" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Dash</span>
+</a>
+<!-- Add Link -->
+<a class="flex flex-col items-center justify-center gap-1 p-2 w-16 text-muted-gray hover:text-text-black transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">add_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Add</span>
+</a>
+<!-- Ledger Link -->
+<a class="flex flex-col items-center justify-center gap-1 p-2 w-16 text-muted-gray hover:text-text-black transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">receipt_long</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Ledger</span>
+</a>
+<!-- Analytics Link -->
+<a class="flex flex-col items-center justify-center gap-1 p-2 w-16 text-muted-gray hover:text-text-black transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Stats</span>
+</a>
+</div>
+</div>
+</body></html>

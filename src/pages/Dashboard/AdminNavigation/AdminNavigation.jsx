@@ -38,10 +38,10 @@ const AdminNavigation = ({ sidebarCollapsed, setSidebarCollapsed }) => {
       <header className="min-h-16 bg-white top-0 w-full fixed shadow z-[9999]">
         <div className="flex justify-between items-center h-16 gap-10 md:gap-0">
           <div className={`flex justify-between items-center gap-x-3 ${!sidebarCollapsed ? "w-[85vw] md:w-[240px]" : "w-[65px] md:w-[65px]"} transition-all duration-500 ease-in-out border`}>
-            <div className="w-full flex items-center justify-center bg-[var(--pink-gold)] px-2 py-3 h-16 overflow-hidden">
+            <div className="w-full flex items-center justify-center bg-surface-variant px-2 py-3 h-16 overflow-hidden">
               <Link to={"/"} className="block w-full flex items-center justify-center">
                 <span
-                  style={{ fontFamily: "var(--italiana)" }}
+                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
                   className="text-lg font-extrabold tracking-wider text-black transition-all duration-500 uppercase whitespace-nowrap overflow-hidden"
                 >
                   {!sidebarCollapsed ? "The Jewel Store" : "JS"}
@@ -56,7 +56,7 @@ const AdminNavigation = ({ sidebarCollapsed, setSidebarCollapsed }) => {
                 <img
                   src={user?.photoURL}
                   alt={userFromDB?.name}
-                  className="w-full h-11 rounded-full border border-[var(--pink-gold)]"
+                  className="w-full h-11 rounded-full border border-primary"
                 />
               </div>
             </summary>
@@ -99,7 +99,7 @@ const AdminNavigation = ({ sidebarCollapsed, setSidebarCollapsed }) => {
       <aside
         className={`${
           !sidebarCollapsed ? "w-[85vw] md:w-[240px]" : "w-[65px] md:w-[65px]"
-        } h-[calc(100vh-64px)] whitespace-nowrap fixed shadow overflow-x-visible transition-all duration-500 ease-in-out top-16 bg-black z-[9999]`}
+        } h-[calc(100vh-64px)] whitespace-nowrap fixed shadow overflow-x-visible transition-all duration-500 ease-in-out top-16 bg-neutral z-[9999]`}
       >
         <div className="sidebar-menu-con flex flex-col justify-between h-full">
           <ul className="flex flex-col gap-2 mt-2 overflow-x-hidden overflow-y-auto flex-grow">

@@ -1,52 +1,57 @@
 import express from "express";
+import { User } from "../models/User.js";
 
 const router = express.Router();
 
-const users = {
-  "user@gmail.com": {
-    id: "u-1",
-    name: "Jewellery Connoisseur",
-    email: "user@gmail.com",
-    role: "USER",
-    photoURL: "/placeholder-user.png",
-    shippingAddress: {
-      street: "123 Diamond Avenue",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400001",
-      phone: "+91 9876543210",
-    },
-  },
-};
-
 // GET /api/users/me?email=user@gmail.com
-router.get("/me", (req, res) => {
-  const { email } = req.query;
-  if (email && users[email]) {
-    return res.json({ success: true, data: users[email] });
+router.get("/me", async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (email) {
+      const user = await User.findOne({ email }).lean();
+      if (user) {
+        return res.json({ success: true, data: user });
+      }
+    }
+    // Guest fallback
+    res.json({
+      success: true,
+      data: {
+        id: "guest-id",
+        name: "Guest User",
+        email: email || "guest@jewelstore.com",
+        role: "USER",
+        photoURL: "/placeholder-user.png",
+        shippingAddress: {},
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user profile" });
   }
-  res.json({
-    success: true,
-    data: {
-      id: "guest-id",
-      name: "Guest User",
-      email: email || "guest@jewelstore.com",
-      role: "USER",
-      photoURL: "/placeholder-user.png",
-      shippingAddress: {},
-    },
-  });
 });
 
 // PUT /api/users/me
-router.put("/me", (req, res) => {
-  const { email, name, shippingAddress } = req.body;
-  if (email && users[email]) {
-    users[email].name = name || users[email].name;
-    users[email].shippingAddress = shippingAddress || users[email].shippingAddress;
-    return res.json({ success: true, data: users[email] });
+router.put("/me", async (req, res) => {
+  try {
+    const { email, name, shippingAddress } = req.body;
+    if (email) {
+      let user = await User.findOne({ email });
+      if (user) {
+        if (name) user.name = name;
+        if (shippingAddress) user.shippingAddress = shippingAddress;
+        await user.save();
+        return res.json({ success: true, data: user });
+      } else {
+        // Optionally create the user if they don't exist
+        user = new User({ email, name, shippingAddress });
+        await user.save();
+        return res.json({ success: true, data: user });
+      }
+    }
+    res.json({ success: true, message: "Profile updated" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update user profile" });
   }
-  res.json({ success: true, message: "Profile updated" });
 });
 
 export default router;

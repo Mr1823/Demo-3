@@ -1,0 +1,258 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Register | Sri Ram Jewellery</title>
+<!-- Google Fonts: EB Garamond for Serif, Montserrat for Sans -->
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Montserrat:wght@100..900&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "tertiary": "#60523f",
+                    "on-secondary-fixed": "#2a1702",
+                    "primary-fixed": "#ffdcc4",
+                    "outline-variant": "#d4c3b9",
+                    "tertiary-fixed": "#f4dfc7",
+                    "primary-fixed-dim": "#edbd9a",
+                    "primary": "#704c31",
+                    "inverse-primary": "#edbd9a",
+                    "secondary-fixed": "#ffdcbb",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-container": "#795d40",
+                    "on-surface-variant": "#50443d",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#75593c",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#613f25",
+                    "surface-variant": "#ebe1d2",
+                    "secondary-container": "#ffd9b4",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#d7c4ac",
+                    "on-tertiary-container": "#ffecd6",
+                    "surface-container-low": "#fcf2e3",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#faefe0",
+                    "surface-dim": "#e2d9ca",
+                    "surface-container-high": "#f1e7d8",
+                    "surface-tint": "#7b563a",
+                    "primary-container": "#8b6447",
+                    "inverse-surface": "#353026",
+                    "on-surface": "#1f1b12",
+                    "on-primary-fixed": "#2e1501",
+                    "on-primary-container": "#ffebe0",
+                    "background": "#f4eadb",
+                    "tertiary-container": "#796a56",
+                    "surface-container": "#f7edde",
+                    "surface": "#fff8f2",
+                    "surface-container-highest": "#ebe1d2",
+                    "on-error": "#ffffff",
+                    "outline": "#82746c",
+                    "on-tertiary-fixed": "#241a0b",
+                    "on-background": "#1f1b12",
+                    "secondary-fixed-dim": "#e4c09d",
+                    "surface-bright": "#fff8f2",
+                    "on-secondary-fixed-variant": "#5b4227",
+                    "on-tertiary-fixed-variant": "#524533"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "unit": "4px",
+                    "margin-mobile": "20px",
+                    "section-gap-lg": "120px",
+                    "margin-desktop": "64px",
+                    "container-max": "1280px",
+                    "section-gap-sm": "64px"
+            },
+            "fontFamily": {
+                    "display-lg": ["EB Garamond"],
+                    "body-lg": ["Montserrat"],
+                    "label-caps": ["Montserrat"],
+                    "headline-sm": ["EB Garamond"],
+                    "headline-md": ["EB Garamond"],
+                    "body-base": ["Montserrat"],
+                    "display-lg-mobile": ["EB Garamond"],
+                    "button-text": ["Montserrat"]
+            },
+            "fontSize": {
+                    "display-lg": ["56px", {"lineHeight": "1.1", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.15em", "fontWeight": "600"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                    "body-base": ["15px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg-mobile": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "button-text": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .input-underline {
+            border: none !important;
+            border-bottom: 1px solid #d4c3b9 !important;
+            background: transparent !important;
+            padding: 1rem 0 !important;
+            transition: border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 0 !important;
+        }
+        .input-underline:focus {
+            outline: none !important;
+            box-shadow: none !important;
+            border-bottom-color: #8b6447 !important;
+        }
+        .fade-up {
+            animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .divider-line::before, .divider-line::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #d4c3b9;
+        }
+        .luxury-text-shadow {
+            text-shadow: 0 10px 30px rgba(139, 100, 71, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-fixed" style="background-position: 48.528125% 48.628625%;">
+<!-- Canonical Header -->
+<header class="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant/30 px-margin-desktop py-6">
+<div class="max-w-container-max mx-auto flex items-center justify-between">
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-caps text-[11px] tracking-widest text-on-surface hover:text-primary transition-colors" href="/">HOME</a>
+<a class="font-label-caps text-[11px] tracking-widest text-on-surface hover:text-primary transition-colors" href="#">SHOP</a>
+</nav>
+<div class="flex-shrink-0">
+<a href="/"><div class="flex items-center gap-4"><img alt="Sri Ram Jewellery" class="h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCSRvnlCu1vMSwiEj8xjJ9pE9ohh3-6-lObgY634kW-v21caLHgC_H35WsZQAS6_u9kYsKXk3fcjzFwONKcebdZAeO_WOQZmD6YBuNTbRoa8gyo51bZ78VZZNjMs9F-BRLKAif3Z9hrd4-9Sue_A0_Jomen6GktQEIa6Ew-hc2LwDMXrxyGesaUowfW-BSg_DsmcFd-Kw1B2mwvgoi3ONczsJafTykMa3smYZh10wUg5WrRUbsYEf3tEXRBtHvp0F4gM6qW60SssU"><span class="font-display-lg text-headline-sm text-primary tracking-tight">Sri Ram Jewellery</span></div></a>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-caps text-[11px] tracking-widest text-on-surface hover:text-primary transition-colors" href="#">CATEGORIES</a>
+<a class="font-label-caps text-[11px] tracking-widest text-on-surface hover:text-primary transition-colors" href="#">ABOUT</a>
+</nav>
+<div class="flex items-center gap-4 md:hidden">
+<span class="material-symbols-outlined text-on-surface">menu</span>
+</div>
+</div>
+</header>
+<main class="min-h-[80vh] flex flex-col items-center justify-center py-section-gap-lg px-margin-mobile">
+<!-- Registration Container -->
+<div class="w-full max-w-[480px] fade-up">
+<header class="text-center mb-16">
+<p class="font-label-caps text-label-caps text-primary mb-6 tracking-[0.3em] uppercase">Private Registry</p>
+<h1 class="font-display-lg text-display-lg-mobile md:text-[64px] text-on-surface leading-tight tracking-tight luxury-text-shadow">Create Account</h1>
+<div class="w-12 h-[1px] bg-primary mx-auto mt-8 opacity-40"></div>
+</header>
+<form class="space-y-10" onsubmit="return false;">
+<!-- Name Field -->
+<div class="relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant/80 block mb-1" for="name">Full Name</label>
+<input class="w-full input-underline font-body-base text-on-surface placeholder:text-outline-variant/40" id="name" name="name" placeholder="E.g. Arjun Mehta" required="" type="text">
+</div>
+<!-- Email Field -->
+<div class="relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant/80 block mb-1" for="email">Email Address</label>
+<input class="w-full input-underline font-body-base text-on-surface placeholder:text-outline-variant/40" id="email" name="email" placeholder="email@example.com" required="" type="email">
+</div>
+<!-- Password Field -->
+<div class="relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant/80 block mb-1" for="password">Security Password</label>
+<input class="w-full input-underline font-body-base text-on-surface placeholder:text-outline-variant/40" id="password" name="password" placeholder="••••••••" required="" type="password">
+</div>
+<!-- Action Button -->
+<div class="pt-8">
+<a href="{{DATA:SCREEN:SCREEN_10}}" class="w-full py-6 bg-primary-container text-white font-button-text uppercase tracking-[0.2em] hover:bg-primary transition-all duration-700 shadow-xl shadow-primary-container/10 group overflow-hidden relative flex items-center justify-center">
+<span class="relative z-10">Create Account</span>
+</a>
+</div>
+</form>
+<!-- Divider -->
+<div class="flex items-center gap-6 my-12 divider-line">
+<span class="font-label-caps text-[10px] text-outline-variant tracking-widest uppercase">Social Entry</span>
+</div>
+<!-- Social Sign-Up -->
+<div class="space-y-4">
+<button class="w-full py-5 border border-outline-variant flex items-center justify-center gap-4 font-button-text text-on-surface-variant hover:bg-surface-container-low transition-all duration-500 group" type="button">
+<svg class="w-5 h-5 opacity-80 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+                    Continue with Google
+                </button>
+</div>
+<!-- Footer Link -->
+<footer class="mt-16 text-center">
+<p class="font-body-base text-on-surface-variant text-sm tracking-wide">
+                    Already part of the heritage? 
+                    <a class="text-primary font-semibold underline underline-offset-8 hover:text-tertiary transition-all" href="{{DATA:SCREEN:SCREEN_12}}">Sign In</a>
+</p>
+</footer>
+</div>
+</main>
+<!-- Shared Footer Component -->
+<footer class="bg-surface-container-low border-t border-outline-variant/30 w-full py-section-gap-sm px-margin-desktop">
+<div class="max-w-container-max mx-auto flex flex-col items-center text-center">
+<img alt="SRJ Logo" class="h-20 w-auto object-contain mb-8 opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCSRvnlCu1vMSwiEj8xjJ9pE9ohh3-6-lObgY634kW-v21caLHgC_H35WsZQAS6_u9kYsKXk3fcjzFwONKcebdZAeO_WOQZmD6YBuNTbRoa8gyo51bZ78VZZNjMs9F-BRLKAif3Z9hrd4-9Sue_A0_Jomen6GktQEIa6Ew-hc2LwDMXrxyGesaUowfW-BSg_DsmcFd-Kw1B2mwvgoi3ONczsJafTykMa3smYZh10wUg5WrRUbsYEf3tEXRBtHvp0F4gM6qW60SssU">
+<nav class="flex flex-wrap justify-center gap-x-12 gap-y-6 mb-10">
+<a class="text-on-surface-variant hover:text-primary font-label-caps text-[11px] tracking-widest transition-colors uppercase" href="#">Heritage &amp; Craft</a>
+<a class="text-on-surface-variant hover:text-primary font-label-caps text-[11px] tracking-widest transition-colors uppercase" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary font-label-caps text-[11px] tracking-widest transition-colors uppercase" href="#">Care Guide</a>
+<a class="text-on-surface-variant hover:text-primary font-label-caps text-[11px] tracking-widest transition-colors uppercase" href="#">Bespoke Service</a>
+<a class="text-on-surface-variant hover:text-primary font-label-caps text-[11px] tracking-widest transition-colors uppercase" href="#">Contact</a>
+</nav>
+<p class="font-body-base text-[13px] text-secondary opacity-60 tracking-wider">
+                © 2024 Sri Ram Jewellery. Artisanal Excellence Since 1970.
+            </p>
+</div>
+</footer>
+<script>
+        // Micro-interaction for inputs
+        document.querySelectorAll('.input-underline').forEach(input => {
+            input.addEventListener('focus', () => {
+                const label = input.previousElementSibling;
+                label.classList.add('text-primary');
+                label.classList.remove('text-on-surface-variant/80');
+            });
+            input.addEventListener('blur', () => {
+                const label = input.previousElementSibling;
+                label.classList.remove('text-primary');
+                label.classList.add('text-on-surface-variant/80');
+            });
+        });
+
+        // Atmospheric parallax on mouse move (Subtle)
+        document.addEventListener('mousemove', (e) => {
+            const amount = 3; // Reduced for even more subtlety
+            const x = (e.clientX / window.innerWidth - 0.5) * amount;
+            const y = (e.clientY / window.innerHeight - 0.5) * amount;
+            document.body.style.backgroundPosition = `${50 + x}% ${50 + y}%`;
+        });
+    </script>
+
+
+
+
+</body></html>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./AddressBook.css";
+
 import useUserInfo from "../../../hooks/useUserInfo";
 import { useForm } from "react-hook-form";
 import { City, Country, State } from "country-state-city";
@@ -321,10 +321,9 @@ const AddressBook = () => {
                   maxLength={phoneNumInfo?.numberLength}
                 />
                 <span
-                  className={`country-code absolute left-2 text-[1.1rem] border px-3 rounded-lg border-black bottom-2 ${
-                    errors?.mobileNumber?.type === "maxLength" &&
+                  className={`country-code absolute left-2 text-[1.1rem] border px-3 rounded-lg border-black bottom-2 ${errors?.mobileNumber?.type === "maxLength" &&
                     "bottom-14 md:bottom-8"
-                  }`}
+                    }`}
                 >
                   +{Country?.getCountryByCode(countryCode)?.phonecode}
                 </span>

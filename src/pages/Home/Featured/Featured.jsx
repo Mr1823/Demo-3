@@ -1,123 +1,69 @@
-import React, { useEffect, useState } from "react";
-import "./Featured.css";
-import useProducts from "../../../hooks/useProducts";
-import featuredBanner from "../../../assets/featuredbanner.jpg";
-import FeaturedCard from "./FeaturedCard/FeaturedCard";
-import { Link } from "react-router-dom";
-import AnimateText from "@moxy/react-animate-text";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Featured = () => {
-  const [products, isProductsLoading] = useProducts();
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [bestSellers, setBestSellers] = useState([]);
-
-  useEffect(() => {
-    if (products) {
-      /**
-       * ********
-       * Logics *
-       * ********
-       *
-       * FeaturedProducts: only those products that have the featured key set to true
-       *
-       * BestSellers: We are sorting the products array based on Sold(a key) value of the products from max to min and slicing the first 4 items.
-       */
-
-      setFeaturedProducts(
-        products.filter((product) => product.featured === true)
-      );
-
-      const sortedArray = [...products].sort((a, b) => b.sold - a.sold);
-      setBestSellers(sortedArray.slice(0, 4));
-    }
-  }, [products]);
-
   return (
-    <div className="container grid grid-cols-1 md:grid-cols-2 md:gap-x-6 gap-y-8 md:gap-y-0 mb-12">
-      <div className="h-[450px] relative" data-aos="fade-up">
-        <img
-          src={featuredBanner}
-          className="border w-full h-full hover:scale-[1.01] transition-all duration-150 ease"
-        />
-        <div
-          className="absolute bottom-36 left-8 text-center"
-          style={{ fontFamily: "var(--poppins)" }}
-        >
-          <h5 className="text-lg text-gray-500">BEAUTIFUL</h5>
-          <h4
-            className="text-4xl font-bold text-black mt-2 mb-6"
-            style={{ fontFamily: "var(--italiana)" }}
-          >
-            <AnimateText initialDelay={0.2} wordDelay={0.2}>
-              <span>Wedding Rings</span>
-            </AnimateText>
-          </h4>
+    <section className="space-y-16">
+      <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-primary/10 pb-6">
+        <div className="space-y-3">
+          <span className="font-body text-xs text-on-surface-variant uppercase tracking-[0.3em]">Curated Heritage</span>
+          <h2 className="font-display text-4xl md:text-5xl text-primary">The Heritage Collection</h2>
+        </div>
+        <Link to="/shop" className="font-body text-sm font-semibold text-primary hover:text-secondary transition-all flex items-center gap-2 group uppercase tracking-widest">
+          View All <span className="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+        </Link>
+      </div>
 
-          <Link to="/shop" state={{ category: "diamond rings" }}>
-            <button className="border-b-2 border-b-black hover:border-b-[var(--pink-gold)] hover:text-[var(--pink-gold)] transition-all duration-150 ease">
-              Shop Now
+      {/* Bento Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[350px]">
+        {/* Featured Large Card */}
+        <div className="md:col-span-8 md:row-span-2 relative bg-surface-container group overflow-hidden border border-primary/5 p-8 flex flex-col justify-end shadow-sm">
+          <img 
+            alt="Antique Mango Mala" 
+            className="w-full h-full object-cover absolute inset-0 z-0 opacity-95 group-hover:opacity-100 transition-all duration-1000 group-hover:scale-105" 
+            src="https://images.unsplash.com/photo-1599643477873-1fd955d8d06b?q=80&w=2835&auto=format&fit=crop"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent z-10"></div>
+          <div className="relative z-20 flex justify-between items-end w-full">
+            <div>
+              <h3 className="font-display text-3xl md:text-4xl text-primary mb-2">Antique Mango Mala</h3>
+              <p className="font-body text-on-surface-variant italic">22K Gold with Rubies</p>
+            </div>
+            <button aria-label="View Details" className="w-14 h-14 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all bg-surface/80 backdrop-blur-sm cursor-pointer">
+              <span className="material-symbols-outlined">north_east</span>
             </button>
-          </Link>
+          </div>
+        </div>
+
+        {/* Secondary Card 1*/}
+        <div className="md:col-span-4 md:row-span-1 relative bg-surface-container group overflow-hidden border border-primary/5 p-8 flex flex-col justify-end shadow-sm">
+          <img 
+            alt="Temple Jhumkas" 
+            className="w-full h-full object-cover absolute inset-0 z-0 opacity-95 transition-all duration-1000 group-hover:scale-105" 
+            src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=2940&auto=format&fit=crop"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent z-10"></div>
+          <div className="relative z-20">
+            <h3 className="font-display text-2xl md:text-3xl text-primary mb-1">Temple Jhumkas</h3>
+            <p className="font-body text-on-surface-variant text-sm italic">22K Handcrafted Gold</p>
+          </div>
+        </div>
+
+        {/* Secondary Card 2 */}
+        <div className="md:col-span-4 md:row-span-1 relative bg-surface-container group overflow-hidden border border-primary/5 p-8 flex flex-col justify-end shadow-sm">
+          <img 
+            alt="Kada Bangles" 
+            className="w-full h-full object-cover absolute inset-0 z-0 opacity-95 transition-all duration-1000 group-hover:scale-105" 
+            src="https://images.unsplash.com/photo-1599643478524-fb524b0d0f72?q=80&w=2835&auto=format&fit=crop"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent z-10"></div>
+          <div className="relative z-20">
+            <h3 className="font-display text-2xl md:text-3xl text-primary mb-1">Kada Bangles</h3>
+            <p className="font-body text-on-surface-variant text-sm italic">Solid Gold Accents</p>
+          </div>
         </div>
       </div>
-
-      <div className="flex flex-col md:flex-row justify-between md:items-center md:gap-x-4 space-y-8 md:space-y-0 px-4 md:px-0">
-        <div className="md:w-1/2">
-          <h4
-            className="font-bold text-2xl mb-4"
-            style={{ fontFamily: "var(--italiana)" }}
-          >
-            Featured Products
-          </h4>
-
-          {isProductsLoading ? (
-            <div className="w-full">
-              {[...Array(5)].map((_, idx) => (
-                <div
-                  className="skeleton w-full h-16 my-4 rounded-none"
-                  key={idx}
-                ></div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {featuredProducts?.map((product, counter) => (
-                <FeaturedCard
-                  counter={counter}
-                  key={product._id}
-                  product={product}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="md:w-1/2">
-          <h4
-            className="font-bold text-2xl mb-4"
-            style={{ fontFamily: "var(--italiana)" }}
-          >
-            Best Sellers
-          </h4>
-          {isProductsLoading ? (
-            <div className="w-full">
-              {[...Array(5)].map((_, idx) => (
-                <div
-                  className="skeleton w-full h-16 my-4 rounded-none"
-                  key={idx}
-                ></div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {bestSellers?.map((product) => (
-                <FeaturedCard key={product._id} product={product} />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    </section>
   );
 };
 

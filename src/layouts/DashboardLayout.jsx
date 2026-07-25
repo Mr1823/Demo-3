@@ -15,7 +15,7 @@ const DashboardLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div style={{ fontFamily: "var(--poppins)" }} className="max-w-screen-2xl">
+    <div style={{ fontFamily: "'Montserrat', sans-serif" }} className="max-w-screen-2xl">
       <CustomHelmet title={"Dashboard"} />
 
       <>
@@ -43,7 +43,7 @@ const DashboardLayout = () => {
               <div className="w-full p-4 md:container mt-10 mb-10 text-left">
                 <h1
                   className="text-4xl font-bold text-black tracking-wide"
-                  style={{ fontFamily: "var(--italiana)" }}
+                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
                 >
                   <AnimateText initialDelay={0.2} wordDelay={0.2}>
                     <span>{`Welcome, ${userFromDB?.name}`}</span>

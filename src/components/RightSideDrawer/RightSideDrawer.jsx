@@ -1,79 +1,94 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { TfiClose } from "react-icons/tfi";
-import { FiTrash2 } from "react-icons/fi";
 
 const RightSideDrawer = ({ showRightDrawer, setShowRightDrawer, cartData, removeFromCart, cartSubtotal }) => {
   if (!showRightDrawer) return null;
 
   return (
-    <div className="fixed inset-0 z-[10000] overflow-hidden">
+    <div className="fixed inset-0 z-[10000] overflow-hidden font-body-base">
       <div
-        className="absolute inset-0 bg-black/50 transition-opacity duration-300"
+        className="absolute inset-0 bg-[#353026]/40 backdrop-blur-sm transition-opacity duration-300"
         onClick={() => setShowRightDrawer(false)}
       ></div>
-      <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-white shadow-xl flex flex-col h-full z-10">
-          <div className="p-6 border-b flex items-center justify-between">
-            <h3 className="text-xl font-semibold" style={{ fontFamily: "var(--italiana)" }}>
-              Shopping Cart ({cartData?.length || 0})
+      <div className="absolute inset-y-0 right-0 max-w-full flex">
+        <div className="w-screen max-w-md bg-background shadow-xl flex flex-col h-full z-10 border-l border-[#c8a684]/30">
+          
+          <div className="p-6 border-b border-[#c8a684]/30 flex items-center justify-between bg-surface-container-low">
+            <h3 className="text-2xl text-on-surface" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              Shopping Bag ({cartData?.length || 0})
             </h3>
             <button
               onClick={() => setShowRightDrawer(false)}
-              className="p-2 text-gray-500 hover:text-black transition-colors"
+              className="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-[#ebe1d2]"
             >
-              <TfiClose className="text-xl" />
+              <TfiClose className="text-lg" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {cartData && cartData.length > 0 ? (
               cartData.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-4 border-b pb-4">
-                  <img
-                    src={item.image || "/logo.png"}
-                    alt={item.name}
-                    className="w-20 h-20 object-cover rounded border"
-                  />
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm text-gray-800 line-clamp-1">{item.name}</h4>
-                    <p className="text-xs text-gray-500 mt-1">Qty: {item.quantity || 1}</p>
-                    <p className="text-sm font-semibold mt-1">₹{item.price}</p>
+                <div key={idx} className="flex gap-4 border-b border-[#c8a684]/20 pb-6 group">
+                  <div className="w-24 h-24 shrink-0 border border-[#c8a684]/30 overflow-hidden bg-[#fcf2e3]">
+                    <img
+                      src={item.image || item.img || "/logo.png"}
+                      alt={item.name}
+                      className="w-full h-full object-cover mix-blend-multiply"
+                    />
                   </div>
-                  <button
-                    onClick={() => removeFromCart && removeFromCart(item._id || item.productId)}
-                    className="text-red-500 hover:text-red-700 p-2"
-                  >
-                    <FiTrash2 />
-                  </button>
+                  <div className="flex-1 flex flex-col justify-between py-1">
+                    <div>
+                      <h4 className="font-semibold text-base text-on-surface line-clamp-2" style={{fontFamily: "'Cormorant Garamond', serif"}}>{item.name}</h4>
+                      <p className="text-xs text-on-surface-variant mt-1 font-label-caps uppercase tracking-widest">Qty: {item.quantity || 1}</p>
+                    </div>
+                    <div className="flex justify-between items-center mt-2">
+                      <p className="text-sm font-semibold text-primary">₹{(item.price || item.discountPrice)?.toLocaleString('en-IN')}</p>
+                      <button
+                        onClick={() => removeFromCart && removeFromCart(item._id || item.productId)}
+                        className="text-on-surface-variant hover:text-[#93000a] text-xs font-label-caps uppercase tracking-widest flex items-center gap-1 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">delete</span>
+                        Remove
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-20 text-gray-500">
-                <p>Your shopping bag is empty.</p>
+              <div className="text-center py-32 flex flex-col items-center gap-4 text-on-surface-variant opacity-60">
+                 <span className="material-symbols-outlined text-5xl">shopping_bag</span>
+                <p style={{fontFamily: "'Cormorant Garamond', serif"}} className="text-xl">Your shopping bag is empty.</p>
               </div>
             )}
           </div>
 
-          <div className="p-6 border-t bg-gray-50 space-y-4">
-            <div className="flex justify-between items-center text-lg font-semibold">
-              <span>Subtotal:</span>
-              <span>₹{cartSubtotal?.subtotal || 0}</span>
+          <div className="p-6 border-t border-[#c8a684]/30 bg-[#fcf2e3] space-y-6">
+            <div className="flex justify-between items-center text-xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <span className="text-on-surface-variant">Subtotal</span>
+              <span className="font-semibold text-on-surface">₹{(cartSubtotal?.subtotal || 0).toLocaleString('en-IN')}</span>
             </div>
-            <Link
-              to="/checkout"
-              onClick={() => setShowRightDrawer(false)}
-              className="block w-full bg-black text-white text-center py-3 uppercase tracking-wider text-sm hover:bg-gray-800 transition-colors"
-            >
-              Proceed to Checkout
-            </Link>
-            <Link
-              to="/shop"
-              onClick={() => setShowRightDrawer(false)}
-              className="block w-full border border-black text-black text-center py-3 uppercase tracking-wider text-sm hover:bg-black hover:text-white transition-colors"
-            >
-              Continue Shopping
-            </Link>
+            
+            <p className="text-xs text-on-surface-variant text-center -mt-4">
+              Taxes and shipping calculated at checkout
+            </p>
+
+            <div className="space-y-3">
+              <Link
+                to="/checkout"
+                onClick={() => setShowRightDrawer(false)}
+                className="block w-full bg-[#704c31] text-white text-center py-4 font-button-text text-sm font-semibold uppercase tracking-widest hover:bg-[#5b3d27] transition-colors"
+              >
+                Checkout
+              </Link>
+              <Link
+                to="/shop"
+                onClick={() => setShowRightDrawer(false)}
+                className="block w-full border border-[#704c31] text-[#704c31] text-center py-4 font-button-text text-sm font-semibold uppercase tracking-widest hover:bg-white transition-colors"
+              >
+                Continue Shopping
+              </Link>
+            </div>
           </div>
         </div>
       </div>

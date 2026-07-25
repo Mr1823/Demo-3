@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from "react";
-import "./DynmicProduct.css";
-import { useParams } from "react-router-dom";
-import StarRatings from "react-star-ratings";
-import useDynamicRating from "../../hooks/useDynamicRating";
-import { FaMinus, FaPlus } from "react-icons/fa";
-import { FaMagnifyingGlass, FaRegHeart } from "react-icons/fa6";
-import { LiaShippingFastSolid } from "react-icons/lia";
-import { RiRefund2Line } from "react-icons/ri";
-import Magnifier from "react-magnifier";
-import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
-import { HashLink } from "react-router-hash-link";
+import { useParams, Link } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
 import useCart from "../../hooks/useCart";
 import useAuthContext from "../../hooks/useAuthContext";
 import useWishlist from "../../hooks/useWishlist";
-import toast from "react-hot-toast";
-import { FiShoppingCart } from "react-icons/fi";
+import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 
 const DynamicProduct = () => {
   const { id } = useParams();
@@ -27,189 +16,195 @@ const DynamicProduct = () => {
   const { cartData, addToCart } = useCart();
   const [wishlistData, , , addToWishlist] = useWishlist();
 
-  // find the product by id
   useEffect(() => {
     const filteredProduct = products?.find((data) => data._id === id);
     setDynamicProduct(filteredProduct);
   }, [products, id]);
 
-  // check if product is present in cart and wishlist
   useEffect(() => {
     if (user) {
-      const cartProduct = cartData?.find(
-        (cartItem) => cartItem.productId === id
-      );
-      setPresentInCart(cartProduct ? true : false);
+      const cartProduct = cartData?.find((cartItem) => cartItem.productId === id);
+      setPresentInCart(!!cartProduct);
 
-      const wishlistProduct = wishlistData?.find(
-        (wishlistItem) => wishlistItem.productId === id
-      );
-      setPresentInWishlist(wishlistProduct ? true : false);
+      const wishlistProduct = wishlistData?.find((wishlistItem) => wishlistItem.productId === id);
+      setPresentInWishlist(!!wishlistProduct);
     }
   }, [cartData, dynamicProduct, id, wishlistData, user]);
 
-  // set order quantity
-  const [quantity, setQuantity] = useState(1);
-
-  // add to cart function
   const handleAddToCartWishlist = (where) => {
     if (user) {
       where === "cart"
-        ? addToCart(dynamicProduct, quantity)
+        ? addToCart(dynamicProduct, 1)
         : addToWishlist(dynamicProduct);
     } else {
-      // show modal to login if not logged in
       document.getElementById("loginModalTextContent").innerText =
         "to add products into Cart or Wishlist.";
       document.getElementById("takeToLoginModal").showModal();
     }
   };
 
-  // get calculated average rating
-  const { averageRating } = useDynamicRating(dynamicProduct?.review);
+  if (!dynamicProduct) {
+    return (
+      <div className="w-full flex justify-center items-center py-40 bg-background">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  // Price calculations for the UI breakdown approximation
+  const finalPrice = dynamicProduct.discountPrice || dynamicProduct.price;
+  const gst = Math.round(finalPrice * 0.03); // 3% GST
+  const makingCharges = Math.round(finalPrice * 0.12); // Approx 12% making charges in new design
+  const basePrice = finalPrice - gst - makingCharges;
 
   return (
-    <div className="my-16">
+    <main className="pt-32 pb-32 max-w-7xl mx-auto px-4 md:px-8 font-body">
       <CustomHelmet title={"Product Details"} />
-      {/* product image and buttons */}
-      <div
-        className="container flex flex-col md:flex-row md:justify-between items-center px-4 md:px-0"
-        style={{ fontFamily: "var(--poppins)" }}
-      >
-        {/* left side div */}
-        <div className="w-full md:w-[40%] relative product-img-con border-2 rounded-xl h-[500px]">
-          <div className="h-[100%] flex justify-center items-center">
-            {/* product image magnifier */}
-            <Magnifier
-              src={dynamicProduct?.img}
-              mgShape="circle"
-              mgShowOverflow={false}
-              mgBorderWidth={1}
-              zoomFactor={1.2}
+      
+      {/* Breadcrumb */}
+      <nav className="mb-12">
+        <ol className="flex items-center gap-2 font-body text-xs text-on-surface-variant uppercase tracking-widest font-semibold">
+          <li><Link className="hover:text-primary transition-colors" to="/">Home</Link></li>
+          <li className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm">chevron_right</span> 
+            <Link className="hover:text-primary transition-colors" to="/shop">Jewellery</Link>
+          </li>
+          <li className="flex items-center gap-2 font-bold text-primary">
+            <span className="material-symbols-outlined text-sm">chevron_right</span> 
+            <span className="line-clamp-1">{dynamicProduct.name}</span>
+          </li>
+        </ol>
+      </nav>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        {/* Left Column: Imagery */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="bg-surface-container overflow-hidden border border-outline-variant/30 aspect-square group relative">
+            <img 
+              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+              src={dynamicProduct.img} 
+              alt={dynamicProduct.name}
             />
+            <button className="absolute top-4 right-4 bg-white/80 p-2 rounded-full backdrop-blur-sm hover:bg-white transition-colors cursor-pointer">
+              <span className="material-symbols-outlined text-primary">zoom_in</span>
+            </button>
           </div>
-          <div className="img-zoom-hint opacity-100 visible flex items-center gap-2 bg-gray-50 w-fit px-4 py-3 rounded-full shadow absolute bottom-5 right-5 text-gray-500">
-            <FaMagnifyingGlass />
-            <p>Zoom On Hover</p>
+          <div className="grid grid-cols-3 gap-6">
+            <div className="bg-surface-container border border-outline-variant/30 aspect-square overflow-hidden cursor-pointer group">
+              <img className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src={dynamicProduct.img} alt="Thumbnail 1" />
+            </div>
+            <div className="bg-surface-container border border-outline-variant/30 aspect-square overflow-hidden cursor-pointer group">
+              <img className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-60" src={dynamicProduct.img} alt="Thumbnail 2" />
+            </div>
+            <div className="bg-surface-container border border-outline-variant/30 aspect-square overflow-hidden cursor-pointer group">
+              <img className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-60" src={dynamicProduct.img} alt="Thumbnail 3" />
+            </div>
           </div>
         </div>
 
-        {/* right side div */}
-        <div className="w-full md:w-[58%] mt-8 md:mt-0">
-          {/* upper part*/}
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-            <h4 className="uppercase font-bold bg-[#eebfab] px-6 py-2 text-sm text-black">
-              {dynamicProduct?.category}
-            </h4>
-            <div className="space-x-4">
-              <StarRatings
-                rating={averageRating}
-                starDimension="24px"
-                starSpacing="4px"
-                starRatedColor="#d4647c"
-                starEmptyColor="#c7c7c7"
-                svgIconPath="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7c0.1,0.1,0.3,0.1,0.5,0.1v0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1"
-                svgIconViewBox="0 0 24 24"
-              />
-              <HashLink
-                to={`/products/${id}/reviews/#productReviews`}
-                smooth
-                className="text-gray-400 pt-1 underline"
-              >
-                {dynamicProduct?.review?.length && (
-                  <span>
-                    See All Reviews ({dynamicProduct?.review?.length})
+        {/* Right Column: Product Info */}
+        <div className="lg:col-span-5">
+          <div className="sticky top-40">
+            <div className="flex justify-between items-start">
+               <p className="font-body text-xs text-primary tracking-widest mb-4 uppercase font-bold">
+                 {dynamicProduct.category}
+               </p>
+               <button 
+                  className="text-on-surface-variant hover:text-[#93000a] transition-colors p-2"
+                  onClick={() => handleAddToCartWishlist("wishlist")}
+                  disabled={presentInWishlist}
+                  title="Add to Wishlist"
+                >
+                  <span className="material-symbols-outlined" style={{ fontVariationSettings: presentInWishlist ? "'FILL' 1" : "'FILL' 0", color: presentInWishlist ? "#93000a" : "inherit" }}>
+                    favorite
                   </span>
-                )}
-              </HashLink>
+                </button>
             </div>
-          </div>
-          {/* ---------------------- */}
-          {/* middle part*/}
-          <div className="mt-6">
-            <h1
-              className="text-4xl font-bold tracking-wide"
-              style={{ fontFamily: "var(--italiana)" }}
-            >
-              {dynamicProduct?.name}
+            <h1 className="font-display text-4xl text-on-surface mb-8 leading-tight">
+              {dynamicProduct.name}
             </h1>
-            <div className="flex items-center mt-8 md:w-[60%] gap-5">
-              <div className="w-[35%]">
-                <div className="flex items-center justify-between border border-black mt-2 py-2 px-2">
-                  <button
-                    disabled={quantity === 0}
-                    onClick={() => quantity > 0 && setQuantity(quantity - 1)}
-                  >
-                    <FaMinus />
-                  </button>
-                  <span className="font-bold text-lg">{quantity}</span>
-                  <button
-                    onClick={() => {
-                      dynamicProduct?.stock - quantity > 0
-                        ? setQuantity(quantity + 1)
-                        : toast.error("Out of Stock", {
-                            position: "bottom-right",
-                          });
-                    }}
-                  >
-                    <FaPlus />
-                  </button>
+
+            {/* Price Table */}
+            <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8">
+              <h3 className="font-body text-xs text-primary font-bold mb-6 tracking-widest border-b border-outline-variant/20 pb-2 uppercase">PRICE BREAKDOWN</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-on-surface-variant font-body">Gold Value</span>
+                  <span className="font-semibold">₹ {basePrice.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-on-surface-variant font-body">Making Charges (12%)</span>
+                  <span className="font-semibold">₹ {makingCharges.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-on-surface-variant font-body">GST (3%)</span>
+                  <span className="font-semibold">₹ {gst.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="pt-6 mt-6 border-t border-primary/20 flex justify-between items-center">
+                  <span className="font-display text-2xl text-primary uppercase">Net Payable</span>
+                  <span className="font-display text-2xl text-primary">₹ {finalPrice.toLocaleString('en-IN')}</span>
                 </div>
               </div>
-              <div>
-                <h4 className="mt-2 px-2 font-bold text-3xl py-2">
-                  ₹ {dynamicProduct?.price}
-                </h4>
-              </div>
             </div>
-          </div>
-          {/* ---------------------- */}
-          {/* buttons part */}
-          <div className="flex items-center gap-5 mt-6 md:w-[60%]">
-            <button
-              className="btn rounded-none flex-1 bg-[var(--pink-gold)] font-bold"
-              disabled={presentInCart}
-              onClick={() => handleAddToCartWishlist("cart")}
-            >
-              {/* <FaCartShopping /> */}
-              <FiShoppingCart className="text-lg" />
-              <span>{presentInCart ? "ADDED TO CART" : "ADD TO CART"}</span>
-            </button>
-            <button
-              className="btn rounded-none flex-1 font-bold text-white bg-black hover:text-black"
-              disabled={presentInWishlist}
-              onClick={() => handleAddToCartWishlist("wishlist")}
-            >
-              <FaRegHeart />
-              SAVE
-            </button>
-          </div>
 
-          <div className="border-2 rounded-xl px-7 py-6 space-y-4 mt-12 md:w-[70%]">
-            <div className="flex items-center gap-5">
-              <LiaShippingFastSolid className="text-3xl" />
-              <div>
-                <h4 className="font-bold">FREE SHIPPING</h4>
-                <p className="text-gray-500 text-sm">
-                  Free shipping available only for the weekend
-                </p>
-              </div>
+            {/* Actions */}
+            <div className="flex flex-col gap-4 mb-12">
+              <button 
+                onClick={() => handleAddToCartWishlist("cart")}
+                disabled={presentInCart || dynamicProduct.stock === 0}
+                className="w-full bg-primary-container text-white py-5 font-body text-sm font-bold tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:brightness-100 uppercase"
+              >
+                {presentInCart ? (
+                   <><span className="material-symbols-outlined text-sm">check</span> ADDED TO BAG</>
+                ) : dynamicProduct.stock === 0 ? (
+                   <><span className="material-symbols-outlined text-sm">close</span> OUT OF STOCK</>
+                ) : (
+                   <><span className="material-symbols-outlined text-sm">shopping_bag</span> ADD TO BAG</>
+                )}
+              </button>
+              <button className="w-full bg-transparent border border-[#c8a684] text-primary py-5 font-body text-sm font-bold tracking-widest hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase cursor-pointer">
+                <span className="material-symbols-outlined text-sm">mail</span>
+                ENQUIRE NOW
+              </button>
             </div>
-            <div className="divider"></div>
-            <div className="flex items-center gap-5">
-              <RiRefund2Line className="text-3xl" />
-              <div>
-                <h4 className="font-bold">RETURN DELIVERY</h4>
-                <p className="text-gray-500 text-sm">
-                  Free 30 days Delivery Return on all products
-                </p>
-              </div>
+
+            {/* Accordion Details */}
+            <div className="space-y-0">
+              <details className="group border-b border-outline-variant/30 py-4" open>
+                <summary className="flex justify-between items-center cursor-pointer list-none font-body text-sm font-bold text-on-surface uppercase tracking-widest">
+                  CRAFTSMANSHIP DETAILS
+                  <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="pt-4 pb-2 text-on-surface-variant text-body leading-relaxed">
+                  {dynamicProduct.description || "Each link is individually forged by master artisans from the temple towns of South India. Ensures a finish that evolves with time."}
+                </div>
+              </details>
+              
+              <details className="group border-b border-outline-variant/30 py-4">
+                <summary className="flex justify-between items-center cursor-pointer list-none font-body text-sm font-bold text-on-surface uppercase tracking-widest">
+                  SHIPPING & RETURNS
+                  <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="pt-4 pb-2 text-on-surface-variant text-body">
+                  Complimentary fully insured shipping within India. Returns accepted within 7 days in original, unworn condition with all authenticity certificates.
+                </div>
+              </details>
+              
+              <details className="group border-b border-outline-variant/30 py-4">
+                <summary className="flex justify-between items-center cursor-pointer list-none font-body text-sm font-bold text-on-surface uppercase tracking-widest">
+                  CARE GUIDE
+                  <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                </summary>
+                <div className="pt-4 pb-2 text-on-surface-variant text-body">
+                  Store in a soft pouch to avoid scratches. Clean with a dry cotton cloth after each use. Professional polishing service available at any SRJ boutique.
+                </div>
+              </details>
             </div>
+
           </div>
         </div>
       </div>
-      {/* product details and reviews */}
-    </div>
+    </main>
   );
 };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import "./MyOrders.css";
+
 import useOrders from "../../../hooks/useOrders";
 import { Link } from "react-router-dom";
 import { TfiTrash } from "react-icons/tfi";
@@ -112,14 +112,13 @@ const MyOrders = () => {
                   </td>
                   <td>₹{order.total}</td>
                   <td
-                    className={`${
-                      order.orderStatus.toLowerCase() === "processing"
-                        ? "text-primary"
-                        : order.orderStatus.toLowerCase() === "shipped"
+                    className={`${order.orderStatus.toLowerCase() === "processing"
+                      ? "text-primary"
+                      : order.orderStatus.toLowerCase() === "shipped"
                         ? "text-secondary"
                         : order.orderStatus.toLowerCase() === "delivered" &&
-                          "text-success"
-                    } font-medium`}
+                        "text-success"
+                      } font-medium`}
                   >
                     {order.orderStatus
                       .toLowerCase()

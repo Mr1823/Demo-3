@@ -1,65 +1,84 @@
 import express from "express";
+import { Cart } from "../models/Cart.js";
 
 const router = express.Router();
 
-// In-memory cart store keyed by email (for ultra-fast development/testing)
-const carts = {};
-
 // GET /api/cart?email=user@gmail.com
-router.get("/", (req, res) => {
-  const { email } = req.query;
-  if (!email) return res.json([]);
-  const userCart = carts[email] || [];
-  res.json(userCart);
+router.get("/", async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.json([]);
+    const userCart = await Cart.find({ email }).lean();
+    res.json(userCart);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch cart" });
+  }
 });
 
 // GET /api/cart/subtotal?email=user@gmail.com
-router.get("/subtotal", (req, res) => {
-  const { email } = req.query;
-  const userCart = carts[email] || [];
-  const subtotal = userCart.reduce((acc, item) => acc + (parseFloat(item.price || 0) * (item.quantity || 1)), 0);
-  res.json({
-    subtotal: subtotal.toFixed(2),
-    totalItems: userCart.length,
-  });
+router.get("/subtotal", async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.json({ subtotal: "0.00", totalItems: 0 });
+    
+    const userCart = await Cart.find({ email });
+    const subtotal = userCart.reduce((acc, item) => acc + (parseFloat(item.price || 0) * (item.quantity || 1)), 0);
+    
+    res.json({
+      subtotal: subtotal.toFixed(2),
+      totalItems: userCart.length,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch cart subtotal" });
+  }
 });
 
 // POST /api/cart
-router.post("/", (req, res) => {
-  const { productId, email, name, img, image, category, price, quantity = 1 } = req.body;
-  if (!email) return res.status(400).json({ error: "Email required" });
+router.post("/", async (req, res) => {
+  try {
+    const { productId, email, name, img, image, category, price, quantity = 1 } = req.body;
+    if (!email) return res.status(400).json({ error: "Email required" });
 
-  if (!carts[email]) carts[email] = [];
-  const existing = carts[email].find((p) => p.productId === productId);
+    let cartItem = await Cart.findOne({ email, productId });
 
-  if (existing) {
-    existing.quantity += quantity;
-  } else {
-    carts[email].push({
-      _id: productId,
-      productId,
-      email,
-      name,
-      img: img || image || "/logo.png",
-      image: img || image || "/logo.png",
-      category: category || "Jewellery",
-      price,
-      quantity,
-      addedAt: new Date(),
-    });
+    if (cartItem) {
+      cartItem.quantity += quantity;
+      await cartItem.save();
+    } else {
+      cartItem = new Cart({
+        productId,
+        email,
+        name,
+        img: img || image || "/logo.png",
+        image: img || image || "/logo.png",
+        category: category || "Jewellery",
+        price,
+        quantity
+      });
+      await cartItem.save();
+    }
+
+    res.json({ insertedId: productId, success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add to cart" });
   }
-
-  res.json({ insertedId: productId, success: true });
 });
 
 // DELETE /api/cart/:id?email=user@gmail.com
-router.delete("/:id", (req, res) => {
-  const { email } = req.query;
-  const { id } = req.params;
-  if (carts[email]) {
-    carts[email] = carts[email].filter((p) => p._id !== id && p.productId !== id);
+router.delete("/:id", async (req, res) => {
+  try {
+    const { email } = req.query;
+    const { id } = req.params;
+    
+    const result = await Cart.deleteMany({
+      email,
+      $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { productId: id }].filter(Boolean)
+    });
+    
+    res.json({ deletedCount: result.deletedCount, success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete from cart" });
   }
-  res.json({ deletedCount: 1, success: true });
 });
 
 export default router;
