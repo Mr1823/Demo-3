@@ -4,8 +4,7 @@ import useFilterProducts from "../../../hooks/useFilterProducts";
 import ProductCard from "../../../components/ProductCard/ProductCard";
 import { Pagination } from "react-pagination-bar";
 import useProducts from "../../../hooks/useProducts";
-import axios from "axios";
-import { getApiBaseUrl } from "../../../utils/apiConfig";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import CardSkeleton from "../../../components/CardSkeleton/CardSkeleton";
 import CustomHelmet from "../../../components/CustomHelmet/CustomHelmet";
 import Pace from "pace-js";
@@ -24,6 +23,7 @@ const Shop = () => {
   const [size, setSize] = useState("all");
   const [carate, setCarate] = useState("all");
   const [searchText, setSearchText] = useState("");
+  const [axiosSecure] = useAxiosSecure();
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageProductLimit = 12; // 4 columns grid
@@ -49,10 +49,9 @@ const Shop = () => {
 
   useEffect(() => {
     setFilterLoading(true);
-    const apiBaseUrl = getApiBaseUrl();
-    axios
+    axiosSecure
       .get(
-        `${apiBaseUrl}/products/filter?category=${category}&minPrice=${minimumPrice}&maxPrice=${maximumPrice}&priceOrder=${priceSortingOrder}&size=${size}&carate=${carate}&search=${searchText}`
+        `/products/filter?category=${category}&minPrice=${minimumPrice}&maxPrice=${maximumPrice}&priceOrder=${priceSortingOrder}&size=${size}&carate=${carate}&search=${searchText}`
       )
       .then((res) => {
         setFilteredProducts(res.data);
@@ -82,14 +81,13 @@ const Shop = () => {
   const [allCategories, setAllCategories] = useState([]);
 
   useEffect(() => {
-    const apiBaseUrl = getApiBaseUrl();
-    axios
-      .get(`${apiBaseUrl}/categories`)
+    axiosSecure
+      .get(`/categories`)
       .then((res) => {
         setAllCategories(res.data);
       })
       .catch((e) => console.error(e));
-  }, []);
+  }, [axiosSecure]);
 
   useEffect(() => {
     if (filterCategories && allCategories) {

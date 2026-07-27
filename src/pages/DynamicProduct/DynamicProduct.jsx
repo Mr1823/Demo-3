@@ -6,6 +6,7 @@ import useAuthContext from "../../hooks/useAuthContext";
 import useWishlist from "../../hooks/useWishlist";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 import ProductCard from "../../components/ProductCard/ProductCard";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const DynamicProduct = () => {
   const { id } = useParams();
@@ -17,7 +18,11 @@ const DynamicProduct = () => {
   const { cartData, addToCart } = useCart();
   const [wishlistData, , , addToWishlist] = useWishlist();
   const navigate = useNavigate();
+  const [axiosSecure] = useAxiosSecure();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [quoteName, setQuoteName] = useState("");
+  const [quoteMobile, setQuoteMobile] = useState("");
+  const [quoteLoading, setQuoteLoading] = useState(false);
 
   useEffect(() => {
     const filteredProduct = products?.find((data) => data._id === id);
@@ -46,6 +51,32 @@ const DynamicProduct = () => {
     }
   };
 
+  const handleQuoteRequest = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      document.getElementById("loginModalTextContent").innerText = "to request a quote.";
+      document.getElementById("takeToLoginModal").showModal();
+      return;
+    }
+    setQuoteLoading(true);
+    try {
+      await axiosSecure.post("/quotes", {
+        productId: dynamicProduct.productId || dynamicProduct._id,
+        productName: dynamicProduct.name,
+        productImage: dynamicProduct.img,
+        customerName: quoteName,
+        customerMobile: quoteMobile,
+      });
+      alert("Quote requested! Our artisans will contact you via WhatsApp shortly.");
+      setIsQuoteModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit quote request. Please try again.");
+    } finally {
+      setQuoteLoading(false);
+    }
+  };
+
   if (!dynamicProduct) {
     return (
       <div className="w-full flex justify-center items-center py-40 bg-background">
@@ -54,11 +85,9 @@ const DynamicProduct = () => {
     );
   }
 
-  // Price calculations for the UI breakdown approximation
+  // Price calculations are now provided directly by the backend via priceBreakdown
   const finalPrice = dynamicProduct.discountPrice || dynamicProduct.price;
-  const gst = Math.round(finalPrice * 0.03); // 3% GST
-  const makingCharges = Math.round(finalPrice * 0.12); // Approx 12% making charges in new design
-  const basePrice = finalPrice - gst - makingCharges;
+  const breakdown = dynamicProduct.priceBreakdown;
 
   return (
     <main className="pt-32 pb-32 max-w-7xl mx-auto px-4 md:px-8 font-body">
@@ -148,18 +177,27 @@ const DynamicProduct = () => {
                 <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8">
                   <h3 className="font-body text-xs text-primary font-bold mb-6 tracking-widest border-b border-outline-variant/20 pb-2 uppercase">PRICE BREAKDOWN</h3>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-on-surface-variant font-body">Gold Value</span>
-                      <span className="font-semibold">₹ {basePrice.toLocaleString('en-IN')}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-on-surface-variant font-body">Making Charges (12%)</span>
-                      <span className="font-semibold">₹ {makingCharges.toLocaleString('en-IN')}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-on-surface-variant font-body">GST (3%)</span>
-                      <span className="font-semibold">₹ {gst.toLocaleString('en-IN')}</span>
-                    </div>
+                    {breakdown ? (
+                      <>
+                        <div className="flex justify-between items-center">
+                          <span className="text-on-surface-variant font-body">{dynamicProduct.metalType === 'silver' ? 'Silver' : '22k Gold'} Value</span>
+                          <span className="font-semibold">₹ {breakdown.metalValue.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-on-surface-variant font-body">Wastage ({dynamicProduct.wastagePercent}%)</span>
+                          <span className="font-semibold">₹ {breakdown.wastageValue.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-on-surface-variant font-body">GST ({dynamicProduct.gstPercent}%)</span>
+                          <span className="font-semibold">₹ {breakdown.gst.toLocaleString('en-IN')}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex justify-between items-center">
+                        <span className="text-on-surface-variant font-body">Base Price</span>
+                        <span className="font-semibold">₹ {finalPrice.toLocaleString('en-IN')}</span>
+                      </div>
+                    )}
                     <div className="pt-6 mt-6 border-t border-primary/20 flex justify-between items-center">
                       <span className="font-display text-2xl text-primary uppercase">Net Payable</span>
                       <span className="font-display text-2xl text-primary">₹ {finalPrice.toLocaleString('en-IN')}</span>
@@ -254,22 +292,17 @@ const DynamicProduct = () => {
             <p className="font-body text-sm text-on-surface-variant text-center mb-8">
               Please provide your details. Our master artisans will contact you shortly regarding the {dynamicProduct.name}.
             </p>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              // Backend logic deferred to Phase 8 per requirements
-              alert("Quote requested! Our artisans will contact you via WhatsApp shortly.");
-              setIsQuoteModalOpen(false);
-            }} className="space-y-6">
+            <form onSubmit={handleQuoteRequest} className="space-y-6">
               <div className="input-focus-line">
                 <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Full Name *</label>
-                <input required type="text" className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body" placeholder="e.g. Aditya Vardhan" />
+                <input required value={quoteName} onChange={(e) => setQuoteName(e.target.value)} type="text" className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body" placeholder="e.g. Aditya Vardhan" />
               </div>
               <div className="input-focus-line">
                 <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Mobile Number *</label>
-                <input required type="tel" className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body" placeholder="e.g. +91 9876543210" />
+                <input required value={quoteMobile} onChange={(e) => setQuoteMobile(e.target.value)} type="tel" className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body" placeholder="e.g. +91 9876543210" />
               </div>
-              <button type="submit" className="w-full bg-primary text-white py-4 font-body text-sm font-bold tracking-widest hover:bg-primary/90 transition-colors uppercase mt-4 cursor-pointer">
-                Submit Request
+              <button disabled={quoteLoading} type="submit" className="w-full bg-primary text-white py-4 font-body text-sm font-bold tracking-widest hover:bg-primary/90 transition-colors uppercase mt-4 cursor-pointer disabled:opacity-50">
+                {quoteLoading ? "Submitting..." : "Submit Request"}
               </button>
             </form>
           </div>

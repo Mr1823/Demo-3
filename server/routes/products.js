@@ -27,11 +27,12 @@ const getPriceInjectedProducts = async (query = {}) => {
   const rateMap = await getRates();
 
   return products.map(product => {
-    const computedPrice = computePrice(product, rateMap);
-    if (computedPrice !== undefined) {
-      product.price = computedPrice;
+    const priceData = computePrice(product, rateMap);
+    if (priceData !== undefined) {
+      product.price = priceData.finalPrice;
+      product.priceBreakdown = priceData.priceBreakdown;
       if (product.discountPercentage) {
-        product.discountPrice = computedPrice - (computedPrice * (product.discountPercentage / 100));
+        product.discountPrice = priceData.finalPrice - (priceData.finalPrice * (product.discountPercentage / 100));
       }
     }
     return product;
@@ -146,11 +147,12 @@ router.get("/:id", verifyJWT, async (req, res) => {
     }
 
     const rateMap = await getRates();
-    const computedPrice = computePrice(product, rateMap);
-    if (computedPrice !== undefined) {
-      product.price = computedPrice;
+    const priceData = computePrice(product, rateMap);
+    if (priceData !== undefined) {
+      product.price = priceData.finalPrice;
+      product.priceBreakdown = priceData.priceBreakdown;
       if (product.discountPercentage) {
-        product.discountPrice = computedPrice - (computedPrice * (product.discountPercentage / 100));
+        product.discountPrice = priceData.finalPrice - (priceData.finalPrice * (product.discountPercentage / 100));
       }
     }
 

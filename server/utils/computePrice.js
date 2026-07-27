@@ -17,25 +17,16 @@ export const computePrice = (product, rateMap) => {
 
   const weight = product.weight || 0;
   if (weight === 0) {
-    return product.price; // Truly fixed price product (no weight-based calc)
+    return { finalPrice: product.price, priceBreakdown: null };
   }
 
   // Get the appropriate metal rate
   const metalType = product.metalType || "gold";
-  let ratePerGram = 0;
-
-  if (rateMap) {
-    if (typeof rateMap === "object" && !rateMap.rate) {
-      // New format: { gold: 7250, silver: 95 }
-      ratePerGram = rateMap[metalType] || 0;
-    } else if (rateMap.rate) {
-      // Legacy format: { rate: 7250, silverRate: 95 }
-      ratePerGram = metalType === "silver" ? (rateMap.silverRate || 0) : (rateMap.rate || 0);
-    }
-  }
+  const ratePerGram = rateMap ? (rateMap[metalType] || 0) : 0;
 
   if (ratePerGram === 0) {
-    return product.price; // Fallback to base price if no rate
+    console.error(`[computePrice] Data Error: Missing rate for metalType '${metalType}'. Product ID: ${product._id || product.productId}`);
+    return { finalPrice: product.price, priceBreakdown: null };
   }
 
   const wastagePercent = product.wastagePercent || 0;
@@ -47,5 +38,13 @@ export const computePrice = (product, rateMap) => {
   const gst = subtotal * (gstPercent / 100);
   const finalPrice = subtotal + gst;
 
-  return Math.round(finalPrice);
+  return {
+    finalPrice: Math.round(finalPrice),
+    priceBreakdown: {
+      metalValue: Math.round(x),
+      wastageValue: Math.round(z),
+      gst: Math.round(gst),
+      ratePerGram
+    }
+  };
 };
