@@ -14,6 +14,7 @@
     "@moxy/react-animate-text": "^1.0.0",
     "aos": "^2.3.4",
     "axios": "^1.7.9",
+    "bcrypt": "^6.0.0",
     "clsx": "^2.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -21,11 +22,14 @@
     "dotenv": "^17.4.2",
     "easyinvoice": "^3.0.47",
     "express": "^4.21.2",
+    "express-rate-limit": "^8.6.1",
     "firebase": "^11.1.0",
     "framer-motion": "^11.11.17",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.8.0",
     "pace-js": "^1.2.4",
     "pdfjs-dist": "^3.11.174",
+    "razorpay": "^2.9.8",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-fast-marquee": "^1.6.5",
@@ -46,7 +50,8 @@
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.26.25",
     "tailwind-merge": "^2.5.4",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/react": "^19.0.7",

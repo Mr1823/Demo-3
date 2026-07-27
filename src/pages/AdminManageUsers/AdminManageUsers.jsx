@@ -22,7 +22,7 @@ const AdminManageUsers = () => {
     refetch,
   } = useQuery({
     enabled:
-      !isAuthLoading && user?.uid !== undefined && userFromDB?.admin === true,
+      !isAuthLoading && user !== null && user !== undefined && userFromDB?.admin === true,
     queryKey: ["all-users"],
     queryFn: async () => {
       const res = await axiosSecure.get("/admin/users");

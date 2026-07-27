@@ -12,11 +12,10 @@ const useAdminStats = () => {
   const [popularProducts, setPopularProducts] = useState([]);
   const [recentReviews, setRecentReviews] = useState([]);
 
+  const hasValidUser = !isAuthLoading && user !== null && user !== undefined;
+
   const { data: adminStats } = useQuery({
-    enabled:
-      !isAuthLoading &&
-      user?.uid !== undefined &&
-      localStorage.getItem("the-jewel-store-jwt-token") !== null,
+    enabled: hasValidUser,
     queryKey: ["admin-stats"],
     queryFn: async () => {
       const res = await axiosSecure.get("/admin-dashboard/stats");
@@ -26,37 +25,37 @@ const useAdminStats = () => {
 
   // TOP SELLING CATEGORIES
   useEffect(() => {
-    if (user) {
-      // get categories data
+    if (hasValidUser) {
       axiosSecure.get("/admin-dashboard/top-selling-categories").then((res) => {
         setTotalCategories(res.data.totalCategories);
         setTopCategories(res.data.topCategories);
-      });
+      }).catch(() => {});
 
-      // get income stats for last 5 and current month
       axiosSecure.get("/admin-dashboard/income-stats").then((res) => {
         setIncomeStats(res.data);
-      });
+      }).catch(() => {});
     }
-  }, [user]);
+  }, [hasValidUser]);
 
   // BEST SELLING POPULAR PRODUCTS
   useEffect(() => {
-    if (user) {
+    if (hasValidUser) {
       axiosSecure
         .get("/admin-dashboard/popular-products")
-        .then((res) => setPopularProducts(res.data));
+        .then((res) => setPopularProducts(res.data))
+        .catch(() => {});
     }
-  }, [user]);
+  }, [hasValidUser]);
 
   // Recent Reviews
   useEffect(() => {
-    if (user) {
+    if (hasValidUser) {
       axiosSecure
         .get("/admin-dashboard/recent-reviews")
-        .then((res) => setRecentReviews(res.data));
+        .then((res) => setRecentReviews(res.data))
+        .catch(() => {});
     }
-  }, [user]);
+  }, [hasValidUser]);
 
   return {
     adminStats,

@@ -1,29 +1,26 @@
 import express from "express";
 import { Cart } from "../models/Cart.js";
+import { verifyJWT } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// GET /api/cart?email=user@gmail.com
-router.get("/", async (req, res) => {
+// GET /api/cart — user's cart items
+router.get("/", verifyJWT, async (req, res) => {
   try {
-    const { email } = req.query;
-    if (!email) return res.json([]);
-    const userCart = await Cart.find({ email }).lean();
+    const userCart = await Cart.find({ userId: req.user.userId }).lean();
     res.json(userCart);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch cart" });
   }
 });
 
-// GET /api/cart/subtotal?email=user@gmail.com
-router.get("/subtotal", async (req, res) => {
+// GET /api/cart/subtotal
+router.get("/subtotal", verifyJWT, async (req, res) => {
   try {
-    const { email } = req.query;
-    if (!email) return res.json({ subtotal: "0.00", totalItems: 0 });
-    
-    const userCart = await Cart.find({ email });
-    const subtotal = userCart.reduce((acc, item) => acc + (parseFloat(item.price || 0) * (item.quantity || 1)), 0);
-    
+    const userCart = await Cart.find({ userId: req.user.userId });
+    const subtotal = userCart.reduce((acc, item) =>
+      acc + (parseFloat(item.price || 0) * (item.quantity || 1)), 0);
+
     res.json({
       subtotal: subtotal.toFixed(2),
       totalItems: userCart.length,
@@ -33,13 +30,12 @@ router.get("/subtotal", async (req, res) => {
   }
 });
 
-// POST /api/cart
-router.post("/", async (req, res) => {
+// POST /api/cart — add item to cart
+router.post("/", verifyJWT, async (req, res) => {
   try {
-    const { productId, email, name, img, image, category, price, quantity = 1 } = req.body;
-    if (!email) return res.status(400).json({ error: "Email required" });
+    const { productId, name, img, image, category, price, quantity = 1 } = req.body;
 
-    let cartItem = await Cart.findOne({ email, productId });
+    let cartItem = await Cart.findOne({ userId: req.user.userId, productId });
 
     if (cartItem) {
       cartItem.quantity += quantity;
@@ -47,13 +43,14 @@ router.post("/", async (req, res) => {
     } else {
       cartItem = new Cart({
         productId,
-        email,
+        userId: req.user.userId,
+        email: req.user.email,
         name,
         img: img || image || "/logo.png",
         image: img || image || "/logo.png",
         category: category || "Jewellery",
         price,
-        quantity
+        quantity,
       });
       await cartItem.save();
     }
@@ -64,17 +61,48 @@ router.post("/", async (req, res) => {
   }
 });
 
-// DELETE /api/cart/:id?email=user@gmail.com
-router.delete("/:id", async (req, res) => {
+// PATCH /api/cart/:itemId — update cart item quantity
+router.patch("/:itemId", verifyJWT, async (req, res) => {
   try {
-    const { email } = req.query;
-    const { id } = req.params;
-    
-    const result = await Cart.deleteMany({
-      email,
-      $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { productId: id }].filter(Boolean)
+    const { quantity } = req.body;
+    const cartItem = await Cart.findOne({
+      userId: req.user.userId,
+      $or: [
+        { _id: req.params.itemId.match(/^[0-9a-fA-F]{24}$/) ? req.params.itemId : null },
+        { productId: req.params.itemId }
+      ].filter(Boolean)
     });
-    
+
+    if (!cartItem) {
+      return res.status(404).json({ error: "Cart item not found" });
+    }
+
+    if (quantity !== undefined) {
+      if (quantity <= 0) {
+        await cartItem.deleteOne();
+        return res.json({ success: true, message: "Item removed from cart" });
+      }
+      cartItem.quantity = quantity;
+    }
+
+    await cartItem.save();
+    res.json({ success: true, data: cartItem });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update cart item" });
+  }
+});
+
+// DELETE /api/cart/:itemId — remove item from cart
+router.delete("/:itemId", verifyJWT, async (req, res) => {
+  try {
+    const result = await Cart.deleteMany({
+      userId: req.user.userId,
+      $or: [
+        { _id: req.params.itemId.match(/^[0-9a-fA-F]{24}$/) ? req.params.itemId : null },
+        { productId: req.params.itemId }
+      ].filter(Boolean)
+    });
+
     res.json({ deletedCount: result.deletedCount, success: true });
   } catch (error) {
     res.status(500).json({ error: "Failed to delete from cart" });

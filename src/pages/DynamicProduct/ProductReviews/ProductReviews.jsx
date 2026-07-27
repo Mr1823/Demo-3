@@ -123,7 +123,7 @@ const ProductReviews = () => {
   const handleLikeStatus = (reviewObjId) => {
     setUpdateLikeLoading({ status: true, id: reviewObjId });
 
-    if (!isAuthLoading && user?.uid !== undefined) {
+    if (!isAuthLoading && user) {
       axiosSecure
         .post("/single-product-like-update", {
           productId: id,
@@ -260,7 +260,7 @@ const ProductReviews = () => {
       )}
 
       <div className="mt-16">
-        {!user?.uid ? (
+        {!user ? (
           <div>
             <h4 className="font-bold text-2xl uppercase mb-4">
               Write a Review

@@ -8,10 +8,7 @@ const useCart = () => {
   const { user, isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
 
-  const hasValidQuery =
-    !isAuthLoading &&
-    user?.uid !== undefined &&
-    localStorage.getItem("the-jewel-store-jwt-token") !== null;
+  const hasValidQuery = !isAuthLoading && user !== null && user !== undefined;
 
   const {
     data: cartData,
@@ -19,9 +16,9 @@ const useCart = () => {
     refetch,
   } = useQuery({
     enabled: hasValidQuery,
-    queryKey: ["cart", user?.email],
+    queryKey: ["cart", user?._id || user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/cart?email=${user?.email}`);
+      const res = await axiosSecure.get("/cart");
       return res.data;
     },
   });
@@ -31,31 +28,30 @@ const useCart = () => {
   // fetch subtotal amount of cart
   const { data: cartSubtotal } = useQuery({
     enabled: hasValidQuery,
-    queryKey: ["cart-subtotal", user?.email],
+    queryKey: ["cart-subtotal", user?._id || user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/cart/subtotal?email=${user?.email}`);
+      const res = await axiosSecure.get("/cart/subtotal");
       return res.data;
     },
   });
 
   // post product data to cart
   const addToCart = async (productData, quantity = 1) => {
-    if (!isAuthLoading && user?.uid !== undefined) {
-      const { _id, name, img, category, price, discountPrice } = productData;
+    if (!isAuthLoading && user) {
+      const { _id, productId, name, img, image, category, price, discountPrice } = productData;
 
       const cartProductData = {
-        productId: _id,
-        email: user?.email,
+        productId: productId || _id,
         name,
-        img,
+        img: img || image,
+        image: img || image,
         category,
         price: discountPrice || price,
         quantity,
-        addedAt: new Date(),
       };
 
       axiosSecure.post("/cart", cartProductData).then((res) => {
-        if (res.data?.insertedId) {
+        if (res.data?.insertedId || res.data?.success) {
           toast.success("Cart Updated", {
             position: "bottom-right",
           });

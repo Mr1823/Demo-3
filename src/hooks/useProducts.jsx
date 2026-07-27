@@ -1,17 +1,22 @@
-import axios from "axios";
 import { useQuery } from "react-query";
-import { getApiBaseUrl } from "../utils/apiConfig";
+import useAuthContext from "./useAuthContext";
+import useAxiosSecure from "./useAxiosSecure";
 
 const useProducts = () => {
+  const { user, isAuthLoading } = useAuthContext();
+  const [axiosSecure] = useAxiosSecure();
+
+  const hasValidQuery = !isAuthLoading && user !== null && user !== undefined;
+
   const {
     data: products,
     isLoading: isProductsLoading,
     refetch,
   } = useQuery({
+    enabled: hasValidQuery,
     queryKey: ["products"],
     queryFn: async () => {
-      const apiBaseUrl = getApiBaseUrl();
-      const res = await axios.get(`${apiBaseUrl}/products`);
+      const res = await axiosSecure.get("/products");
       return Array.isArray(res.data?.data) ? res.data.data : (Array.isArray(res.data) ? res.data : []);
     },
   });

@@ -1,172 +1,203 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { createContext } from "react";
-import {
-  GoogleAuthProvider,
-  createUserWithEmailAndPassword,
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  updateProfile,
-  sendPasswordResetEmail
-} from "firebase/auth";
-import app from "../firebase/firebase.config";
 import axios from "axios";
 import { getApiBaseUrl } from "../utils/apiConfig";
 
 export const AuthContext = createContext(null);
-const auth = getAuth(app);
 
-// google provier
-const googleProvider = new GoogleAuthProvider();
-
-// Dev admin credentials (bypass Firebase for local development)
-const DEV_ADMIN = {
-  email: "admin@buildwithus",
-  password: "Buildwith@us",
-};
+const TOKEN_KEY = "sri-ram-access-token";
+const REFRESH_KEY = "sri-ram-refresh-token";
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const [isDevUser, setIsDevUser] = useState(false);
 
-  // Sign Up with email/pass
-  const signUp = (email, password) => {
-    setIsAuthLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+  const apiBase = getApiBaseUrl();
+
+  // ─── Token helpers ─────────────────────────────────────────────────────────
+  const storeTokens = (accessToken, refreshToken) => {
+    localStorage.setItem(TOKEN_KEY, accessToken);
+    localStorage.setItem(REFRESH_KEY, refreshToken);
   };
 
-  // Update user's profile
-  const updateUserProfile = (name, photoURL) => {
-    setIsAuthLoading(true);
-    return updateProfile(auth.currentUser, {
-      displayName: name,
-      photoURL: photoURL,
-    });
+  const clearTokens = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(REFRESH_KEY);
   };
 
-  // Dev Sign In — bypasses Firebase entirely
-  const devSignIn = (email, password) => {
-    if (email === DEV_ADMIN.email && password === DEV_ADMIN.password) {
-      const mockUser = {
-        uid: "dev-admin-uid",
-        email: DEV_ADMIN.email,
-        displayName: "Admin",
-        photoURL: "/placeholder-user.png",
-      };
-      const mockToken = `dev-jwt-token-${Date.now()}`;
-      localStorage.setItem("the-jewel-store-jwt-token", mockToken);
-      setUser(mockUser);
-      setIsDevUser(true);
+  const getAccessToken = () => localStorage.getItem(TOKEN_KEY);
+  const getRefreshToken = () => localStorage.getItem(REFRESH_KEY);
+
+  /**
+   * Decode JWT payload (without verification — just to read expiry/user data).
+   */
+  const decodeToken = (token) => {
+    try {
+      const payload = token.split(".")[1];
+      return JSON.parse(atob(payload));
+    } catch {
+      return null;
+    }
+  };
+
+  /**
+   * Check if a JWT is expired (with 30s buffer for clock skew).
+   */
+  const isTokenExpired = (token) => {
+    const decoded = decodeToken(token);
+    if (!decoded || !decoded.exp) return true;
+    return decoded.exp * 1000 < Date.now() + 30000; // 30s buffer
+  };
+
+  // ─── Auth actions ──────────────────────────────────────────────────────────
+
+  /**
+   * Sign Up — POST /api/auth/register
+   */
+  const signUp = async (name, email, password) => {
+    setIsAuthLoading(true);
+    try {
+      const res = await axios.post(`${apiBase}/auth/register`, { name, email, password });
+      const { accessToken, refreshToken, user: userData } = res.data;
+      storeTokens(accessToken, refreshToken);
+      setUser(userData);
       setIsAuthLoading(false);
-      return Promise.resolve({ user: mockUser });
+      return res.data;
+    } catch (error) {
+      setIsAuthLoading(false);
+      throw error.response?.data || error;
     }
-    return Promise.reject({ code: "auth/invalid-dev-credentials" });
   };
 
-  // Sign In with email/pass (tries dev bypass first, then Firebase)
-  const signIn = (email, password) => {
-    // Check dev admin credentials first
-    if (email === DEV_ADMIN.email && password === DEV_ADMIN.password) {
-      return devSignIn(email, password);
-    }
-    // Fall through to Firebase for all other credentials
+  /**
+   * Sign In — POST /api/auth/login
+   */
+  const signIn = async (email, password) => {
     setIsAuthLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
+    try {
+      const res = await axios.post(`${apiBase}/auth/login`, { email, password });
+      const { accessToken, refreshToken, user: userData } = res.data;
+      storeTokens(accessToken, refreshToken);
+      setUser(userData);
+      setIsAuthLoading(false);
+      return res.data;
+    } catch (error) {
+      setIsAuthLoading(false);
+      throw error.response?.data || error;
+    }
   };
 
-  // Google sign in
-  const signInGoogle = () => {
-    return signInWithPopup(auth, googleProvider);
-  };
+  /**
+   * Refresh the access token using the stored refresh token.
+   * Returns the new access token, or null on failure.
+   */
+  const refreshAccessToken = useCallback(async () => {
+    const refreshToken = getRefreshToken();
+    if (!refreshToken) return null;
 
-  // Sign Out
-  const logOut = () => {
-    if (isDevUser) {
-      localStorage.removeItem("the-jewel-store-jwt-token");
+    try {
+      const res = await axios.post(`${apiBase}/auth/refresh`, { refreshToken });
+      const { accessToken: newAccess, refreshToken: newRefresh, user: userData } = res.data;
+      storeTokens(newAccess, newRefresh);
+      setUser(userData);
+      return newAccess;
+    } catch {
+      // Refresh failed — session expired
+      clearTokens();
       setUser(null);
-      setIsDevUser(false);
-      setIsAuthLoading(false);
-      return Promise.resolve();
+      return null;
     }
-    return signOut(auth);
+  }, [apiBase]);
+
+  /**
+   * Log Out — POST /api/auth/logout
+   */
+  const logOut = async () => {
+    try {
+      const token = getAccessToken();
+      if (token) {
+        await axios.post(`${apiBase}/auth/logout`, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+    } catch {
+      // Silent fail — we're clearing tokens regardless
+    } finally {
+      clearTokens();
+      setUser(null);
+      setIsAuthLoading(false);
+    }
   };
 
-  // Reset Password
-  const resetPassword = (email) => {
-    return sendPasswordResetEmail(auth, email);
-  };
-
-  // Auth State Observer
+  // ─── Session bootstrap (on app load) ───────────────────────────────────────
   useEffect(() => {
-    // Check if dev session exists in localStorage on mount
-    const storedToken = localStorage.getItem("the-jewel-store-jwt-token");
-    if (storedToken && storedToken.startsWith("dev-jwt-token-")) {
-      setUser({
-        uid: "dev-admin-uid",
-        email: DEV_ADMIN.email,
-        displayName: "Admin",
-        photoURL: "/placeholder-user.png",
-      });
-      setIsDevUser(true);
-      setIsAuthLoading(false);
-      return;
-    }
+    const bootstrapAuth = async () => {
+      const accessToken = getAccessToken();
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      // Check again if we logged in as Dev Admin
-      const token = localStorage.getItem("the-jewel-store-jwt-token");
-      if (token && token.startsWith("dev-jwt-token-")) {
+      if (!accessToken) {
+        setUser(null);
         setIsAuthLoading(false);
         return;
       }
 
-      if (currentUser?.uid !== undefined) {
-        setUser(currentUser);
-        const apiBaseUrl = getApiBaseUrl();
-        axios
-          .post(`${apiBaseUrl}/jwt`, {
-            email: currentUser.email,
-          })
-          .then((res) => {
-            if (res.data.token) {
-              localStorage.setItem("the-jewel-store-jwt-token", res.data.token);
-              setIsAuthLoading(false);
-            } else {
-              setIsAuthLoading(false);
-            }
-          })
-          .catch((err) => {
-            console.error("JWT fetch failed:", err);
-            setIsAuthLoading(false);
+      // If token is still valid, decode user from it
+      if (!isTokenExpired(accessToken)) {
+        const decoded = decodeToken(accessToken);
+        if (decoded) {
+          setUser({
+            _id: decoded.userId,
+            email: decoded.email,
+            role: decoded.role,
+            name: decoded.name,
           });
-      } else {
-        localStorage.removeItem("the-jewel-store-jwt-token");
-        setUser(null);
+
+          // Also fetch full user profile from backend
+          try {
+            const res = await axios.get(`${apiBase}/users/me`, {
+              headers: { Authorization: `Bearer ${accessToken}` },
+            });
+            if (res.data?.success && res.data?.data) {
+              setUser(res.data.data);
+            }
+          } catch {
+            // Token might have been invalidated server-side
+            const newToken = await refreshAccessToken();
+            if (!newToken) {
+              clearTokens();
+              setUser(null);
+            }
+          }
+        }
         setIsAuthLoading(false);
+        return;
       }
-    });
-    return () => unsubscribe();
-  }, []);
+
+      // Token expired — try refresh
+      const newToken = await refreshAccessToken();
+      if (!newToken) {
+        clearTokens();
+        setUser(null);
+      }
+      setIsAuthLoading(false);
+    };
+
+    bootstrapAuth();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const value = {
     user,
     isAuthLoading,
     signUp,
-    updateUserProfile,
     signIn,
-    signInGoogle,
     logOut,
-    resetPassword,
+    refreshAccessToken,
     setIsAuthLoading,
+    getAccessToken,
+    getRefreshToken,
   };
 
   return (
-    <>
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    </>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 };
 

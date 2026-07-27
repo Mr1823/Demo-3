@@ -1,19 +1,24 @@
 import React, { useRef } from "react";
 import "./Reviews.css";
 import { useQuery } from "react-query";
-import axios from "axios";
-import { getApiBaseUrl } from "../../../utils/apiConfig";
+import useAuthContext from "../../../hooks/useAuthContext";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Slider from "react-slick";
 import ReviewCard from "./ReviewCard/ReviewCard";
 import { TfiQuoteLeft, TfiQuoteRight } from "react-icons/tfi";
 import SectionTitle from "../../../components/SectionTitle/SectionTitle";
 
 const Reviews = () => {
+  const { user, isAuthLoading } = useAuthContext();
+  const [axiosSecure] = useAxiosSecure();
+
+  const hasValidQuery = !isAuthLoading && user !== null && user !== undefined;
+
   const { data: reviews, isLoading: isReviewsLoading } = useQuery({
+    enabled: hasValidQuery,
     queryKey: ["reviews"],
     queryFn: async () => {
-      const apiBaseUrl = getApiBaseUrl();
-      const res = await axios.get(`${apiBaseUrl}/reviews`);
+      const res = await axiosSecure.get("/reviews");
       return res.data;
     },
   });

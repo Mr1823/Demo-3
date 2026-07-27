@@ -15,7 +15,8 @@ const AdminRoute = ({ children }) => {
     );
   }
 
-  if (user && userFromDB?.admin) {
+  // Check admin from JWT user or DB user
+  if (user && (user.role === "ADMIN" || userFromDB?.admin || userFromDB?.role === "ADMIN")) {
     return children;
   }
 

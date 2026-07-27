@@ -21,7 +21,7 @@ const AdminCategories = () => {
     isLoading: isCategoryLoading,
     refetch,
   } = useQuery({
-    enabled: !isAuthLoading && user?.uid !== undefined,
+    enabled: !isAuthLoading && user !== null && user !== undefined,
     queryKey: ["admin-categories"],
     queryFn: async () => {
       const result = await axiosSecure.get("/admin/categories");

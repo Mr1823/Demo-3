@@ -7,24 +7,63 @@ const seedInitialData = async () => {
     const { Product } = await import("../models/Product.js");
     const { Category } = await import("../models/Category.js");
     const { GoldRate } = await import("../models/GoldRate.js");
+    const { User } = await import("../models/User.js");
 
     const productCount = await Product.countDocuments();
     if (productCount === 0) {
-      console.log("🌱 Database is empty. Seeding initial products, categories, and gold rates...");
+      console.log("🌱 Database is empty. Seeding initial products, categories, gold rates, and admin user...");
 
-      // Insert Gold Rate
+      // ─── Seed Admin User with bcrypt-hashed password ─────────────────────
+      const bcrypt = await import("bcrypt");
+      const adminPassword = process.env.ADMIN_PASSWORD || "Buildwith@us";
+      const adminPasswordHash = await bcrypt.hash(adminPassword, 12);
+
+      const existingAdmin = await User.findOne({ email: "admin@buildwithus" });
+      if (!existingAdmin) {
+        await User.create({
+          name: "Admin",
+          email: "admin@buildwithus",
+          passwordHash: adminPasswordHash,
+          role: "ADMIN",
+          photoURL: "/placeholder-user.png",
+        });
+        console.log(`   ✅ Admin user created: admin@buildwithus (password: ${adminPassword})`);
+      }
+
+      // ─── Seed test user ──────────────────────────────────────────────────
+      const testPassword = process.env.TEST_USER_PASSWORD || "TestUser@123";
+      const testPasswordHash = await bcrypt.hash(testPassword, 12);
+
+      const existingTestUser = await User.findOne({ email: "user@test.com" });
+      if (!existingTestUser) {
+        await User.create({
+          name: "Test User",
+          email: "user@test.com",
+          passwordHash: testPasswordHash,
+          role: "USER",
+          photoURL: "/placeholder-user.png",
+        });
+        console.log(`   ✅ Test user created: user@test.com (password: ${testPassword})`);
+      }
+
+      // ─── Insert Gold/Silver Rates (per-metal format) ─────────────────────
       await GoldRate.create({
-        rate: 7250,
-        silverRate: 95,
+        metalType: "gold",
+        ratePerGram: 7250,
+        updatedAt: new Date(),
+      });
+      await GoldRate.create({
+        metalType: "silver",
+        ratePerGram: 95,
         updatedAt: new Date(),
       });
 
-      // Insert Categories
+      // ─── Insert Categories ───────────────────────────────────────────────
       await Category.create({ categoryName: "Gold", productCount: 3 });
       await Category.create({ categoryName: "Silver", productCount: 2 });
       await Category.create({ categoryName: "Diamond", productCount: 2 });
 
-      // Insert Products — aligned with PRD data model
+      // ─── Insert Products — aligned with PRD data model ───────────────────
       const productsData = [
         {
           productId: "p1",
@@ -63,7 +102,6 @@ const seedInitialData = async () => {
           weight: 22.0,
           wastagePercent: 10,
           gstPercent: 3,
-          metalType: "silver",
           isQuoteOnly: false,
           isFixedPrice: true,
         },
@@ -80,7 +118,7 @@ const seedInitialData = async () => {
           newArrival: true,
           stock: 2,
           sold: 5,
-          isQuoteOnly: true,     // Quote-only product — no price displayed
+          isQuoteOnly: true,
           isFixedPrice: false,
           metalType: "gold",
         },
@@ -117,10 +155,10 @@ const seedInitialData = async () => {
           newArrival: false,
           stock: 5,
           sold: 14,
-          isQuoteOnly: true,     // Quote-only product
+          isQuoteOnly: true,
           isFixedPrice: false,
           metalType: "gold",
-        }
+        },
       ];
 
       await Product.insertMany(productsData);

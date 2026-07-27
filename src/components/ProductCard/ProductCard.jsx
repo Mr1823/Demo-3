@@ -16,7 +16,7 @@ const ProductCard = ({ cardData, counter }) => {
   const [presentInWishlist, setPresentInWishlist] = useState(false);
 
   useEffect(() => {
-    if (!isAuthLoading && user?.uid) {
+    if (!isAuthLoading && user) {
       const itemInCart = cartData?.find((p) => p.productId === cardData._id);
       const itemInWishlist = wishlistData?.find(
         (p) => p.productId === cardData._id

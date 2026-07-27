@@ -1,5 +1,3 @@
-import { getApiBaseUrl } from "../../../utils/apiConfig";
-import axios from "axios";
 import React, { useState } from "react";
 import StarRatings from "react-star-ratings";
 import useAuthContext from "../../../hooks/useAuthContext";
@@ -26,9 +24,9 @@ const AddReview = () => {
 
   const { refetch } = useQuery({
     queryKey: ["reviews"],
-    enabled: !isAuthLoading && user?.uid !== undefined,
+    enabled: !isAuthLoading && user !== null && user !== undefined,
     queryFn: async () => {
-      const reviews = await axios.get(`${getApiBaseUrl()}/reviews`);
+      const reviews = await axiosSecure.get("/reviews");
       const reviewByUser = reviews.data?.find((r) => r.email === user.email);
       setUserReview(reviewByUser);
     },

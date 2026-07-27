@@ -10,8 +10,12 @@ import categoriesRouter from "./routes/categories.js";
 import reviewsRouter from "./routes/reviews.js";
 import adminRouter from "./routes/admin.js";
 import goldRateRouter from "./routes/goldRate.js";
+import ratesRouter from "./routes/rates.js";
+import quotesRouter from "./routes/quotes.js";
+import paymentRouter from "./routes/payment.js";
+import adminDashboardRouter from "./routes/adminDashboard.js";
 import connectDB from "./db/connect.js";
-import { User } from "./models/User.js";
+import { apiLimiter, authLimiter } from "./middleware/rateLimit.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -33,93 +37,33 @@ app.use((req, res, next) => {
   next();
 });
 
+// ─── Rate Limiting ───────────────────────────────────────────────────────────
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/refresh", authLimiter);
+app.use("/api", apiLimiter);
+
 // ─── API Routes ──────────────────────────────────────────────────────────────
+// Auth — public endpoints (JWT issued here)
+app.use("/api/auth", authRouter);
+
+// All routes below require JWT (enforced in each router via verifyJWT middleware)
 app.use("/api/products", productsRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/wishlist", wishlistRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/auth", authRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/reviews", reviewsRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/rates", ratesRouter);
+app.use("/api/quotes", quotesRouter);
+app.use("/api/payment", paymentRouter);
+app.use("/api/admin-dashboard", adminDashboardRouter);
+
+// Legacy gold-rate route (backward compat — also served at /api/rates)
 app.use("/api/gold-rate", goldRateRouter);
-// Admin gold rate update uses same router but different path prefix
 app.use("/api/admin/gold-rate", goldRateRouter);
-
-// JWT endpoint for Firebase sync
-app.post("/api/jwt", (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ error: "Email required" });
-  // Mock JWT token generation for dev
-  const token = `mock-jwt-token-for-${email}-${Date.now()}`;
-  res.json({ token, success: true });
-});
-
-// ─── User endpoint (used by useUserInfo hook) ────────────────────────────────
-app.get("/api/user", async (req, res) => {
-  try {
-    const { email } = req.query;
-    if (!email) {
-      return res.json({
-        _id: "guest-id",
-        name: "Guest",
-        email: "guest@jewelstore.com",
-        role: "USER",
-        admin: false,
-        photoURL: "/placeholder-user.png",
-        shippingAddress: {},
-      });
-    }
-
-    // Check for admin dev bypass
-    if (email === "admin@buildwithus") {
-      // Ensure dev admin exists in DB
-      let adminUser = await User.findOne({ email: "admin@buildwithus" });
-      if (!adminUser) {
-        adminUser = await User.create({
-          email: "admin@buildwithus",
-          name: "Admin",
-          role: "ADMIN",
-          photoURL: "/placeholder-user.png",
-        });
-      }
-      return res.json({
-        _id: adminUser._id,
-        name: adminUser.name,
-        email: adminUser.email,
-        role: "ADMIN",
-        admin: true,
-        photoURL: adminUser.photoURL || "/placeholder-user.png",
-        shippingAddress: adminUser.shippingAddress || {},
-      });
-    }
-
-    // Regular users — find or create
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await User.create({
-        email,
-        name: email.split("@")[0],
-        role: "USER",
-        photoURL: "/placeholder-user.png",
-      });
-    }
-
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      admin: user.role === "ADMIN",
-      photoURL: user.photoURL || "/placeholder-user.png",
-      shippingAddress: user.shippingAddress || {},
-    });
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    res.status(500).json({ error: "Failed to fetch user" });
-  }
-});
 
 // Navigation notifications endpoint
 app.get("/api/nav-notifications", (req, res) => {

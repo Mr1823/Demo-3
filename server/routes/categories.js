@@ -1,14 +1,56 @@
 import express from "express";
 import { Category } from "../models/Category.js";
+import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+// GET /api/categories — list all categories
+router.get("/", verifyJWT, async (req, res) => {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find().lean();
     res.json(categories);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch categories" });
+  }
+});
+
+// POST /api/categories — create category (admin)
+router.post("/", verifyJWT, requireAdmin, async (req, res) => {
+  try {
+    const category = await Category.create(req.body);
+    res.status(201).json({ success: true, data: category, insertedId: category._id });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create category" });
+  }
+});
+
+// PATCH /api/categories/:id — update category (admin)
+router.patch("/:id", verifyJWT, requireAdmin, async (req, res) => {
+  try {
+    const category = await Category.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+    res.json({ success: true, data: category });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update category" });
+  }
+});
+
+// DELETE /api/categories/:id — delete category (admin)
+router.delete("/:id", verifyJWT, requireAdmin, async (req, res) => {
+  try {
+    const category = await Category.findByIdAndDelete(req.params.id);
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+    res.json({ success: true, message: "Category deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete category" });
   }
 });
 

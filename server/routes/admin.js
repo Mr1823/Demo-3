@@ -2,23 +2,24 @@ import express from "express";
 import { User } from "../models/User.js";
 import { Order } from "../models/Order.js";
 import { Category } from "../models/Category.js";
+import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // ─── Users ───────────────────────────────────────────────────────────────────
-router.get("/users", async (req, res) => {
+router.get("/users", verifyJWT, requireAdmin, async (req, res) => {
   try {
-    const users = await User.find().lean();
+    const users = await User.find().select("-passwordHash").lean();
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch users" });
   }
 });
 
-router.patch("/users/:id", async (req, res) => {
+router.patch("/users/:id", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const updated = await User.findByIdAndUpdate(id, req.body, { new: true });
+    const updated = await User.findByIdAndUpdate(id, req.body, { new: true }).select("-passwordHash");
     if (!updated) return res.status(404).json({ error: "User not found" });
     res.json({ success: true, data: updated });
   } catch (error) {
@@ -26,7 +27,7 @@ router.patch("/users/:id", async (req, res) => {
   }
 });
 
-router.delete("/users/:id", async (req, res) => {
+router.delete("/users/:id", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const deleted = await User.findByIdAndDelete(id);
@@ -38,7 +39,7 @@ router.delete("/users/:id", async (req, res) => {
 });
 
 // ─── Orders ──────────────────────────────────────────────────────────────────
-router.get("/orders", async (req, res) => {
+router.get("/orders", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 }).lean();
     res.json(orders);
@@ -47,7 +48,7 @@ router.get("/orders", async (req, res) => {
   }
 });
 
-router.patch("/orders/:id", async (req, res) => {
+router.patch("/orders/:id", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const updated = await Order.findByIdAndUpdate(id, req.body, { new: true });
@@ -59,7 +60,7 @@ router.patch("/orders/:id", async (req, res) => {
 });
 
 // ─── Categories ──────────────────────────────────────────────────────────────
-router.get("/categories", async (req, res) => {
+router.get("/categories", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const categories = await Category.find().lean();
     res.json(categories);
@@ -68,7 +69,7 @@ router.get("/categories", async (req, res) => {
   }
 });
 
-router.post("/categories", async (req, res) => {
+router.post("/categories", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const category = await Category.create(req.body);
     res.json({ success: true, insertedId: category._id });
@@ -77,7 +78,7 @@ router.post("/categories", async (req, res) => {
   }
 });
 
-router.patch("/categories/:id", async (req, res) => {
+router.patch("/categories/:id", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const updated = await Category.findByIdAndUpdate(id, req.body, { new: true });
@@ -88,7 +89,7 @@ router.patch("/categories/:id", async (req, res) => {
   }
 });
 
-router.delete("/categories/:id", async (req, res) => {
+router.delete("/categories/:id", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const deleted = await Category.findByIdAndDelete(id);
@@ -100,7 +101,7 @@ router.delete("/categories/:id", async (req, res) => {
 });
 
 // ─── Total Spent (per user) ─────────────────────────────────────────────────
-router.get("/total-spent", async (req, res) => {
+router.get("/total-spent", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const result = await Order.aggregate([
       { $group: { _id: "$email", totalSpent: { $sum: "$totalAmount" } } },

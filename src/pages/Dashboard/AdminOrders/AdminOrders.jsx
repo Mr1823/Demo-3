@@ -22,7 +22,7 @@ const AdminOrders = () => {
     refetch,
   } = useQuery({
     enabled:
-      !isAuthLoading && user?.uid !== undefined && userFromDB?.admin === true,
+      !isAuthLoading && user !== null && user !== undefined && userFromDB?.admin === true,
     queryKey: ["all-orders"],
     queryFn: async () => {
       const result = await axiosSecure.get("/admin/orders");

@@ -16,7 +16,7 @@ const DashboardLayout = () => {
       <CustomHelmet title={"Dashboard | Sri Ram Jewellery"} />
 
       <>
-        {!isAuthLoading && user?.uid !== undefined && (
+        {!isAuthLoading && user && (
           <>
             {!isUserLoading && userFromDB?.admin ? (
               <div>

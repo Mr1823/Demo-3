@@ -7,8 +7,7 @@ const useOrders = () => {
   const { user, isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
 
-  // get all orders by email
-  const hasValidQuery = !isAuthLoading && user?.uid !== undefined;
+  const hasValidQuery = !isAuthLoading && user !== null && user !== undefined;
 
   const {
     data: orders,
@@ -16,9 +15,9 @@ const useOrders = () => {
     refetch,
   } = useQuery({
     enabled: hasValidQuery,
-    queryKey: ["orders", user?.email],
+    queryKey: ["orders", user?._id || user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/orders?email=${user?.email}`);
+      const res = await axiosSecure.get("/orders");
       return res.data;
     },
   });
@@ -28,9 +27,9 @@ const useOrders = () => {
   // get total amount spent on the orders
   const [totalSpent, setTotalSpent] = useState(0);
   useEffect(() => {
-    if (orders && user?.uid !== undefined) {
+    if (orders && user) {
       const sum = orders.reduce((totalAmount, item) => {
-        return totalAmount + parseFloat(item.total);
+        return totalAmount + parseFloat(item.totalAmount || item.total || 0);
       }, 0);
 
       setTotalSpent(sum.toFixed(2));

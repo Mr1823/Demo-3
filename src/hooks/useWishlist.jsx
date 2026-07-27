@@ -8,10 +8,7 @@ const useWishlist = () => {
   const { user, isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
 
-  const hasValidQuery =
-    !isAuthLoading &&
-    user?.uid !== undefined &&
-    localStorage.getItem("the-jewel-store-jwt-token") !== null;
+  const hasValidQuery = !isAuthLoading && user !== null && user !== undefined;
 
   const {
     data: wishlistData,
@@ -19,9 +16,9 @@ const useWishlist = () => {
     refetch,
   } = useQuery({
     enabled: hasValidQuery,
-    queryKey: ["wishlist", user?.email],
+    queryKey: ["wishlist", user?._id || user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/wishlist?email=${user?.email}`);
+      const res = await axiosSecure.get("/wishlist");
       return res.data;
     },
   });
@@ -29,19 +26,21 @@ const useWishlist = () => {
   const isWishlistLoading = isAuthLoading || (hasValidQuery && isQueryLoading);
 
   const addToWishlist = (productData) => {
-    if (!isAuthLoading && user?.uid !== undefined) {
-      const { ["_id"]: excludedKey, ...otherProps } = productData;
-      const wishlistData = {
-        productId: excludedKey,
-        email: user?.email,
-        ...otherProps,
+    if (!isAuthLoading && user) {
+      const { _id, productId, name, img, image, category, price } = productData;
+      const wishlistPayload = {
+        productId: productId || _id,
+        name,
+        img: img || image,
+        image: img || image,
+        category,
+        price,
       };
 
-      // post data to wishlist db
       axiosSecure
-        .post(`/wishlist?email=${user?.email}`, wishlistData)
+        .post("/wishlist", wishlistPayload)
         .then((res) => {
-          if (res.data?.insertedId) {
+          if (res.data?.insertedId || res.data?.success) {
             toast.success("Item added to your wishlist!", {
               position: "bottom-right",
             });
