@@ -3,9 +3,6 @@ import mongoose from "mongoose";
 const GoldRateSchema = new mongoose.Schema({
   metalType: { type: String, enum: ["gold", "silver"], required: true },
   ratePerGram: { type: Number, required: true },
-  // Legacy fields kept for backward compatibility
-  rate: { type: Number },
-  silverRate: { type: Number },
   updatedAt: { type: Date, default: Date.now },
 });
 

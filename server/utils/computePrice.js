@@ -26,7 +26,7 @@ export const computePrice = (product, rateMap) => {
 
   if (ratePerGram === 0) {
     console.error(`[computePrice] Data Error: Missing rate for metalType '${metalType}'. Product ID: ${product._id || product.productId}`);
-    return { finalPrice: product.price, priceBreakdown: null };
+    return undefined; // Degrade to quote-only rather than showing a stale price
   }
 
   const wastagePercent = product.wastagePercent || 0;

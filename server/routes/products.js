@@ -12,12 +12,7 @@ const getRates = async () => {
   const rates = await GoldRate.find().lean();
   const rateMap = {};
   for (const r of rates) {
-    rateMap[r.metalType] = r.ratePerGram;
-  }
-  // Fallback: if old single-document format exists
-  if (rates.length === 1 && rates[0].rate) {
-    rateMap.gold = rates[0].rate;
-    rateMap.silver = rates[0].silverRate || 0;
+    if (r.metalType) rateMap[r.metalType] = r.ratePerGram;
   }
   return rateMap;
 };

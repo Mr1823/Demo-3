@@ -52,11 +52,9 @@ export const createProductSchema = z.object({
 export const updateRatesSchema = z.object({
   gold: z.number().positive().optional(),
   silver: z.number().positive().optional(),
-  rate: z.number().positive().optional(),
-  silverRate: z.number().positive().optional(),
 }).refine(
-  (data) => data.gold || data.silver || data.rate || data.silverRate,
-  { message: "At least one rate value is required" }
+  (data) => data.gold || data.silver,
+  { message: "Must provide at least one rate to update (gold or silver)" }
 );
 
 export const quoteRequestSchema = z.object({

@@ -35,10 +35,6 @@ const getRates = async () => {
   for (const r of rates) {
     if (r.metalType) rateMap[r.metalType] = r.ratePerGram;
   }
-  if (rates.length >= 1 && rates[0].rate) {
-    rateMap.gold = rateMap.gold || rates[0].rate;
-    rateMap.silver = rateMap.silver || rates[0].silverRate || 0;
-  }
   return rateMap;
 };
 

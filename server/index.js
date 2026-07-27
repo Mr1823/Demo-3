@@ -9,7 +9,7 @@ import authRouter from "./routes/auth.js";
 import categoriesRouter from "./routes/categories.js";
 import reviewsRouter from "./routes/reviews.js";
 import adminRouter from "./routes/admin.js";
-import goldRateRouter from "./routes/goldRate.js";
+// Removed dead goldRate.js import
 import ratesRouter from "./routes/rates.js";
 import quotesRouter from "./routes/quotes.js";
 import paymentRouter from "./routes/payment.js";
@@ -62,8 +62,7 @@ app.use("/api/payment", paymentRouter);
 app.use("/api/admin-dashboard", adminDashboardRouter);
 
 // Legacy gold-rate route (backward compat — also served at /api/rates)
-app.use("/api/gold-rate", goldRateRouter);
-app.use("/api/admin/gold-rate", goldRateRouter);
+// Removed dead /api/gold-rate mounts
 
 // Navigation notifications endpoint
 app.get("/api/nav-notifications", (req, res) => {
