@@ -67,7 +67,7 @@ const ProductCard = ({ cardData, counter }) => {
     >
       <Link to={`/products/${_id}/description`} state={{ from: "/" }} className="absolute inset-0 z-0"></Link>
       
-      <div className="relative aspect-[4/5] bg-surface-container-low overflow-hidden border border-[#D4AF37]/30 group-hover:border-[#D4AF37]/60 transition-colors duration-500 rounded-sm">
+      <div className="relative aspect-[4/5] bg-surface-container-low overflow-hidden border border-outline-variant/30 group-hover:border-primary/60 transition-colors duration-500 rounded-sm">
         <img 
           alt={name} 
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
@@ -77,12 +77,12 @@ const ProductCard = ({ cardData, counter }) => {
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10 pointer-events-none">
           {discountPercentage && (
-            <div className="bg-[#93000a] text-white font-label-caps text-[10px] font-bold px-2 py-1 rounded-sm tracking-widest">
+            <div className="bg-error text-white font-label-caps text-[10px] font-bold px-2 py-1 rounded-sm tracking-widest">
               -{discountPercentage}%
             </div>
           )}
           {badge && (
-            <div className="bg-[#353026] text-white font-label-caps text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-widest">
+            <div className="bg-inverse-surface text-inverse-on-surface font-label-caps text-[10px] font-bold px-2 py-1 rounded-sm uppercase tracking-widest">
               {badge}
             </div>
           )}
@@ -95,7 +95,7 @@ const ProductCard = ({ cardData, counter }) => {
           disabled={presentInWishlist}
           title={presentInWishlist ? "Added to Wishlist" : "Add to Wishlist"}
         >
-          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: presentInWishlist ? "'FILL' 1" : "'FILL' 0", color: presentInWishlist ? "#93000a" : "inherit" }}>
+          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: presentInWishlist ? "'FILL' 1" : "'FILL' 0", color: presentInWishlist ? "var(--tw-colors-error, #BA1A1A)" : "inherit" }}>
             favorite_border
           </span>
         </button>

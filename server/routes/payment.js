@@ -2,9 +2,9 @@ import express from "express";
 import crypto from "crypto";
 import { Order } from "../models/Order.js";
 import { Product } from "../models/Product.js";
-import { GoldRate } from "../models/GoldRate.js";
 import { computePrice } from "../utils/computePrice.js";
 import { verifyJWT } from "../middleware/auth.js";
+import { getRates } from "../utils/getRates.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -29,14 +29,7 @@ const getRazorpay = () => {
   return razorpayInstance;
 };
 
-const getRates = async () => {
-  const rates = await GoldRate.find().lean();
-  const rateMap = {};
-  for (const r of rates) {
-    if (r.metalType) rateMap[r.metalType] = r.ratePerGram;
-  }
-  return rateMap;
-};
+// Use shared getRates from utils
 
 // POST /api/payment/create-order — create a Razorpay order with server-verified price
 router.post("/create-order", verifyJWT, async (req, res) => {

@@ -90,7 +90,7 @@ const DynamicProduct = () => {
   const breakdown = dynamicProduct.priceBreakdown;
 
   return (
-    <main className="pt-32 pb-32 max-w-7xl mx-auto px-4 md:px-8 font-body">
+    <main className="pt-24 md:pt-32 pb-24 md:pb-32 max-w-7xl mx-auto px-4 md:px-8 font-body">
       <CustomHelmet title={"Product Details"} />
       
       {/* Breadcrumb */}
@@ -108,7 +108,7 @@ const DynamicProduct = () => {
         </ol>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
         {/* Left Column: Imagery */}
         <div className="lg:col-span-7 flex flex-col gap-6">
           <div className="bg-surface-container overflow-hidden border border-outline-variant/30 aspect-square group relative">
@@ -136,7 +136,7 @@ const DynamicProduct = () => {
 
         {/* Right Column: Product Info */}
         <div className="lg:col-span-5">
-          <div className="sticky top-40">
+          <div className="lg:sticky lg:top-40">
             <div className="flex justify-between items-start">
                <p className="font-body text-xs text-primary tracking-widest mb-4 uppercase font-bold">
                  {dynamicProduct.category}
@@ -158,7 +158,7 @@ const DynamicProduct = () => {
 
             {/* Price Table or Get Quote UI */}
             {dynamicProduct.isQuoteOnly ? (
-              <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8 text-center flex flex-col items-center">
+              <div className="bg-surface-container-lowest p-6 md:p-8 border border-outline-variant/30 mb-8 text-center flex flex-col items-center">
                 <span className="material-symbols-outlined text-primary text-4xl mb-4">diamond</span>
                 <h3 className="font-display text-2xl text-on-surface mb-2">Price on Request</h3>
                 <p className="font-body text-sm text-on-surface-variant mb-6">
@@ -174,7 +174,7 @@ const DynamicProduct = () => {
               </div>
             ) : (
               <>
-                <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8">
+                <div className="bg-surface-container-lowest p-6 md:p-8 border border-outline-variant/30 mb-8">
                   <h3 className="font-body text-xs text-primary font-bold mb-6 tracking-widest border-b border-outline-variant/20 pb-2 uppercase">PRICE BREAKDOWN</h3>
                   <div className="space-y-4">
                     {breakdown ? (
@@ -220,7 +220,7 @@ const DynamicProduct = () => {
                       <><span className="material-symbols-outlined text-sm">shopping_bag</span> ADD TO BAG</>
                     )}
                   </button>
-                  <button className="w-full bg-transparent border border-[#c8a684] text-primary py-5 font-body text-sm font-bold tracking-widest hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase cursor-pointer">
+                  <button className="w-full bg-transparent border border-outline-variant text-primary py-5 font-body text-sm font-bold tracking-widest hover:bg-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase cursor-pointer">
                     <span className="material-symbols-outlined text-sm">mail</span>
                     ENQUIRE NOW
                   </button>

@@ -59,7 +59,7 @@ const Wishlist = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[#F4EADB] font-body-base pt-12 text-on-surface">
+    <main className="min-h-screen bg-surface font-body-base pt-12 text-on-surface">
       <CustomHelmet title="Wishlist" />
 
       <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap-lg min-h-[614px]">
@@ -67,7 +67,7 @@ const Wishlist = () => {
         <div className="text-center mb-16 space-y-2">
           <span className="font-label-caps text-label-caps text-tertiary tracking-[0.2em]">YOUR FAVORITES</span>
           <h1 className="font-display-lg text-display-lg text-primary">Wishlist</h1>
-          <div className="w-16 h-px bg-[#c8a684] mx-auto mt-6"></div>
+          <div className="w-16 h-px bg-outline-variant mx-auto mt-6"></div>
         </div>
 
         {isWishlistLoading ? (
@@ -85,7 +85,7 @@ const Wishlist = () => {
                   const isQuoteOnly = productDetails.isQuoteOnly;
                   
                   return (
-                    <div key={item._id} className="group relative flex flex-col h-full bg-surface-container border border-[#c8a684] overflow-hidden transition-all duration-500 hover:shadow-heritage">
+                    <div key={item._id} className="group relative flex flex-col h-full bg-surface-container border border-outline-variant overflow-hidden transition-all duration-500 hover:shadow-heritage">
                       <div className="aspect-[4/5] overflow-hidden relative">
                         <Link to={`/products/${item.productId}`}>
                           <img

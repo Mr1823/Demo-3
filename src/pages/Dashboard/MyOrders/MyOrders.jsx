@@ -96,7 +96,7 @@ const MyOrders = () => {
             return (
               <div 
                 key={order._id} 
-                className="p-6 md:p-8 bg-surface-container-low/50 border border-outline-gold/30 group cursor-pointer relative overflow-hidden transition-all duration-500 hover:bg-white hover:-translate-y-1 hover:shadow-heritage hover:border-outline-gold/60"
+                className="p-6 md:p-8 bg-surface-container-low/50 border border-outline-variant/30 group cursor-pointer relative overflow-hidden transition-all duration-500 hover:bg-white hover:-translate-y-1 hover:shadow-heritage hover:border-outline-variant/60"
                 onClick={() => navigateToOrder(order.orderId)}
               >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">

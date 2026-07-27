@@ -61,7 +61,18 @@ const useCart = () => {
     }
   };
 
-  return { cartData, isCartLoading, refetch, addToCart, cartSubtotal };
+  const updateCartQuantity = async (itemId, quantity) => {
+    if (!isAuthLoading && user) {
+      axiosSecure.patch(`/cart/${itemId}`, { quantity }).then((res) => {
+        if (res.data?.success) {
+          refetch();
+          // We don't want a toast every time they click + or -, so we omit toast or use a subtle one
+        }
+      });
+    }
+  };
+
+  return { cartData, isCartLoading, refetch, addToCart, updateCartQuantity, cartSubtotal };
 };
 
 export default useCart;

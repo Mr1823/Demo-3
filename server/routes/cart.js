@@ -1,14 +1,40 @@
 import express from "express";
 import { Cart } from "../models/Cart.js";
 import { verifyJWT } from "../middleware/auth.js";
-
+import { Product } from "../models/Product.js";
+import { computePrice } from "../utils/computePrice.js";
+import { getRates } from "../utils/getRates.js";
 const router = express.Router();
 
 // GET /api/cart — user's cart items
 router.get("/", verifyJWT, async (req, res) => {
   try {
     const userCart = await Cart.find({ userId: req.user.userId }).lean();
-    res.json(userCart);
+    if (!userCart.length) return res.json([]);
+
+    const rateMap = await getRates();
+    const productIds = userCart.map((item) => item.productId);
+    const products = await Product.find({ productId: { $in: productIds } }).lean();
+    const productMap = products.reduce((acc, p) => { acc[p.productId] = p; return acc; }, {});
+
+    const dynamicCart = userCart.map((item) => {
+      const product = productMap[item.productId];
+      let computedPrice = parseFloat(item.price || 0); // Fallback to stale price if product deleted
+      
+      if (product) {
+        const pricing = computePrice(product, rateMap);
+        if (pricing && pricing.finalPrice) {
+          computedPrice = pricing.finalPrice;
+        }
+      }
+      
+      return {
+        ...item,
+        price: computedPrice // Override the old price with the new dynamically computed price
+      };
+    });
+
+    res.json(dynamicCart);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch cart" });
   }
@@ -17,9 +43,28 @@ router.get("/", verifyJWT, async (req, res) => {
 // GET /api/cart/subtotal
 router.get("/subtotal", verifyJWT, async (req, res) => {
   try {
-    const userCart = await Cart.find({ userId: req.user.userId });
-    const subtotal = userCart.reduce((acc, item) =>
-      acc + (parseFloat(item.price || 0) * (item.quantity || 1)), 0);
+    const userCart = await Cart.find({ userId: req.user.userId }).lean();
+    if (!userCart.length) return res.json({ subtotal: "0.00", totalItems: 0 });
+
+    const rateMap = await getRates();
+    const productIds = userCart.map((item) => item.productId);
+    const products = await Product.find({ productId: { $in: productIds } }).lean();
+    const productMap = products.reduce((acc, p) => { acc[p.productId] = p; return acc; }, {});
+
+    let subtotal = 0;
+    
+    for (const item of userCart) {
+      const product = productMap[item.productId];
+      let computedPrice = parseFloat(item.price || 0);
+      
+      if (product) {
+        const pricing = computePrice(product, rateMap);
+        if (pricing && pricing.finalPrice) {
+          computedPrice = pricing.finalPrice;
+        }
+      }
+      subtotal += computedPrice * (item.quantity || 1);
+    }
 
     res.json({
       subtotal: subtotal.toFixed(2),

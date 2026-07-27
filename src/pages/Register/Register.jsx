@@ -41,24 +41,24 @@ const Register = () => {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center py-section-gap-lg px-margin-mobile relative bg-surface text-on-surface">
+    <main className="min-h-screen flex flex-col items-center justify-center pt-16 md:pt-32 pb-24 px-5 md:px-0 relative bg-surface text-on-surface">
       <CustomHelmet title={"Register"} />
 
       {/* Decorative ambient background */}
       <div className="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10 opacity-[0.03] select-none">
-        <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full blur-[150px] bg-[#C8A684]"></div>
-        <div className="absolute bottom-[0%] -left-[10%] w-[40%] h-[40%] rounded-full blur-[120px] bg-[#8B6447]"></div>
+        <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full blur-[150px] bg-primary-container"></div>
+        <div className="absolute bottom-[0%] -left-[10%] w-[40%] h-[40%] rounded-full blur-[120px] bg-primary"></div>
       </div>
 
       <div className="w-full max-w-[480px] animate-fade-in-up">
         {/* Header */}
-        <header className="text-center mb-16">
+        <header className="text-center mb-12 md:mb-16">
           <Link to="/" className="inline-block mb-8">
             <img alt="Sri Ram Jewellery" className="h-16 w-auto mx-auto object-contain" src="/logo.png" />
           </Link>
-          <p className="font-label-caps text-label-caps text-primary mb-6 tracking-[0.3em] uppercase">Private Registry</p>
-          <h1 className="font-display-lg text-display-lg-mobile md:text-[64px] text-on-surface leading-tight tracking-tight drop-shadow-sm">Create Account</h1>
-          <div className="w-12 h-[1px] bg-primary mx-auto mt-8 opacity-40"></div>
+          <p className="font-label-caps text-label-caps text-primary mb-4 md:mb-6 tracking-[0.3em] uppercase">Private Registry</p>
+          <h1 className="font-display-lg text-3xl md:text-[64px] text-on-surface leading-tight tracking-tight drop-shadow-sm">Create Account</h1>
+          <div className="w-12 h-[1px] bg-primary mx-auto mt-6 md:mt-8 opacity-40"></div>
         </header>
 
         {/* Error */}

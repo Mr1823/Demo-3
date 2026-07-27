@@ -148,7 +148,7 @@ const AddressBook = () => {
 
         {/* Existing Address Card */}
         {!isFormVisible && shippingAdd && (
-          <div className="bg-[#E6D2BA] border border-primary/10 p-8 flex flex-col justify-between h-64 relative overflow-hidden group transition-all duration-400 hover:-translate-y-1 hover:border-primary/50 hover:shadow-heritage">
+          <div className="bg-primary-container border border-primary/10 p-8 flex flex-col justify-between h-64 relative overflow-hidden group transition-all duration-400 hover:-translate-y-1 hover:border-primary/50 hover:shadow-heritage">
             <div>
               <div className="flex justify-between items-start mb-6">
                 <h3 className="font-display text-2xl text-on-surface">
@@ -192,7 +192,7 @@ const AddressBook = () => {
 
       {/* Address Form Container */}
       {isFormVisible && (
-        <div className="mt-8 bg-surface-container-low border border-outline-gold/30 p-8 max-w-2xl animate-fade-in">
+        <div className="mt-8 bg-surface-container-low border border-outline-variant/30 p-8 max-w-2xl animate-fade-in">
           <div className="flex justify-between items-center mb-8 border-b border-primary/10 pb-4">
             <h4 className="font-display text-2xl text-primary">
               {shippingAdd ? 'Edit Address' : 'New Address'}

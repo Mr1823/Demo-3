@@ -20,7 +20,7 @@ const About = () => {
   };
 
   return (
-    <main className="min-h-screen bg-[#F4EADB] font-body-base text-on-surface">
+    <main className="min-h-screen bg-surface font-body-base text-on-surface">
       <CustomHelmet title={"Our Heritage & Contact"} />
 
       {/* Section 1: About Us (Our Story) */}
@@ -33,7 +33,7 @@ const About = () => {
             <p>Every piece we create is a narrative of tradition meeting modernity. We do not simply design jewellery; we forge heirlooms that carry the weight of memory and the sparkle of future legacies.</p>
           </div>
           <div className="mt-12">
-            <div className="w-16 h-px bg-[#c8a684] mx-auto"></div>
+            <div className="w-16 h-px bg-outline-variant mx-auto"></div>
           </div>
         </div>
         

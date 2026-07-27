@@ -41,19 +41,19 @@ const Login = () => {
   };
 
   return (
-    <main className="w-full min-h-screen flex flex-col items-center font-body-base pb-24 relative bg-[#F4EADB] text-on-surface">
+    <main className="w-full min-h-screen flex flex-col items-center font-body-base pb-24 relative bg-surface text-on-surface">
       <CustomHelmet title={"Sign In"} />
 
       {/* Decorative ambient background */}
       <div className="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10 opacity-[0.03] select-none">
-        <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[150px] bg-[#C8A684]"></div>
-        <div className="absolute bottom-[0%] -right-[10%] w-[40%] h-[40%] rounded-full blur-[120px] bg-[#8B6447]"></div>
+        <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full blur-[150px] bg-primary-container"></div>
+        <div className="absolute bottom-[0%] -right-[10%] w-[40%] h-[40%] rounded-full blur-[120px] bg-primary"></div>
       </div>
 
       {/* Form Container */}
       <div className="w-full max-w-[440px] px-5 md:px-0 flex flex-col items-center animate-fade-in">
         {/* Logo Section */}
-        <div className="mt-28 mb-16 text-center">
+        <div className="mt-16 md:mt-28 mb-12 md:mb-16 text-center">
           <Link to="/">
             <img alt="Sri Ram Jewellery" className="h-16 w-auto mx-auto object-contain" src="/logo.png" />
           </Link>
@@ -85,7 +85,7 @@ const Login = () => {
               Email Address
             </label>
             <input
-              className="w-full bg-transparent border-0 border-b border-[#C8A684] py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base"
+              className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base"
               id="login-email"
               placeholder="Enter your email"
               type="email"
@@ -101,7 +101,7 @@ const Login = () => {
                 Password
               </label>
               <input
-                className="w-full bg-transparent border-0 border-b border-[#C8A684] py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base tracking-widest"
+                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base tracking-widest"
                 id="login-password"
                 placeholder="••••••••"
                 type="password"
@@ -114,7 +114,7 @@ const Login = () => {
           {/* Action Button */}
           <div className="pt-6">
             <button
-              className="w-full bg-[#8B6447] text-white py-5 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-primary cursor-pointer"
+              className="w-full bg-primary text-white py-4 md:py-5 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-primary cursor-pointer"
               type="submit"
               disabled={loginLoading}
             >

@@ -128,7 +128,7 @@ const OrderSuccess = () => {
                 check_circle
               </span>
             </div>
-            <h1 className="text-primary text-4xl md:text-5xl mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <h1 className="text-primary text-4xl md:text-5xl mb-4 font-display-lg">
               Order Confirmed
             </h1>
             <p className="text-on-surface-variant max-w-lg mx-auto">
@@ -136,7 +136,7 @@ const OrderSuccess = () => {
                 ? "Thank you! Your order has been received and is being prepared with the utmost care."
                 : `Thank you! Your order has been ${orderObj?.orderStatus || "confirmed"}.`}
             </p>
-            <div className="w-16 h-px bg-[#e4c09d] mx-auto mt-6"></div>
+            <div className="w-16 h-px bg-primary/30 mx-auto mt-6"></div>
           </div>
 
           {/* Main Content */}
@@ -148,7 +148,7 @@ const OrderSuccess = () => {
               {/* Order Details */}
               <div className="border border-outline-variant/30 bg-surface-container-low">
                 <div className="p-6 border-b border-outline-variant/30">
-                  <h2 className="text-primary text-2xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                  <h2 className="text-primary text-2xl font-display-lg">
                     Order Details
                   </h2>
                 </div>
@@ -170,7 +170,7 @@ const OrderSuccess = () => {
                     </div>
                     <div>
                       <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-1">Total</span>
-                      <p className="text-primary font-semibold text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                      <p className="text-primary font-semibold text-lg font-display-lg">
                         ₹{orderObj?.total?.toLocaleString("en-IN")}
                       </p>
                     </div>

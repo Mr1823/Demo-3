@@ -15,7 +15,7 @@ const StatCard = ({ title, value, icon, changeData, subtitle }) => {
         <span className="material-symbols-outlined text-primary-container">{icon}</span>
       </div>
       <div>
-        <p className="text-3xl text-on-surface" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+        <p className="text-3xl text-on-surface font-display">
           {value}
         </p>
         <div className="flex items-center gap-2 mt-2">
@@ -67,7 +67,7 @@ const AdminDashboard = () => {
     <div className="px-4 md:px-0 font-body-base">
       {/* Header */}
       <div className="mb-10 border-b border-outline-variant/30 pb-6">
-        <h1 className="text-primary text-3xl md:text-4xl mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+        <h1 className="text-primary text-3xl md:text-4xl mb-2 font-display-lg">
           Dashboard Overview
         </h1>
         <p className="text-on-surface-variant text-sm">

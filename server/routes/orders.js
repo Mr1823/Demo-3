@@ -2,21 +2,13 @@ import express from "express";
 import { Order } from "../models/Order.js";
 import { Cart } from "../models/Cart.js";
 import { Product } from "../models/Product.js";
-import { GoldRate } from "../models/GoldRate.js";
 import { computePrice } from "../utils/computePrice.js";
+import { getRates } from "../utils/getRates.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-const getRates = async () => {
-  const rates = await GoldRate.find().lean();
-  const rateMap = {};
-  for (const r of rates) {
-    if (r.metalType) rateMap[r.metalType] = r.ratePerGram;
-  }
-  return rateMap;
-};
 
 // ─── User Orders ─────────────────────────────────────────────────────────────
 
