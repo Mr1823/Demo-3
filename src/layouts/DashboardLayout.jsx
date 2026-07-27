@@ -5,18 +5,15 @@ import CustomHelmet from "../components/CustomHelmet/CustomHelmet";
 import useUserInfo from "../hooks/useUserInfo";
 import AdminNavigation from "../pages/Dashboard/AdminNavigation/AdminNavigation";
 import useAuthContext from "../hooks/useAuthContext";
-import AnimateText from "@moxy/react-animate-text";
 
 const DashboardLayout = () => {
   const [userFromDB, isUserLoading] = useUserInfo();
   const { user, isAuthLoading } = useAuthContext();
-
-  // amdin dashboard side-navbar control
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div style={{ fontFamily: "'Montserrat', sans-serif" }} className="max-w-screen-2xl">
-      <CustomHelmet title={"Dashboard"} />
+    <div className="font-body bg-background min-h-screen text-on-surface">
+      <CustomHelmet title={"Dashboard | Sri Ram Jewellery"} />
 
       <>
         {!isAuthLoading && user?.uid !== undefined && (
@@ -40,26 +37,17 @@ const DashboardLayout = () => {
                 </div>
               </div>
             ) : (
-              <div className="w-full p-4 md:container mt-10 mb-10 text-left">
-                <h1
-                  className="text-4xl font-bold text-black tracking-wide"
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                >
-                  <AnimateText initialDelay={0.2} wordDelay={0.2}>
-                    <span>{`Welcome, ${userFromDB?.name}`}</span>
-                  </AnimateText>
-                </h1>
-
-                <div className="flex flex-col md:flex-row items-start mt-16">
-                  <div className="w-full md:w-[25%] md:border-none overflow-auto">
-                    <DashboardNav />
-                  </div>
-                  <div className="md:divider md:divider-horizontal"></div>
-                  <div className="md:w-[75%] md:pl-8 mt-10 md:mt-0">
-                    <Outlet />
-                  </div>
-                </div>
-              </div>
+              <main className="max-w-[1280px] mx-auto px-5 md:px-16 py-16 flex flex-col md:flex-row gap-8 lg:gap-16 min-h-[calc(100vh-100px)]">
+                {/* Sidebar Navigation */}
+                <aside className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-outline-variant/30 pb-8 md:pb-0 md:pr-8">
+                  <DashboardNav />
+                </aside>
+                
+                {/* Main Content Area */}
+                <section className="flex-1 w-full overflow-hidden">
+                  <Outlet />
+                </section>
+              </main>
             )}
           </>
         )}

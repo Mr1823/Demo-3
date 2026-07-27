@@ -25,6 +25,7 @@ import AdminAddProduct from "../pages/Dashboard/AdminAddProduct/AdminAddProduct"
 import AdminManageUsers from "../pages/AdminManageUsers/AdminManageUsers";
 import AdminCategories from "../pages/AdminCategories/AdminCategories";
 import AdminOrders from "../pages/Dashboard/AdminOrders/AdminOrders";
+import About from "../pages/About/About";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        path: "about",
+        element: <About />,
       },
       {
         path: "wishlist",

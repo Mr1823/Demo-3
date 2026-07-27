@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import useProducts from "../../hooks/useProducts";
 import useCart from "../../hooks/useCart";
 import useAuthContext from "../../hooks/useAuthContext";
 import useWishlist from "../../hooks/useWishlist";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
+import ProductCard from "../../components/ProductCard/ProductCard";
 
 const DynamicProduct = () => {
   const { id } = useParams();
@@ -15,6 +16,8 @@ const DynamicProduct = () => {
   const [products] = useProducts();
   const { cartData, addToCart } = useCart();
   const [wishlistData, , , addToWishlist] = useWishlist();
+  const navigate = useNavigate();
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   useEffect(() => {
     const filteredProduct = products?.find((data) => data._id === id);
@@ -124,49 +127,68 @@ const DynamicProduct = () => {
               {dynamicProduct.name}
             </h1>
 
-            {/* Price Table */}
-            <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8">
-              <h3 className="font-body text-xs text-primary font-bold mb-6 tracking-widest border-b border-outline-variant/20 pb-2 uppercase">PRICE BREAKDOWN</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-on-surface-variant font-body">Gold Value</span>
-                  <span className="font-semibold">₹ {basePrice.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-on-surface-variant font-body">Making Charges (12%)</span>
-                  <span className="font-semibold">₹ {makingCharges.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-on-surface-variant font-body">GST (3%)</span>
-                  <span className="font-semibold">₹ {gst.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="pt-6 mt-6 border-t border-primary/20 flex justify-between items-center">
-                  <span className="font-display text-2xl text-primary uppercase">Net Payable</span>
-                  <span className="font-display text-2xl text-primary">₹ {finalPrice.toLocaleString('en-IN')}</span>
-                </div>
+            {/* Price Table or Get Quote UI */}
+            {dynamicProduct.isQuoteOnly ? (
+              <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8 text-center flex flex-col items-center">
+                <span className="material-symbols-outlined text-primary text-4xl mb-4">diamond</span>
+                <h3 className="font-display text-2xl text-on-surface mb-2">Price on Request</h3>
+                <p className="font-body text-sm text-on-surface-variant mb-6">
+                  This is a bespoke heritage piece. Please request a quote to speak with our artisans regarding pricing and customization.
+                </p>
+                <button 
+                  onClick={() => setIsQuoteModalOpen(true)}
+                  className="w-full bg-primary-container text-white py-5 font-body text-sm font-bold tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-sm">request_quote</span>
+                  GET QUOTE
+                </button>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8">
+                  <h3 className="font-body text-xs text-primary font-bold mb-6 tracking-widest border-b border-outline-variant/20 pb-2 uppercase">PRICE BREAKDOWN</h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-on-surface-variant font-body">Gold Value</span>
+                      <span className="font-semibold">₹ {basePrice.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-on-surface-variant font-body">Making Charges (12%)</span>
+                      <span className="font-semibold">₹ {makingCharges.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-on-surface-variant font-body">GST (3%)</span>
+                      <span className="font-semibold">₹ {gst.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="pt-6 mt-6 border-t border-primary/20 flex justify-between items-center">
+                      <span className="font-display text-2xl text-primary uppercase">Net Payable</span>
+                      <span className="font-display text-2xl text-primary">₹ {finalPrice.toLocaleString('en-IN')}</span>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Actions */}
-            <div className="flex flex-col gap-4 mb-12">
-              <button 
-                onClick={() => handleAddToCartWishlist("cart")}
-                disabled={presentInCart || dynamicProduct.stock === 0}
-                className="w-full bg-primary-container text-white py-5 font-body text-sm font-bold tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:brightness-100 uppercase"
-              >
-                {presentInCart ? (
-                   <><span className="material-symbols-outlined text-sm">check</span> ADDED TO BAG</>
-                ) : dynamicProduct.stock === 0 ? (
-                   <><span className="material-symbols-outlined text-sm">close</span> OUT OF STOCK</>
-                ) : (
-                   <><span className="material-symbols-outlined text-sm">shopping_bag</span> ADD TO BAG</>
-                )}
-              </button>
-              <button className="w-full bg-transparent border border-[#c8a684] text-primary py-5 font-body text-sm font-bold tracking-widest hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase cursor-pointer">
-                <span className="material-symbols-outlined text-sm">mail</span>
-                ENQUIRE NOW
-              </button>
-            </div>
+                {/* Actions */}
+                <div className="flex flex-col gap-4 mb-12">
+                  <button 
+                    onClick={() => handleAddToCartWishlist("cart")}
+                    disabled={presentInCart || dynamicProduct.stock === 0}
+                    className="w-full bg-primary-container text-white py-5 font-body text-sm font-bold tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:brightness-100 uppercase cursor-pointer"
+                  >
+                    {presentInCart ? (
+                      <><span className="material-symbols-outlined text-sm">check</span> ADDED TO BAG</>
+                    ) : dynamicProduct.stock === 0 ? (
+                      <><span className="material-symbols-outlined text-sm">close</span> OUT OF STOCK</>
+                    ) : (
+                      <><span className="material-symbols-outlined text-sm">shopping_bag</span> ADD TO BAG</>
+                    )}
+                  </button>
+                  <button className="w-full bg-transparent border border-[#c8a684] text-primary py-5 font-body text-sm font-bold tracking-widest hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase cursor-pointer">
+                    <span className="material-symbols-outlined text-sm">mail</span>
+                    ENQUIRE NOW
+                  </button>
+                </div>
+              </>
+            )}
 
             {/* Accordion Details */}
             <div className="space-y-0">
@@ -204,6 +226,55 @@ const DynamicProduct = () => {
           </div>
         </div>
       </div>
+      
+      {/* You May Also Like Section */}
+      <section className="mt-32">
+        <div className="flex flex-col items-center mb-16">
+          <div className="w-16 h-px bg-[#c8a684] mb-6"></div>
+          <h2 className="font-display text-4xl text-on-surface text-center">You May Also Like</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {products?.filter(p => p.category === dynamicProduct.category && p._id !== dynamicProduct._id).slice(0, 4).map((product) => (
+            <ProductCard key={product._id} item={product} />
+          ))}
+        </div>
+      </section>
+
+      {/* Quote Modal */}
+      {isQuoteModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-surface-bright border border-primary/20 max-w-md w-full p-8 shadow-2xl relative">
+            <button 
+              onClick={() => setIsQuoteModalOpen(false)}
+              className="absolute top-4 right-4 text-on-surface-variant hover:text-error transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            <h3 className="font-display text-3xl text-primary mb-2 text-center">Request Quote</h3>
+            <p className="font-body text-sm text-on-surface-variant text-center mb-8">
+              Please provide your details. Our master artisans will contact you shortly regarding the {dynamicProduct.name}.
+            </p>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              // Backend logic deferred to Phase 8 per requirements
+              alert("Quote requested! Our artisans will contact you via WhatsApp shortly.");
+              setIsQuoteModalOpen(false);
+            }} className="space-y-6">
+              <div className="input-focus-line">
+                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Full Name *</label>
+                <input required type="text" className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body" placeholder="e.g. Aditya Vardhan" />
+              </div>
+              <div className="input-focus-line">
+                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Mobile Number *</label>
+                <input required type="tel" className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body" placeholder="e.g. +91 9876543210" />
+              </div>
+              <button type="submit" className="w-full bg-primary text-white py-4 font-body text-sm font-bold tracking-widest hover:bg-primary/90 transition-colors uppercase mt-4 cursor-pointer">
+                Submit Request
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

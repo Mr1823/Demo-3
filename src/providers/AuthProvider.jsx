@@ -9,6 +9,7 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import app from "../firebase/firebase.config";
 import axios from "axios";
@@ -93,6 +94,11 @@ const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
+  // Reset Password
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email);
+  };
+
   // Auth State Observer
   useEffect(() => {
     // Check if dev session exists in localStorage on mount
@@ -153,6 +159,7 @@ const AuthProvider = ({ children }) => {
     signIn,
     signInGoogle,
     logOut,
+    resetPassword,
     setIsAuthLoading,
   };
 

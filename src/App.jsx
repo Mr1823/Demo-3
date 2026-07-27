@@ -14,6 +14,7 @@ import Wishlist from "./pages/Wishlist/Wishlist";
 import Payment from "./pages/Payment/Payment";
 import OrderSuccess from "./pages/OrderSuccess/OrderSuccess";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
+import About from "./pages/About/About";
 
 // Dashboard Pages
 import AdminDashboard from "./pages/Dashboard/AdminDashboard/AdminDashboard";
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="shop" element={<Shop />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="about" element={<About />} />
         <Route path="checkout" element={<Checkout />} />
         <Route path="wishlist" element={<Wishlist />} />
         <Route path="payment" element={<Payment />} />

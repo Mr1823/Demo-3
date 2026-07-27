@@ -1,8 +1,13 @@
-/* Global styles for smooth rendering & mobile optimization */
+/* ═══════════════════════════════════════════════════════════════
+   Sri Ram Jewellery — Heritage Gold & Silk Design System
+   Global Styles, Utilities & Component Classes
+   ═══════════════════════════════════════════════════════════════ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── Base Layer ── */
 @layer base {
   html, body {
     scroll-behavior: smooth;
@@ -10,48 +15,91 @@
     width: 100%;
     -webkit-tap-highlight-color: transparent;
     -webkit-overflow-scrolling: touch;
-    @apply font-sans bg-background text-on-surface;
+    @apply font-body bg-background text-on-surface;
   }
 
-  /* Prevent auto-zoom on iOS inputs when tapping on mobile */
+  /* Prevent auto-zoom on iOS inputs */
   @media screen and (max-width: 768px) {
     input, select, textarea {
       font-size: 16px !important;
     }
   }
+
+  /* Material Symbols base settings */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  }
 }
 
-.auth-input-con input:focus {
-  border-color: #000000;
+/* ── Custom Scrollbar (Heritage Palette) ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #fff8f2;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4c3b9;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c8a684;
 }
 
-/* Touch-friendly mobile improvements */
+/* ── Touch-friendly mobile ── */
 @media screen and (max-width: 640px) {
   button {
     touch-action: manipulation;
   }
 }
 
-/* Custom scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ── Focus line animation for inputs ── */
+.input-focus-line {
+  position: relative;
 }
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.input-focus-line::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: #704c31;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
+.input-focus-line:focus-within::after {
+  width: 100%;
+  left: 0;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
+
+/* ── Heritage Gold Divider Flourish ── */
+.divider-gold {
+  width: 64px;
+  height: 1px;
+  background: #C8A684;
+  margin: 0 auto;
+}
+
+/* ── Ken Burns hover on images ── */
+.ken-burns-hover img,
+.ken-burns-hover > img {
+  transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.ken-burns-hover:hover img,
+.ken-burns-hover:hover > img {
+  transform: scale(1.05);
+}
+
+/* Legacy compatibility */
+.auth-input-con input:focus {
+  border-color: #704c31;
 }
 
 @layer components {
-  /* --- Buttons --- */
+  /* ═══ Buttons ═══ */
   .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-semibold text-sm transition-all duration-300 ease-out cursor-pointer;
+    @apply inline-flex items-center justify-center px-6 py-3 rounded font-body font-semibold text-sm tracking-wider transition-all duration-300 ease-out cursor-pointer uppercase;
   }
   .btn-wide {
     @apply w-64;
@@ -60,53 +108,112 @@
     @apply w-full;
   }
   .btn-sm {
-    @apply px-3 py-1 text-xs;
+    @apply px-4 py-2 text-xs;
   }
   .btn-circle {
     @apply rounded-full w-10 h-10 p-0;
   }
   .btn-square {
-    @apply rounded-md w-10 h-10 p-0;
-  }
-  .btn-primary, .btn-neutral {
-    @apply bg-primary text-on-primary border-none hover:scale-[1.02] hover:brightness-95;
-  }
-  .btn-outline {
-    @apply bg-transparent border border-outline text-on-surface hover:bg-surface-dim;
-  }
-  .btn-ghost {
-    @apply bg-transparent border border-transparent text-on-surface hover:bg-surface-dim;
-  }
-  .btn-error {
-    @apply bg-error text-on-error border-none hover:scale-[1.02];
-  }
-  .btn-success {
-    @apply bg-surface-tint text-on-primary border-none hover:scale-[1.02];
+    @apply rounded w-10 h-10 p-0;
   }
 
-  /* --- Inputs --- */
+  /* Primary: Solid Antique Bronze */
+  .btn-primary, .btn-neutral {
+    @apply bg-primary text-on-primary border-none;
+    transition: all 0.4s ease;
+  }
+  .btn-primary:hover, .btn-neutral:hover {
+    transform: scale(1.02);
+    filter: brightness(0.92);
+  }
+
+  /* Secondary/Outline: Ghost with gold border */
+  .btn-outline {
+    @apply bg-transparent border border-outline-gold text-heading-espresso;
+    transition: all 0.4s ease;
+  }
+  .btn-outline:hover {
+    @apply bg-surface-container-low;
+    letter-spacing: 0.12em;
+  }
+
+  /* Ghost */
+  .btn-ghost {
+    @apply bg-transparent border border-transparent text-on-surface;
+  }
+  .btn-ghost:hover {
+    @apply bg-surface-dim;
+  }
+
+  /* Error */
+  .btn-error {
+    @apply bg-error text-on-error border-none;
+  }
+  .btn-error:hover {
+    transform: scale(1.02);
+  }
+
+  /* Success */
+  .btn-success {
+    @apply bg-success-sage text-white border-none;
+  }
+  .btn-success:hover {
+    transform: scale(1.02);
+  }
+
+  /* Heritage CTA — Large action button */
+  .btn-heritage {
+    @apply w-full py-5 bg-primary text-white font-body text-xs font-bold uppercase tracking-[0.2em] border-none;
+    transition: all 0.5s ease;
+  }
+  .btn-heritage:hover {
+    @apply bg-primary/90;
+    transform: scale(1.01);
+  }
+  .btn-heritage:active {
+    transform: scale(0.98);
+  }
+
+  /* ═══ Inputs ═══ */
   .input, .file-input, .textarea, .select {
-    @apply bg-surface-container-lowest border border-outline px-4 py-2 rounded-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors;
+    @apply bg-surface-container-lowest border border-outline-gold px-4 py-3 rounded text-on-surface font-body focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/40 transition-colors duration-300;
   }
   .input-bordered {
-    @apply border-outline;
+    @apply border-outline-gold;
   }
-  
-  /* --- Cards --- */
+
+  /* Heritage underline input */
+  .input-heritage {
+    @apply w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body;
+  }
+
+  /* ═══ Cards ═══ */
   .card {
-    @apply bg-surface-container rounded-lg border border-outline overflow-hidden transition-all duration-500;
+    @apply bg-surface-container rounded-lg border border-outline-gold/30 overflow-hidden transition-all duration-500;
+  }
+  .card:hover {
+    @apply border-outline-gold/60;
   }
   .card-body {
     @apply p-6 flex flex-col gap-4;
   }
   .card-title {
-    @apply text-xl font-serif font-semibold;
+    @apply text-xl font-display font-semibold text-heading-espresso;
   }
   .card-actions {
     @apply flex gap-2 mt-4;
   }
-  
-  /* --- Modals --- */
+
+  /* Heritage Product Card */
+  .card-product {
+    @apply bg-surface-container-low border border-outline-gold/30 overflow-hidden transition-all duration-500;
+  }
+  .card-product:hover {
+    @apply border-outline-gold/60;
+    box-shadow: 0 20px 40px -10px rgba(139, 100, 71, 0.08);
+  }
+
+  /* ═══ Modals ═══ */
   .modal {
     @apply fixed inset-0 z-50 flex items-center justify-center bg-black/40 opacity-0 pointer-events-none transition-opacity duration-300;
   }
@@ -114,7 +221,8 @@
     @apply opacity-100 pointer-events-auto;
   }
   .modal-box {
-    @apply bg-surface-container rounded-lg border border-outline shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)] p-6 max-w-lg w-full max-h-[calc(100vh-5em)] overflow-y-auto transform scale-95 transition-transform duration-300;
+    @apply bg-surface-container-lowest rounded-lg border border-outline-gold/30 p-6 max-w-lg w-full max-h-[calc(100vh-5em)] overflow-y-auto transform scale-95 transition-transform duration-300;
+    box-shadow: 0 20px 40px -10px rgba(139, 100, 71, 0.08);
   }
   .modal[open] .modal-box, .modal-open .modal-box {
     @apply scale-100;
@@ -123,7 +231,7 @@
     @apply fixed inset-0 -z-10 bg-black/40 cursor-default;
   }
 
-  /* --- Drawers --- */
+  /* ═══ Drawers ═══ */
   .drawer {
     @apply relative w-full h-full;
   }
@@ -146,13 +254,14 @@
     @apply opacity-100;
   }
   .drawer-side > *:not(.drawer-overlay) {
-    @apply absolute top-0 left-0 h-full w-80 bg-surface text-on-surface transform -translate-x-full transition-transform duration-300 shadow-2xl overflow-y-auto;
+    @apply absolute top-0 left-0 h-full w-80 bg-surface text-on-surface transform -translate-x-full transition-transform duration-300 overflow-y-auto;
+    box-shadow: 0 20px 40px -10px rgba(63, 42, 34, 0.12);
   }
   .drawer-toggle:checked ~ .drawer-side > *:not(.drawer-overlay) {
     @apply translate-x-0;
   }
-  
-  /* --- Avatar & Badges --- */
+
+  /* ═══ Avatar & Badges ═══ */
   .avatar {
     @apply inline-flex relative;
   }
@@ -160,9 +269,43 @@
     @apply object-cover w-full h-full;
   }
   .badge {
-    @apply inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-surface-variant text-on-surface-variant;
+    @apply inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-body font-semibold uppercase tracking-wider bg-surface-variant text-on-surface-variant;
   }
   .badge-primary {
     @apply bg-primary text-on-primary;
   }
+  .badge-success {
+    @apply bg-success-sage text-white;
+  }
+  .badge-error {
+    @apply bg-error-crimson text-white;
+  }
+
+  /* ═══ Labels ═══ */
+  .label-caps {
+    @apply font-body text-xs font-semibold uppercase tracking-[0.15em] leading-none;
+  }
+
+  /* ═══ Loading Spinner (DaisyUI compat) ═══ */
+  .loading {
+    @apply inline-block;
+  }
+  .loading-spinner {
+    @apply border-2 border-current border-t-transparent rounded-full animate-spin;
+  }
+  .loading-md {
+    @apply w-5 h-5;
+  }
+
+  /* ═══ Dividers ═══ */
+  .divider-heritage {
+    @apply w-full border-t border-outline-gold/30;
+  }
 }
+
+/* ═══ Utility: stagger animation delays ═══ */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }

@@ -3,16 +3,18 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-surface-container-low border-t border-primary/10 py-16 md:py-32">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+    <footer className="w-full bg-surface-container-low border-t border-primary/10 py-section-gap-sm">
+      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-20">
           {/* Brand Info */}
           <div className="md:col-span-4 space-y-8">
             <div className="flex flex-col gap-4">
-              <img alt="SRJ Heritage Logo" className="h-20 w-auto object-contain self-start" src="/logo.png" />
-              <h4 className="font-display text-[22px] text-primary">Sri Ram Jewellery</h4>
+              <Link className="mb-6 block" to="/">
+              <img alt="SRJ Heritage Logo" className="h-20 w-auto object-contain self-start" src="/images/logo.png" />
+            </Link>
+              <h4 className="font-display-lg text-[22px] text-primary">Sri Ram Jewellery</h4>
             </div>
-            <p className="font-body text-on-surface-variant leading-relaxed max-w-sm italic">
+            <p className="font-body-base text-on-surface-variant leading-relaxed max-w-sm italic">
               Timeless Craftsmanship. Celebrating your milestones with the purest gold and finest diamonds since 1984.
             </p>
             <div className="flex gap-5">
@@ -24,46 +26,46 @@ const Footer = () => {
               </a>
             </div>
           </div>
-          
+
           {/* Links Columns */}
           <div className="md:col-span-2 space-y-8">
-            <h4 className="font-body text-xs text-primary uppercase tracking-[0.2em] font-bold">Quick Links</h4>
+            <h4 className="font-label-caps text-xs text-primary uppercase tracking-[0.2em] font-bold">Quick Links</h4>
             <nav className="flex flex-col gap-4">
-              <Link className="font-body text-on-surface-variant hover:text-primary transition-colors" to="/">Home</Link>
-              <Link className="font-body text-on-surface-variant hover:text-primary transition-colors" to="/shop">Collections</Link>
-              <Link className="font-body text-on-surface-variant hover:text-primary transition-colors" to="/">Store Locator</Link>
-              <Link className="font-body text-on-surface-variant hover:text-primary transition-colors" to="/">Gold Schemes</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Home</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/shop">Shop</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/shop?category=gold">Categories</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/about">About</Link>
             </nav>
           </div>
-          
+
           <div className="md:col-span-2 space-y-8">
-            <h4 className="font-body text-xs text-primary uppercase tracking-[0.2em] font-bold">Policies</h4>
+            <h4 className="font-label-caps text-xs text-primary uppercase tracking-[0.2em] font-bold">Policies</h4>
             <nav className="flex flex-col gap-4">
-              <Link className="font-body text-on-surface-variant hover:text-primary transition-colors" to="/">Privacy Policy</Link>
-              <Link className="font-body text-on-surface-variant hover:text-primary transition-colors" to="/">Terms of Service</Link>
-              <Link className="font-body text-on-surface-variant hover:text-primary transition-colors" to="/">Shipping Info</Link>
-              <Link className="font-body text-on-surface-variant hover:text-primary transition-colors" to="/">Returns & Exchange</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Privacy Policy</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Terms of Service</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Shipping Info</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Returns & Exchange</Link>
             </nav>
           </div>
-          
+
           {/* Newsletter */}
           <div className="md:col-span-4 space-y-8">
-            <h4 className="font-body text-xs text-primary uppercase tracking-[0.2em] font-bold">Newsletter</h4>
-            <p className="font-body text-on-surface-variant">
+            <h4 className="font-label-caps text-xs text-primary uppercase tracking-[0.2em] font-bold">Newsletter</h4>
+            <p className="font-body-base text-on-surface-variant">
               Join our circle for early access to new collections and gold rate alerts.
             </p>
-            <div className="flex border border-primary/20 rounded-sm overflow-hidden group focus-within:ring-1 focus-within:ring-primary/40 transition-all">
-              <input className="flex-1 bg-white/50 border-none focus:ring-0 px-5 py-3 text-body text-on-surface placeholder:text-on-surface-variant/40" placeholder="Email Address" type="email" />
-              <button className="bg-primary text-white px-8 flex items-center justify-center hover:bg-primary/90 transition-all">
+            <form className="flex border border-primary/20 rounded-sm overflow-hidden group focus-within:ring-1 focus-within:ring-primary/40 transition-all" onSubmit={(e) => e.preventDefault()}>
+              <input className="flex-1 bg-white/50 border-none focus:ring-0 px-5 py-3 text-body-base text-on-surface placeholder:text-on-surface-variant/40" placeholder="Email Address" required type="email" />
+              <button className="bg-primary text-white px-8 flex items-center justify-center hover:bg-primary/90 transition-all" type="submit">
                 <span className="material-symbols-outlined">send</span>
               </button>
-            </div>
+            </form>
           </div>
         </div>
-        
+
         <div className="pt-10 border-t border-primary/10 text-center">
-          <p className="font-body text-[10px] text-on-surface-variant uppercase tracking-[0.3em]">
-            © 2024 SRI RAM JEWELLERY. TIMELESS CRAFTSMANSHIP. ALL RIGHTS RESERVED.
+          <p className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-[0.3em]">
+            © {new Date().getFullYear()} SRI RAM JEWELLERY. TIMELESS CRAFTSMANSHIP. ALL RIGHTS RESERVED.
           </p>
         </div>
       </div>

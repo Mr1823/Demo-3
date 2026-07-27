@@ -1,0 +1,441 @@
+<!DOCTYPE html><html lang="en" class="light" style=""><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&amp;family=Montserrat:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#7b563a",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "inverse-primary": "#edbd9a",
+                      "inverse-on-surface": "#faefe0",
+                      "surface-container": "#f7edde",
+                      "error": "#ba1a1a",
+                      "surface-dim": "#e2d9ca",
+                      "error-container": "#ffdad6",
+                      "outline-variant": "#d4c3b9",
+                      "on-surface": "#1f1b12",
+                      "inverse-surface": "#353026",
+                      "secondary-container": "#ffd9b4",
+                      "on-tertiary-fixed-variant": "#524533",
+                      "on-background": "#1f1b12",
+                      "tertiary": "#60523f",
+                      "on-primary-fixed-variant": "#613f25",
+                      "tertiary-fixed": "#f4dfc7",
+                      "on-tertiary-container": "#ffecd6",
+                      "tertiary-fixed-dim": "#d7c4ac",
+                      "outline": "#82746c",
+                      "on-secondary-fixed": "#2a1702",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#795d40",
+                      "secondary-fixed-dim": "#e4c09d",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#ebe1d2",
+                      "on-secondary-fixed-variant": "#5b4227",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-fixed": "#2e1501",
+                      "surface-bright": "#fff8f2",
+                      "secondary": "#75593c",
+                      "on-surface-variant": "#50443d",
+                      "surface": "#fff8f2",
+                      "surface-container-high": "#f1e7d8",
+                      "on-tertiary-fixed": "#241a0b",
+                      "surface-variant": "#ebe1d2",
+                      "primary-fixed": "#ffdcc4",
+                      "tertiary-container": "#796a56",
+                      "on-primary-container": "#ffebe0",
+                      "primary": "#704c31",
+                      "surface-container-low": "#fcf2e3",
+                      "primary-container": "#8b6447",
+                      "background": "#fff8f2",
+                      "secondary-fixed": "#ffdcbb",
+                      "primary-fixed-dim": "#edbd9a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "section-gap-lg": "120px",
+                      "container-max": "1280px",
+                      "margin-mobile": "20px",
+                      "unit": "4px",
+                      "section-gap-sm": "64px",
+                      "margin-desktop": "64px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "EB Garamond"
+                      ],
+                      "button-text": [
+                              "Montserrat"
+                      ],
+                      "display-lg-mobile": [
+                              "EB Garamond"
+                      ],
+                      "headline-md": [
+                              "EB Garamond"
+                      ],
+                      "body-base": [
+                              "Montserrat"
+                      ],
+                      "display-lg": [
+                              "EB Garamond"
+                      ],
+                      "body-lg": [
+                              "Montserrat"
+                      ],
+                      "label-caps": [
+                              "Montserrat"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "button-text": [
+                              "14px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg-mobile": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-base": [
+                              "15px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "56px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.15em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      }catch(_e){}</script></head><body class="min-h-screen flex flex-col bg-background text-on-background font-body-base antialiased selection:bg-primary-container selection:text-on-primary-container">
+
+    <!-- Header (Suppressed main nav for transactional flow, keeping brand anchor) -->
+    <header class="w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto flex justify-between items-center nav-border-bottom sticky top-0 bg-background/90 backdrop-blur-md z-50">
+  <div class="flex items-center gap-4">
+    <img alt="Sri Ram Jewellery Logo" class="w-12 h-12 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfFsWHV-1mLq_kdNL8FYBfxOGlFGAZiscwzkX5AJ-aGJfb9fhV0c2Q9-0gMEzS4T_LVkBPVQumcxfrtWdlFf7GQlXYSfock_Gu9ttr3tnATXz3vC8kkqKobc-IgnyXH4_7xubGpEa6xvSMPwKYIFnxKMC-9FUDvtEY4io_7QXwFl1-TDNJonAsib7sgGljGD83aC0uzYxKBMFPpq-6lOd-a4pY3HdQ4UO6_8u42oKq_LWmOMq23aymapoinmtg4I2dZgoYXB4uIp0">
+    <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-semibold">Sri Ram Jewellery</span>
+  </div>
+  <nav class="hidden md:flex items-center gap-8">
+    <a class="font-button-text text-button-text text-on-surface hover:text-primary transition-colors" href="{{DATA:SCREEN:SCREEN_10}}">Home</a>
+    <a class="font-button-text text-button-text text-on-surface hover:text-primary transition-colors" href="#">Shop</a>
+    <a class="font-button-text text-button-text text-on-surface hover:text-primary transition-colors" href="#">Categories</a>
+    <a class="font-button-text text-button-text text-on-surface hover:text-primary transition-colors" href="#">About</a>
+  </nav>
+  <div class="flex items-center gap-6">
+    <div class="hidden md:flex items-center bg-surface-container px-4 py-2 rounded-full border border-outline-variant/50">
+      <span class="material-symbols-outlined text-outline text-base" data-icon="search">search</span>
+      <input class="bg-transparent border-none focus:ring-0 text-sm w-32 placeholder:text-outline-variant" placeholder="Search..." type="text">
+    </div>
+    <div class="flex items-center gap-4 text-on-surface">
+      <button class="hover:text-primary transition-colors" type="button">
+        <span class="material-symbols-outlined font-semibold" data-icon="favorite">favorite</span>
+      </button>
+      <button class="hover:text-primary transition-colors relative" type="button">
+        <span class="material-symbols-outlined font-semibold" data-icon="shopping_cart">shopping_cart</span>
+        <span class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-semibold">2</span>
+      </button>
+      <button class="hover:text-primary transition-colors" type="button">
+        <span class="material-symbols-outlined font-semibold" data-icon="person">person</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-section-gap-sm">
+        
+        <!-- Checkout Steps -->
+        <div class="mb-12 flex justify-center">
+            <nav aria-label="Progress">
+                <ol role="list" class="flex items-center">
+                    <!-- Completed Step: Address -->
+                    <li class="relative pr-8 sm:pr-20">
+                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div class="h-[1px] w-full bg-primary"></div>
+                        </div>
+                        <a href="#" class="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:bg-primary-container transition-colors">
+                            <span class="material-symbols-outlined text-on-primary text-sm" data-icon="check">check</span>
+                            <span class="sr-only">Address completed</span>
+                        </a>
+                        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-caps text-label-caps text-primary mt-2">Address</span>
+                    </li>
+
+                    <!-- Completed Step: Review-->
+                    <li class="relative pr-8 sm:pr-20">
+                        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                            <div class="h-[1px] w-full bg-primary"></div>
+                        </div>
+                        <a href="#" class="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary hover:bg-primary-container transition-colors">
+                            <span class="material-symbols-outlined text-on-primary text-sm" data-icon="check">check</span>
+                            <span class="sr-only">Review completed</span>
+                        </a>
+                        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-caps text-label-caps text-primary mt-2">Review</span>
+                    </li>
+
+                    <!-- Current Step: Payment -->
+                    <li class="relative">
+                        <a href="#" class="relative flex h-8 w-8 items-center justify-center rounded-full bg-background border-2 border-primary" aria-current="step">
+                            <span class="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden="true"></span>
+                            <span class="sr-only">Payment</span>
+                        </a>
+                        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 font-label-caps text-label-caps text-primary mt-2 font-bold">Payment</span>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+
+        <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface text-center mb-12">Secure Payment</h1>
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            
+            <!-- Left Column: Payment Methods -->
+            <div class="lg:col-span-7 space-y-8">
+                <h2 class="font-headline-md text-headline-md text-on-surface border-b border-outline-variant pb-4">Payment Method</h2>
+                
+                <form class="space-y-6">
+                    
+                    <!-- Credit/Debit Card Option -->
+                    <label class="block relative cursor-pointer group">
+                        <input type="radio" name="payment_method" value="card" class="peer sr-only radio-custom" checked="">
+                        <div class="p-6 rounded-lg card-border bg-surface transition-all duration-300">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-5 h-5 rounded-full border border-outline-variant flex items-center justify-center">
+                                        <div class="w-2.5 h-2.5 rounded-full radio-inner transform scale-0 transition-transform duration-200"></div>
+                                    </div>
+                                    <span class="font-button-text text-body-lg text-on-surface font-semibold">Credit or Debit Card</span>
+                                </div>
+                                <div class="flex gap-2 text-outline">
+                                    <span class="material-symbols-outlined" data-icon="credit_card">credit_card</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Expanded Card Details -->
+                            <div class="mt-6 space-y-4 peer-checked:block animate-[fadeIn_0.3s_ease-in-out]">
+                                <div>
+                                    <label for="card-number" class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Card Number</label>
+                                    <div class="relative">
+                                        <input type="text" id="card-number" class="w-full bg-surface-container-lowest input-border rounded-md px-4 py-3 font-body-base text-body-base text-on-surface placeholder:text-outline-variant focus:ring-1 focus:ring-primary focus:border-primary transition-colors" placeholder="0000 0000 0000 0000">
+                                        <span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline-variant" data-icon="lock">lock</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="expiry-date" class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Expiry Date</label>
+                                        <input type="text" id="expiry-date" class="w-full bg-surface-container-lowest input-border rounded-md px-4 py-3 font-body-base text-body-base text-on-surface placeholder:text-outline-variant focus:ring-1 focus:ring-primary focus:border-primary transition-colors" placeholder="MM/YY">
+                                    </div>
+                                    <div>
+                                        <label for="cvc" class="block font-label-caps text-label-caps text-on-surface-variant mb-2">CVC</label>
+                                        <div class="relative">
+                                            <input type="text" id="cvc" class="w-full bg-surface-container-lowest input-border rounded-md px-4 py-3 font-body-base text-body-base text-on-surface placeholder:text-outline-variant focus:ring-1 focus:ring-primary focus:border-primary transition-colors" placeholder="123">
+                                            <span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline-variant cursor-help" title="3 digits on back of card" data-icon="info">info</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="card-name" class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Name on Card</label>
+                                    <input type="text" id="card-name" class="w-full bg-surface-container-lowest input-border rounded-md px-4 py-3 font-body-base text-body-base text-on-surface placeholder:text-outline-variant focus:ring-1 focus:ring-primary focus:border-primary transition-colors" placeholder="As it appears on card">
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- UPI Option -->
+                    <label class="block relative cursor-pointer group">
+                        <input type="radio" name="payment_method" value="upi" class="peer sr-only radio-custom">
+                        <div class="p-6 rounded-lg card-border bg-surface transition-all duration-300">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-5 h-5 rounded-full border border-outline-variant flex items-center justify-center">
+                                        <div class="w-2.5 h-2.5 rounded-full radio-inner transform scale-0 transition-transform duration-200"></div>
+                                    </div>
+                                    <span class="font-button-text text-body-lg text-on-surface font-semibold">UPI (Google Pay, PhonePe, Paytm)</span>
+                                </div>
+                                <div class="flex gap-2 text-outline">
+                                    <span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Net Banking Option -->
+                    <label class="block relative cursor-pointer group">
+                        <input type="radio" name="payment_method" value="netbanking" class="peer sr-only radio-custom">
+                        <div class="p-6 rounded-lg card-border bg-surface transition-all duration-300">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-5 h-5 rounded-full border border-outline-variant flex items-center justify-center">
+                                        <div class="w-2.5 h-2.5 rounded-full radio-inner transform scale-0 transition-transform duration-200"></div>
+                                    </div>
+                                    <span class="font-button-text text-body-lg text-on-surface font-semibold">Net Banking</span>
+                                </div>
+                                <div class="flex gap-2 text-outline">
+                                    <span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+
+                </form>
+            </div>
+
+            <!-- Right Column: Order Summary (Sticky) -->
+            <div class="lg:col-span-5 relative">
+                <div class="sticky top-32 p-8 rounded-lg card-border bg-surface-container">
+                    <h2 class="font-headline-md text-headline-sm text-on-surface mb-6 pb-4 border-b border-outline-variant/50">Order Summary</h2>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between font-body-base text-body-base text-on-surface-variant">
+                            <span class="">Subtotal</span>
+                            <span class="">₹ 2,45,000</span>
+                        </div>
+                        <div class="flex justify-between font-body-base text-body-base text-on-surface-variant">
+                            <span class="">Shipping (Insured Courier)</span>
+                            <span class="">Free</span>
+                        </div>
+                        <div class="flex justify-between font-body-base text-body-base text-on-surface-variant">
+                            <span class="">GST (3%)</span>
+                            <span class="">₹ 7,350</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between font-headline-sm text-headline-sm text-on-surface border-t border-outline-variant/50 pt-4 mb-8">
+                        <span class="">Total</span>
+                        <span class="">₹ 2,52,350</span>
+                    </div>
+
+                    <a href="{{DATA:SCREEN:SCREEN_8}}" class="w-full py-4 bg-primary-container text-on-primary font-button-text text-button-text rounded-md hover:scale-[1.02] hover:brightness-95 transition-all duration-300 flex items-center justify-center gap-2"><span class="material-symbols-outlined text-sm">lock</span>Pay Now</a>
+
+                    <!-- Trust Markers -->
+                    <div class="mt-6 flex flex-col items-center gap-3 text-center opacity-80">
+                        <div class="flex items-center gap-2 font-label-caps text-label-caps text-on-surface-variant">
+                            <span class="material-symbols-outlined text-base" data-icon="verified_user">verified_user</span>
+                            <span class="">Secure 256-bit SSL Encryption</span>
+                        </div>
+                        <div class="flex items-center gap-2 font-label-caps text-label-caps text-on-surface-variant">
+                            <span class="material-symbols-outlined text-base" data-icon="workspace_premium">workspace_premium</span>
+                            <span class="">Trusted Jewellery Partner Since 1970</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Component from JSON -->
+    <footer class="bg-surface-container-low border-t border-outline-variant/50 py-12 md:py-section-gap-sm">
+  <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-12">
+      <!-- Brand Section -->
+      <div class="lg:col-span-4 space-y-6">
+        <div class="flex items-center gap-4">
+          <img alt="Sri Ram Jewellery Logo" class="w-12 h-12 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfFsWHV-1mLq_kdNL8FYBfxOGlFGAZiscwzkX5AJ-aGJfb9fhV0c2Q9-0gMEzS4T_LVkBPVQumcxfrtWdlFf7GQlXYSfock_Gu9ttr3tnATXz3vC8kkqKobc-IgnyXH4_7xubGpEa6xvSMPwKYIFnxKMC-9FUDvtEY4io_7QXwFl1-TDNJonAsib7sgGljGD83aC0uzYxKBMFPpq-6lOd-a4pY3HdQ4UO6_8u42oKq_LWmOMq23aymapoinmtg4I2dZgoYXB4uIp0">
+          <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-semibold">Sri Ram Jewellery</span>
+        </div>
+        <p class="text-body-base text-on-surface-variant max-w-sm">
+          Timeless Craftsmanship. Celebrating your milestones with the purest gold and finest diamonds since 1984.
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="lg:col-span-2 space-y-6">
+        <h4 class="font-label-caps text-label-caps text-primary">Quick Links</h4>
+        <ul class="space-y-4">
+          <li class=""><a href="{{DATA:SCREEN:SCREEN_10}}" class="text-body-base text-on-surface hover:text-primary transition-colors">Home</a></li>
+          <li class=""><a href="{{DATA:SCREEN:SCREEN_10}}" class="text-body-base text-on-surface hover:text-primary transition-colors">Collections</a></li>
+          <li class=""><a href="#" class="text-body-base text-on-surface hover:text-primary transition-colors">Store Locator</a></li>
+          <li class=""><a href="#" class="text-body-base text-on-surface hover:text-primary transition-colors">Gold Schemes</a></li>
+        </ul>
+      </div>
+
+      <!-- Policies -->
+      <div class="lg:col-span-2 space-y-6">
+        <h4 class="font-label-caps text-label-caps text-primary">Policies</h4>
+        <ul class="space-y-4">
+          <li class=""><a href="#" class="text-body-base text-on-surface hover:text-primary transition-colors">Privacy Policy</a></li>
+          <li class=""><a href="#" class="text-body-base text-on-surface hover:text-primary transition-colors">Terms of Service</a></li>
+          <li class=""><a href="#" class="text-body-base text-on-surface hover:text-primary transition-colors">Shipping Info</a></li>
+          <li class=""><a href="#" class="text-body-base text-on-surface hover:text-primary transition-colors">Returns &amp; Exchange</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div class="lg:col-span-4 space-y-6">
+        <h4 class="font-label-caps text-label-caps text-primary">Newsletter</h4>
+        <p class="text-body-base text-on-surface-variant">
+          Join our circle for early access to new collections and gold rate alerts.
+        </p>
+        <form class="flex gap-2">
+          <input type="email" placeholder="Email Address" class="flex-grow bg-surface-container-lowest border border-outline-variant rounded-md px-4 py-2 text-body-base focus:ring-1 focus:ring-primary focus:border-primary outline-none">
+          <button type="submit" class="bg-primary-container text-on-primary p-2 rounded-md hover:brightness-95 transition-all">
+            <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bottom Copyright -->
+    <div class="pt-8 border-t border-outline-variant/30 text-center">
+      <p class="font-label-caps text-[10px] tracking-widest text-outline">
+        © 2024 SRI RAM JEWELLERY. TIMELESS CRAFTSMANSHIP. ALL RIGHTS RESERVED.
+      </p>
+    </div>
+  </div>
+</footer>
+
+</body></html>

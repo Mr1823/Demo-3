@@ -1,8 +1,6 @@
 import React from "react";
-import "./DashboardNav.css";
-import { Link } from "react-router-dom";
-import useAuthContext from "../../../hooks/useAuthContext";
 import { NavLink } from "react-router-dom";
+import useAuthContext from "../../../hooks/useAuthContext";
 
 const DashboardNav = () => {
   const { logOut } = useAuthContext();
@@ -14,43 +12,73 @@ const DashboardNav = () => {
       })
       .catch((err) => console.error(err));
   };
+
   return (
-    <nav className="w-full flex flex-row md:flex-col dashboard-nav border-b pr-2 overflow-auto">
+    <nav className="flex flex-col gap-4 sticky top-32">
+      <span className="font-body text-[12px] font-semibold text-on-surface-variant mb-4 uppercase tracking-[0.15em]">
+        Account Dashboard
+      </span>
+      
       <NavLink
         to={"/dashboard/myDashboard"}
-        className={({ isActive, isPending }) =>
-          isPending ? "pending" : isActive ? "active" : ""
+        className={({ isActive }) =>
+          `relative py-2 transition-all text-sm font-body ${
+            isActive 
+              ? "text-primary font-semibold after:content-[''] after:absolute after:right-0 after:top-[20%] after:h-[60%] after:w-[2px] after:bg-primary" 
+              : "text-on-surface-variant hover:text-primary"
+          }`
         }
       >
-        Account Dashboard
+        Overview
       </NavLink>
+      
       <NavLink
         to={"/dashboard/myOrders"}
-        className={({ isActive, isPending }) =>
-          isPending ? "pending" : isActive ? "active" : ""
+        className={({ isActive }) =>
+          `relative py-2 transition-all text-sm font-body ${
+            isActive 
+              ? "text-primary font-semibold after:content-[''] after:absolute after:right-0 after:top-[20%] after:h-[60%] after:w-[2px] after:bg-primary" 
+              : "text-on-surface-variant hover:text-primary"
+          }`
         }
       >
         My Orders
       </NavLink>
+      
       <NavLink
         to={"/dashboard/myAddress"}
-        className={({ isActive, isPending }) =>
-          isPending ? "pending" : isActive ? "active" : ""
+        className={({ isActive }) =>
+          `relative py-2 transition-all text-sm font-body ${
+            isActive 
+              ? "text-primary font-semibold after:content-[''] after:absolute after:right-0 after:top-[20%] after:h-[60%] after:w-[2px] after:bg-primary" 
+              : "text-on-surface-variant hover:text-primary"
+          }`
         }
       >
-        Address Book
+        Shipping Addresses
       </NavLink>
 
       <NavLink
         to={"/dashboard/addReview"}
-        className={({ isActive, isPending }) =>
-          isPending ? "pending" : isActive ? "active" : ""
+        className={({ isActive }) =>
+          `relative py-2 transition-all text-sm font-body ${
+            isActive 
+              ? "text-primary font-semibold after:content-[''] after:absolute after:right-0 after:top-[20%] after:h-[60%] after:w-[2px] after:bg-primary" 
+              : "text-on-surface-variant hover:text-primary"
+          }`
         }
       >
         Add Review
       </NavLink>
 
-      <Link onClick={handleLogOut}>Log Out</Link>
+      <div className="mt-8 pt-8 border-t border-outline-variant/30">
+        <button 
+          onClick={handleLogOut}
+          className="flex items-center gap-3 text-error font-body text-sm font-semibold uppercase tracking-widest hover:text-error/80 transition-colors cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-[20px]">logout</span> Log Out
+        </button>
+      </div>
     </nav>
   );
 };

@@ -24,21 +24,20 @@ const Home = () => {
       <Hero />
       
       {/* Main Content Canvas */}
-      <main className="py-16 md:py-32 px-4 md:px-8 max-w-7xl mx-auto space-y-32">
+      <main className="py-section-gap-sm md:py-section-gap-lg px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto space-y-section-gap-lg">
         <Categories />
-        
         <Featured />
         
         {/* Testimonials */}
-        <section className="py-24 bg-surface-container-low/50 border-y border-primary/5 -mx-4 md:-mx-8 px-4 md:px-8">
+        <section className="py-section-gap-lg bg-surface-container-low/50 border-y border-primary/5 -mx-margin-mobile md:-mx-margin-desktop px-margin-mobile md:px-margin-desktop">
           <div className="max-w-4xl mx-auto text-center space-y-10">
             <span className="material-symbols-outlined text-5xl text-primary/40">format_quote</span>
-            <blockquote className="font-display text-2xl md:text-3xl lg:text-4xl text-primary italic leading-relaxed">
+            <blockquote className="font-display-lg text-headline-sm md:text-headline-md text-primary italic leading-relaxed">
               "The craftsmanship at Sri Ram Jewellery is unparalleled. Every piece feels like a work of art, a true heirloom that my family will cherish for generations. Their attention to detail and dedication to traditional techniques is truly remarkable."
             </blockquote>
             <div className="space-y-2">
-              <p className="font-body text-xs text-on-surface uppercase tracking-[0.4em] font-semibold">Anjali R.</p>
-              <p className="font-body text-sm text-on-surface-variant italic">Client since 2010</p>
+              <p className="font-label-caps text-xs text-on-surface uppercase tracking-[0.4em]">Anjali R.</p>
+              <p className="font-body-base text-sm text-on-surface-variant italic">Client since 2010</p>
             </div>
           </div>
         </section>

@@ -113,12 +113,12 @@ const Shop = () => {
   }, [location]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 md:px-8 py-12 md:py-16 flex flex-col gap-12 font-body">
+    <main className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-16 flex flex-col gap-12 font-body-base">
       <CustomHelmet title={"Shop"} />
 
       {/* Header Area: Breadcrumbs & Title */}
       <section className="flex flex-col items-center text-center gap-3">
-        <nav className="font-body text-[13px] text-on-surface-variant">
+        <nav className="font-body-base text-[13px] text-on-surface-variant">
           <Link className="hover:text-primary transition-colors" to="/">Home</Link>
           <span className="mx-2 text-outline-variant">/</span>
           <Link className="hover:text-primary transition-colors" to="/shop">Collections</Link>
@@ -126,7 +126,7 @@ const Shop = () => {
           <span className="text-primary font-medium">All Jewellery</span>
         </nav>
         <div className="relative inline-block mt-2">
-          <h1 className="font-display text-[48px] md:text-5xl lg:text-6xl text-primary">The Collection</h1>
+          <h1 className="font-display-lg text-[48px] md:text-display-lg text-primary">The Collection</h1>
           <div className="absolute -bottom-3 left-1/4 right-1/4 h-[1px] bg-secondary-fixed-dim/50"></div>
         </div>
       </section>
@@ -139,9 +139,9 @@ const Shop = () => {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="bg-transparent border-none text-on-surface font-body font-semibold uppercase tracking-widest text-xs focus:ring-0 cursor-pointer outline-none appearance-none pr-6"
+              className="bg-transparent border-none text-on-surface font-label-caps uppercase tracking-widest text-xs focus:ring-0 cursor-pointer outline-none appearance-none pr-6 hover:text-primary transition-colors"
             >
-              <option value="all">All Categories</option>
+              <option value="all">Category</option>
               {allFilteredCategories?.map((cat) => Object.keys(cat)[0] !== "All" && (
                 <option key={Object.keys(cat)[0]} value={Object.keys(cat)[0]}>
                   {Object.keys(cat)[0]}
@@ -156,9 +156,9 @@ const Shop = () => {
             <select
               value={carate}
               onChange={(e) => setCarate(e.target.value)}
-              className="bg-transparent border-none text-on-surface font-body font-semibold uppercase tracking-widest text-xs focus:ring-0 cursor-pointer outline-none appearance-none pr-6"
+              className="bg-transparent border-none text-on-surface font-label-caps uppercase tracking-widest text-xs focus:ring-0 cursor-pointer outline-none appearance-none pr-6 hover:text-primary transition-colors"
             >
-              <option value="all">Metal Purity</option>
+              <option value="all">Metal</option>
               {filterCarates?.map((car) => Object.keys(car)[0].toLowerCase() !== "all" && (
                 <option key={Object.keys(car)[0]} value={Object.keys(car)[0]}>
                   {Object.keys(car)[0]}K
@@ -173,7 +173,7 @@ const Shop = () => {
             <select
               value={size}
               onChange={(e) => setSize(e.target.value)}
-              className="bg-transparent border-none text-on-surface font-body font-semibold uppercase tracking-widest text-xs focus:ring-0 cursor-pointer outline-none appearance-none pr-6"
+              className="bg-transparent border-none text-on-surface font-label-caps uppercase tracking-widest text-xs focus:ring-0 cursor-pointer outline-none appearance-none pr-6 hover:text-primary transition-colors"
             >
               <option value="all">Size</option>
               {filterSizes?.map((sz) => Object.keys(sz)[0].toLowerCase() !== "all" && (
@@ -195,24 +195,24 @@ const Shop = () => {
               placeholder="Search..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="bg-transparent border-none p-0 focus:ring-0 text-sm w-full sm:w-32 lg:w-48 outline-none text-on-surface placeholder:text-outline-variant"
+              className="bg-transparent border-none p-0 focus:ring-0 text-sm w-full sm:w-32 lg:w-48 outline-none text-on-surface placeholder:text-outline-variant font-body-base"
             />
           </div>
 
           {/* Sort By */}
-          <div className="flex items-center gap-2 font-body text-on-surface-variant whitespace-nowrap shrink-0">
-            <span className="text-[11px] uppercase tracking-widest">Sort by:</span>
+          <div className="flex items-center gap-2 font-label-caps text-[11px] text-on-surface-variant whitespace-nowrap shrink-0">
+            <span className="uppercase tracking-widest">Sort by:</span>
             <div className="relative">
               <select
                 value={priceSortingOrder}
                 onChange={(e) => setPriceSortingOrder(e.target.value)}
-                className="bg-transparent border-none text-primary font-bold font-body uppercase tracking-widest text-xs focus:ring-0 cursor-pointer outline-none appearance-none pr-5 hover:text-primary-container transition-colors"
+                className="bg-transparent border-none text-primary font-bold font-label-caps uppercase tracking-widest text-xs focus:ring-0 cursor-pointer outline-none appearance-none pr-5 hover:text-primary-container transition-colors"
               >
                 <option value="all">Featured</option>
-                <option value="asc">Price: Low to High</option>
-                <option value="desc">Price: High to Low</option>
+                <option value="asc">Low to High</option>
+                <option value="desc">High to Low</option>
               </select>
-              <span className="material-symbols-outlined text-[14px] absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary">sort</span>
+              <span className="material-symbols-outlined text-sm absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary">sort</span>
             </div>
           </div>
         </div>

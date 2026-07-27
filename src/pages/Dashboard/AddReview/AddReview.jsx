@@ -5,7 +5,6 @@ import StarRatings from "react-star-ratings";
 import useAuthContext from "../../../hooks/useAuthContext";
 import useUserInfo from "../../../hooks/useUserInfo";
 import toast from "react-hot-toast";
-import { FaTrashAlt } from "react-icons/fa";
 import { HashLink } from "react-router-hash-link";
 import Swal from "sweetalert2";
 import { useQuery } from "react-query";
@@ -17,12 +16,14 @@ const AddReview = () => {
   const [axiosSecure] = useAxiosSecure();
   const [productReviewError, setProductReviewError] = useState("");
   const [starRating, setStarRating] = useState(0);
+  
   const handleRatingChange = (newRating) => {
     setStarRating(newRating);
+    if(newRating > 0) setProductReviewError("");
   };
+  
   const [userReview, setUserReview] = useState(null);
 
-  // FETCH ALL THE REVIEWS
   const { refetch } = useQuery({
     queryKey: ["reviews"],
     enabled: !isAuthLoading && user?.uid !== undefined,
@@ -33,13 +34,12 @@ const AddReview = () => {
     },
   });
 
-  // POST REVIEW TO DB
   const handleSubmitProductReview = (e) => {
     e.preventDefault();
     setProductReviewError("");
 
-    if (productReviewError) {
-      setProductReviewError("Rating is required!");
+    if (starRating === 0) {
+      setProductReviewError("Please select a star rating");
       return;
     }
 
@@ -60,23 +60,22 @@ const AddReview = () => {
       .then((res) => {
         if (res.data.insertedId) {
           refetch();
-          toast.success("Your feedback has successfully submitted ❣️");
+          toast.success("Feedback submitted successfully");
           form.reset();
         }
       })
       .catch((error) => console.error(error));
   };
 
-  // HANDLE DELETE USER REVIEW
   const handleDeleteReview = () => {
     Swal.fire({
-      title: "Are you sure?",
-      text: "Your review will be deleted.",
+      title: "Remove Review?",
+      text: "Your feedback will be permanently removed from our testimonials.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#000",
-      cancelButtonColor: "#ef4c53",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonColor: "#8B6447",
+      cancelButtonColor: "#c8a684",
+      confirmButtonText: "Yes, remove it",
     }).then((result) => {
       if (result.isConfirmed) {
         axiosSecure
@@ -84,12 +83,7 @@ const AddReview = () => {
           .then((res) => {
             if (res.data.deletedCount > 0) {
               refetch();
-              Swal.fire({
-                title: "Deleted!",
-                text: "Your review has been deleted.",
-                icon: "success",
-              });
-
+              toast.success("Review removed");
               setStarRating(0);
             }
           })
@@ -97,92 +91,122 @@ const AddReview = () => {
       }
     });
   };
+
   return (
-    <div className="mt-5 mb-10">
-      <div className="pb-6 border-b">
-        <h1 className="text-4xl font-semibold">Write a Review</h1>
-      </div>
+    <div className="w-full">
+      <header className="mb-12">
+        <span className="font-body text-[12px] font-semibold text-secondary tracking-[0.2em] uppercase block mb-2">
+          Your Account
+        </span>
+        <h1 className="font-display text-5xl md:text-6xl text-primary">Write a Review</h1>
+      </header>
 
       {!userReview ? (
-        <form
-          onSubmit={handleSubmitProductReview}
-          className="mt-8 px-2 space-y-8"
-        >
-          {productReviewError && (
-            <p className="text-error">{productReviewError}</p>
-          )}
-          <div className="space-y-2">
-            <h5 className="font-bold">What would you rate us?</h5>
-            <StarRatings
-              rating={starRating}
-              starRatedColor="#d4647c"
-              starHoverColor="#d4647c"
-              starEmptyColor="#c7c7c7"
-              changeRating={handleRatingChange}
-              numberOfStars={5}
-              starDimension="25px"
-              starSpacing="4px"
-              required="true"
-            />
-          </div>
+        <div className="bg-surface-container-low border border-outline-gold/30 p-8 max-w-2xl animate-fade-in">
+          <p className="font-body text-sm text-on-surface-variant mb-8 leading-relaxed">
+            Your experiences shape our legacy. We invite you to share your thoughts on our craftsmanship, service, and the timeless pieces you've acquired.
+          </p>
 
-          <div className="space-y-2">
-            <h5 className="font-bold">Your Feedback</h5>
-            <textarea
-              rows={5}
-              required
-              name="review"
-              placeholder="Write a detailed review about how has been your experience with us and what do you want us to change soon? ..."
-              className="outline-none border-2 border-black rounded-lg w-full p-3"
-              minLength={50}
-            />
-          </div>
+          <form onSubmit={handleSubmitProductReview} className="space-y-8">
+            <div className="space-y-4">
+              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] block">
+                Overall Experience *
+              </label>
+              <div className="flex items-center gap-4">
+                <StarRatings
+                  rating={starRating}
+                  starRatedColor="#c8a684"
+                  starHoverColor="#8B6447"
+                  starEmptyColor="#ebe1d2"
+                  changeRating={handleRatingChange}
+                  numberOfStars={5}
+                  starDimension="32px"
+                  starSpacing="4px"
+                  svgIconPath="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7c0.1,0.1,0.3,0.1,0.5,0.1v0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1"
+                  svgIconViewBox="0 0 24 24"
+                />
+                {productReviewError && <span className="text-error text-xs italic font-body">{productReviewError}</span>}
+              </div>
+            </div>
 
-          <div className="space-y-2">
-            <h5 className="font-bold">Location</h5>
-            <textarea
-              rows={1}
-              required
-              name="location"
-              placeholder="Where are you from?"
-              className="outline-none border-2 border-black rounded-lg w-full p-3"
-              minLength={10}
-            />
-          </div>
-          <button className="btn btn-outline btn-neutral btn-wide border-2">
-            Submit
-          </button>
-        </form>
+            <div className="input-focus-line">
+              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">
+                Your Feedback *
+              </label>
+              <textarea
+                rows={5}
+                required
+                name="review"
+                placeholder="Share your thoughts on our collection and service..."
+                className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body resize-none"
+                minLength={20}
+              />
+            </div>
+
+            <div className="input-focus-line">
+              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">
+                City / Location *
+              </label>
+              <input
+                type="text"
+                required
+                name="location"
+                placeholder="e.g. Jaipur, Rajasthan"
+                className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                minLength={3}
+              />
+            </div>
+
+            <div className="pt-6">
+              <button 
+                type="submit" 
+                className="px-10 py-4 bg-primary text-white font-body text-xs font-bold uppercase tracking-[0.2em] hover:bg-primary/90 transition-all duration-300 cursor-pointer"
+              >
+                Submit Feedback
+              </button>
+            </div>
+          </form>
+        </div>
       ) : (
-        <div className="overflow-x-auto my-10">
-          <table className="table table-zebra">
-            {/* head */}
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Rating</th>
-                <th>Review</th>
-                <th>Action</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{userReview?.name}</td>
-                <td>{userReview?.rating}</td>
-                <td className="w-[40%] text-wrap">{userReview?.review}</td>
-                <td>
-                  <FaTrashAlt
-                    className="hover:text-error cursor-pointer"
-                    onClick={handleDeleteReview}
-                  />
-                </td>
-                <td className="text-primary underline">
-                  <HashLink to="/#reviews">View Review</HashLink>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="bg-[#E6D2BA] border border-primary/10 p-8 max-w-2xl flex flex-col gap-6 relative overflow-hidden">
+          <div className="flex justify-between items-start border-b border-primary/10 pb-6">
+            <div>
+              <h3 className="font-display text-2xl text-on-surface mb-2">Your Review</h3>
+              <StarRatings
+                rating={userReview?.rating}
+                starDimension="20px"
+                starSpacing="2px"
+                starRatedColor="#c8a684"
+                starEmptyColor="#ebe1d2"
+                svgIconPath="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7c0.1,0.1,0.3,0.1,0.5,0.1v0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1"
+                svgIconViewBox="0 0 24 24"
+              />
+            </div>
+            <div className="flex gap-4">
+              <HashLink 
+                to="/#reviews"
+                className="text-primary font-body text-xs font-bold uppercase tracking-[0.15em] border-b border-primary pb-0.5 hover:text-primary/70 transition-colors"
+              >
+                View Publicly
+              </HashLink>
+              <button 
+                onClick={handleDeleteReview}
+                className="text-on-surface-variant hover:text-error transition-colors cursor-pointer"
+                title="Remove Review"
+              >
+                <span className="material-symbols-outlined text-[20px]">delete</span>
+              </button>
+            </div>
+          </div>
+          
+          <div>
+            <p className="font-body text-on-surface text-base italic leading-relaxed">
+              "{userReview?.review}"
+            </p>
+            <p className="font-body text-xs text-on-surface-variant uppercase tracking-widest mt-4">
+              — {userReview?.name} • {userReview?.location}
+            </p>
+          </div>
         </div>
       )}
     </div>

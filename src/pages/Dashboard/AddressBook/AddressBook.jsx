@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
-
 import useUserInfo from "../../../hooks/useUserInfo";
 import { useForm } from "react-hook-form";
 import { City, Country, State } from "country-state-city";
 import toast from "react-hot-toast";
-import { FaPencil } from "react-icons/fa6";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import axios from "axios";
 
 const AddressBook = () => {
-  // react hook form props
   const {
     register,
     handleSubmit,
@@ -17,52 +14,51 @@ const AddressBook = () => {
     formState: { errors },
     setError,
   } = useForm();
+  
   const [userFromDB, , refetch] = useUserInfo();
   const [shippingAdd, setShippingAdd] = useState(null);
   const [axiosSecure] = useAxiosSecure();
+  const [isFormVisible, setIsFormVisible] = useState(false);
 
-  // check if user's db contains shipping add
   useEffect(() => {
     if (userFromDB?.shippingAddress) {
       setShippingAdd(userFromDB.shippingAddress);
+      setIsFormVisible(false);
     } else {
       setShippingAdd(null);
     }
   }, [userFromDB]);
 
-  // country, state, city settings from country,state,city api
   const countryData = Country.getAllCountries();
   const [stateData, setStateData] = useState([]);
   const [cityData, setCityData] = useState([]);
 
   const [countryCode, setCountryCode] = useState(countryData[0]?.isoCode);
-  const [stateCode, setStateCode] = useState(
-    stateData.length && stateData[0]?.isoCode
-  );
+  const [stateCode, setStateCode] = useState("");
 
   useEffect(() => {
     setStateData(State.getStatesOfCountry(countryCode));
   }, [countryCode]);
 
   useEffect(() => {
-    stateData && setStateCode(stateData[0]?.isoCode);
+    if (stateData.length > 0) {
+      setStateCode(stateData[0]?.isoCode);
+    }
   }, [stateData]);
 
   useEffect(() => {
-    const cities = City.getCitiesOfState(countryCode, stateCode);
-
-    if (cities.length) {
-      setCityData(cities);
-    } else {
-      const allCities = City.getCitiesOfCountry(countryCode);
-      const citiesOfState = allCities.filter(
-        (city) => city.stateCode == stateCode
-      );
-      setCityData(citiesOfState);
+    if (countryCode && stateCode) {
+      const cities = City.getCitiesOfState(countryCode, stateCode);
+      if (cities.length) {
+        setCityData(cities);
+      } else {
+        const allCities = City.getCitiesOfCountry(countryCode);
+        const citiesOfState = allCities.filter((city) => city.stateCode === stateCode);
+        setCityData(citiesOfState);
+      }
     }
   }, [stateCode, countryCode]);
 
-  // fetch phone number length for countries
   const [phoneNumInfo, setPhoneNumInfo] = useState(0);
   useEffect(() => {
     axios
@@ -84,276 +80,274 @@ const AddressBook = () => {
       });
   }, [stateData, countryCode]);
 
-  // set default values for the form
   useEffect(() => {
-    let defaultValues = {};
-    defaultValues.firstName = userFromDB?.name?.split(" ")[0];
-    defaultValues.lastName =
-      userFromDB?.name?.split(" ")[userFromDB?.name?.split(" ")?.length - 1];
-
-    reset({ ...defaultValues });
+    if (userFromDB) {
+      let defaultValues = {};
+      defaultValues.firstName = userFromDB?.name?.split(" ")[0] || "";
+      defaultValues.lastName = userFromDB?.name?.split(" ")[userFromDB?.name?.split(" ")?.length - 1] || "";
+      reset({ ...defaultValues });
+    }
   }, [userFromDB, reset]);
 
-  // react hook form data
   const onSubmit = (data) => {
-    data.state = State.getStateByCodeAndCountry(data.state, data.country).name;
-    data.country = Country.getCountryByCode(data.country).name;
-    data.number = `+${phoneNumInfo?.phoneCode} ${data.mobileNumber}`;
+    const stateName = State.getStateByCodeAndCountry(data.state, data.country)?.name || data.state;
+    const countryName = Country.getCountryByCode(data.country)?.name || data.country;
+    
+    data.state = stateName;
+    data.country = countryName;
+    data.number = `+${phoneNumInfo?.phoneCode || ''} ${data.mobileNumber}`;
 
-    // post the data to user db
     axiosSecure
       .patch(`/users/shipping-address?email=${data.email}`, data)
       .then((res) => {
         if (res.data.modifiedCount > 0) {
-          toast.success("Shipping address added successfully");
+          toast.success("Shipping address saved");
           refetch();
+          setIsFormVisible(false);
         }
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      .catch((err) => console.error(err));
   };
 
-  // delete address
   const handleDeleteAddress = () => {
     axiosSecure
       .patch(`/users/delete-address?email=${userFromDB?.email}`)
       .then((res) => {
         if (res.data.modifiedCount > 0) {
           refetch();
+          toast.success("Address removed");
         }
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      .catch((err) => console.error(err));
   };
 
   return (
-    <div>
-      <div className="pb-4 border-b space-y-2">
-        <h1 className="text-4xl font-semibold">Address Book</h1>
-        <p>
-          The following addresses will be used on the checkout page by default.
-        </p>
+    <div className="w-full">
+      <header className="mb-12">
+        <span className="font-body text-[12px] font-semibold text-secondary tracking-[0.2em] uppercase block mb-2">
+          Your Account
+        </span>
+        <h1 className="font-display text-5xl md:text-6xl text-primary">Address Book</h1>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Add New Address Button (Only show if form is hidden and we have less than 2 addresses conceptually, but for now just toggle form) */}
+        {!isFormVisible && !shippingAdd && (
+          <button 
+            onClick={() => setIsFormVisible(true)}
+            className="border-2 border-dashed border-primary/40 h-64 flex flex-col items-center justify-center gap-4 group cursor-pointer hover:bg-primary/5 hover:border-primary border-solid transition-all duration-300"
+          >
+            <div className="w-12 h-12 rounded-full border border-primary flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+              <span className="material-symbols-outlined">add</span>
+            </div>
+            <span className="font-body text-sm font-semibold text-primary uppercase tracking-widest">
+              Add New Address
+            </span>
+          </button>
+        )}
+
+        {/* Existing Address Card */}
+        {!isFormVisible && shippingAdd && (
+          <div className="bg-[#E6D2BA] border border-primary/10 p-8 flex flex-col justify-between h-64 relative overflow-hidden group transition-all duration-400 hover:-translate-y-1 hover:border-primary/50 hover:shadow-heritage">
+            <div>
+              <div className="flex justify-between items-start mb-6">
+                <h3 className="font-display text-2xl text-on-surface">
+                  {shippingAdd.firstName} {shippingAdd.lastName}
+                </h3>
+                <span className="px-3 py-1 border border-primary/40 text-[10px] font-body font-bold text-primary uppercase tracking-widest bg-white/30">
+                  Default
+                </span>
+              </div>
+              <div className="font-body text-on-surface-variant text-sm space-y-1">
+                <p>{shippingAdd.streetAddress}</p>
+                <p>{shippingAdd.city}, {shippingAdd.state} - {shippingAdd.postalCode}</p>
+                <p>{shippingAdd.country}</p>
+              </div>
+            </div>
+            <div className="flex justify-between items-center mt-6">
+              <div className="flex items-center gap-2 text-on-surface-variant">
+                <span className="material-symbols-outlined text-sm">call</span>
+                <span className="font-body text-sm">{shippingAdd.number}</span>
+              </div>
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setIsFormVisible(true)}
+                  className="text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+                  aria-label="Edit"
+                >
+                  <span className="material-symbols-outlined text-[20px]">edit</span>
+                </button>
+                <button 
+                  onClick={handleDeleteAddress}
+                  className="text-on-surface-variant hover:text-error transition-colors cursor-pointer"
+                  aria-label="Delete"
+                >
+                  <span className="material-symbols-outlined text-[20px]">delete</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="mt-6 mb-10">
-        <h4 className="text-xl font-semibold mb-10 underline">
-          Add Shipping/Billing Address
-        </h4>
-        {shippingAdd ? (
-          <div className="border-2 border-gray-200 rounded-xl shadow p-4 w-fit">
-            <div className="text-lg space-y-3 ">
-              <p>
-                Name:{" "}
-                <span className="font-bold">
-                  {shippingAdd.firstName + " " + shippingAdd.lastName}
-                </span>
-              </p>
-              <p>
-                Email: <span className="font-bold">{shippingAdd.email}</span>
-              </p>
-              <p>
-                Phone: <span className="font-bold">{shippingAdd.number}</span>
-              </p>
-              <p>
-                City:{" "}
-                <span className="font-bold">
-                  {shippingAdd.streetAddress}, {shippingAdd.city}
-                </span>
-              </p>
-              <p>
-                State: <span className="font-bold">{shippingAdd.state}</span>
-              </p>
-              <p>
-                Country:{" "}
-                <span className="font-bold">{shippingAdd.country}</span>
-              </p>
-            </div>
-
-            <button
-              className="btn btn-outline btn-wide mt-8"
-              onClick={handleDeleteAddress}
-            >
-              <FaPencil /> Edit
-            </button>
+      {/* Address Form Container */}
+      {isFormVisible && (
+        <div className="mt-8 bg-surface-container-low border border-outline-gold/30 p-8 max-w-2xl animate-fade-in">
+          <div className="flex justify-between items-center mb-8 border-b border-primary/10 pb-4">
+            <h4 className="font-display text-2xl text-primary">
+              {shippingAdd ? 'Edit Address' : 'New Address'}
+            </h4>
+            {shippingAdd && (
+              <button 
+                onClick={() => setIsFormVisible(false)}
+                className="text-on-surface-variant hover:text-error transition-colors"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            )}
           </div>
-        ) : (
-          <div>
-            <form onSubmit={handleSubmit(onSubmit)} className="address-form">
-              <div>
-                <p>First Name *</p>
+          
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="input-focus-line">
+                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">First Name</label>
                 <input
                   type="text"
+                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                   {...register("firstName", { required: true })}
                 />
-                {errors.firstName && (
-                  <span className="text-red-400">First Name is required</span>
-                )}
+                {errors.firstName && <span className="text-error text-xs italic mt-1 block">Required</span>}
               </div>
 
-              <div>
-                <p>Last Name *</p>
+              <div className="input-focus-line">
+                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Last Name</label>
                 <input
                   type="text"
+                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                   {...register("lastName", { required: true })}
                 />
-                {errors.lastName && (
-                  <span className="text-red-400">Last Name is required</span>
-                )}
+                {errors.lastName && <span className="text-error text-xs italic mt-1 block">Required</span>}
               </div>
+            </div>
 
-              <div>
-                <p>Email *</p>
-                <input
-                  type="text"
-                  readOnly
-                  {...register("email", { required: true })}
-                  defaultValue={userFromDB?.email}
-                />
-              </div>
+            <div className="input-focus-line">
+              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Email</label>
+              <input
+                type="text"
+                readOnly
+                className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface opacity-70 cursor-not-allowed font-body"
+                {...register("email", { required: true })}
+                defaultValue={userFromDB?.email}
+              />
+            </div>
 
-              <div>
-                <p>Street Address *</p>
-                <input
-                  type="text"
-                  {...register("streetAddress", {
-                    required: true,
-                  })}
-                />
-                {errors.streetAddress && (
-                  <span className="text-red-400">
-                    Street Address is required
-                  </span>
-                )}
-              </div>
+            <div className="input-focus-line">
+              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Street Address</label>
+              <input
+                type="text"
+                className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                {...register("streetAddress", { required: true })}
+              />
+              {errors.streetAddress && <span className="text-error text-xs italic mt-1 block">Required</span>}
+            </div>
 
-              <div>
-                <p>Country *</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="input-focus-line">
+                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Country</label>
                 <select
-                  {...register("country", {
-                    required: true,
-                  })}
+                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
+                  {...register("country", { required: true })}
                   onChange={(e) => setCountryCode(e.target.value)}
                   defaultValue={countryCode}
                 >
                   {countryData?.map((country) => (
-                    <option key={country.isoCode} value={country.isoCode}>
-                      {country.name}
-                    </option>
+                    <option key={country.isoCode} value={country.isoCode}>{country.name}</option>
                   ))}
                 </select>
-                {errors.country && (
-                  <span className="text-red-400">Country is required</span>
-                )}
               </div>
 
-              <div>
-                <p>State/Province/Division *</p>
+              <div className="input-focus-line">
+                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">State / Province</label>
                 <select
-                  {...register("state", {
-                    required: true,
-                  })}
+                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
+                  {...register("state", { required: true })}
                   onChange={(e) => setStateCode(e.target.value)}
                   defaultValue={stateCode}
                 >
                   {stateData?.map((state) => (
-                    <option key={state.isoCode} value={state.isoCode}>
-                      {state.name}
-                    </option>
+                    <option key={state.isoCode} value={state.isoCode}>{state.name}</option>
                   ))}
                 </select>
-                {errors.state && (
-                  <span className="text-red-400">
-                    State/Province is required
-                  </span>
-                )}
               </div>
+            </div>
 
-              <div>
-                <p>City/Town/District *</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="input-focus-line">
+                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">City / Town</label>
                 {cityData?.length ? (
                   <select
-                    {...register("city", {
-                      required: true,
-                    })}
+                    className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
+                    {...register("city", { required: true })}
                     defaultValue={cityData[0].name}
                   >
                     {cityData.map((city) => (
-                      <option key={city.name} value={city.name}>
-                        {city.name}
-                      </option>
+                      <option key={city.name} value={city.name}>{city.name}</option>
                     ))}
                   </select>
                 ) : (
                   <input
                     type="text"
+                    className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                     {...register("city", { required: true })}
                   />
                 )}
-                {errors.state && (
-                  <span className="text-red-400">
-                    State/Province is required
-                  </span>
-                )}
               </div>
 
-              <div className="relative">
-                <p>Mobile Number *</p>
+              <div className="input-focus-line">
+                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Zip / Postal Code</label>
                 <input
-                  autoComplete="false"
-                  {...register("mobileNumber", {
-                    required: "Phone number is required",
-                  })}
+                  type="text"
+                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  {...register("postalCode", { required: true })}
+                />
+              </div>
+            </div>
+
+            <div className="input-focus-line relative">
+              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Mobile Number</label>
+              <div className="flex items-center gap-2">
+                <span className="text-on-surface bg-surface-variant px-3 py-2 border-b border-secondary">
+                  +{Country?.getCountryByCode(countryCode)?.phonecode || ''}
+                </span>
+                <input
                   type="number"
-                  className="pl-20"
+                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  {...register("mobileNumber", { required: "Required" })}
                   onInput={(e) => {
                     if (e.target.value.length > e.target.maxLength)
                       setError("mobileNumber", {
                         type: "maxLength",
-                        message: `Mobile number cannot be more than ${phoneNumInfo?.numberLength} digits`,
+                        message: `Max ${phoneNumInfo?.numberLength} digits`,
                       });
-                    e.target.value = e.target.value.slice(
-                      0,
-                      e.target.maxLength
-                    );
+                    e.target.value = e.target.value.slice(0, e.target.maxLength);
                   }}
-                  maxLength={phoneNumInfo?.numberLength}
+                  maxLength={phoneNumInfo?.numberLength || 15}
                 />
-                <span
-                  className={`country-code absolute left-2 text-[1.1rem] border px-3 rounded-lg border-black bottom-2 ${errors?.mobileNumber?.type === "maxLength" &&
-                    "bottom-14 md:bottom-8"
-                    }`}
-                >
-                  +{Country?.getCountryByCode(countryCode)?.phonecode}
-                </span>
-                {errors?.mobileNumber && (
-                  <span className="text-red-400">
-                    {errors.mobileNumber?.message}
-                  </span>
-                )}
               </div>
+              {errors?.mobileNumber && <span className="text-error text-xs italic mt-1 block">{errors.mobileNumber.message}</span>}
+            </div>
 
-              <div>
-                <p>Zip/Postal Code *</p>
-                <input
-                  type="number"
-                  {...register("postalCode", { required: true })}
-                />
-                {errors.postalCode && (
-                  <span className="text-red-400">
-                    Zip/Postal Code is required
-                  </span>
-                )}
-              </div>
-
-              <button type="submit" className="btn btn-outline btn-wide">
-                Add
+            <div className="pt-6">
+              <button 
+                type="submit" 
+                className="px-10 py-4 bg-primary text-white font-body text-xs font-bold uppercase tracking-[0.2em] hover:bg-primary/90 transition-all duration-300 cursor-pointer"
+              >
+                Save Address
               </button>
-            </form>
-          </div>
-        )}
-      </div>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

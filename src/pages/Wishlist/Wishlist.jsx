@@ -1,7 +1,6 @@
 import React from "react";
 import useWishlist from "../../hooks/useWishlist";
 import { Link } from "react-router-dom";
-import { RiCloseCircleLine } from "react-icons/ri";
 import useCart from "../../hooks/useCart";
 import Swal from "sweetalert2";
 import useProducts from "../../hooks/useProducts";
@@ -14,35 +13,26 @@ const Wishlist = () => {
   const [products] = useProducts();
   const [axiosSecure] = useAxiosSecure();
 
-  // Check if item exist in cart
   const handleExistInCart = (productId) => {
-    const foundProduct = cartData?.find((p) => p.productId == productId);
-    if (foundProduct) {
-      return true;
-    }
-    return false;
+    return cartData?.some((p) => p.productId == productId);
   };
 
-  // Handle Add to Cart
   const handleAddToCart = (productId) => {
-    // find the product
     const foundProduct = products?.find((p) => p._id === productId);
-
     if (foundProduct) {
       addToCart(foundProduct);
       cartRefetch();
     }
   };
 
-  // Handle Delete from Wishlist
   const handleDeleteFromWishlist = (wishlistId) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "This product will be removed from your wishlist",
+      text: "This piece will be removed from your wishlist.",
       icon: "question",
       showCancelButton: true,
-      confirmButtonColor: "#000",
-      cancelButtonColor: "#ef4c53",
+      confirmButtonColor: "#8B6447",
+      cancelButtonColor: "#c8a684",
       confirmButtonText: "Yes, remove it!",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -51,9 +41,10 @@ const Wishlist = () => {
           .then((res) => {
             if (res.data.deletedCount > 0) {
               Swal.fire({
-                title: "Successful",
-                text: "Product has been removed successfully.",
+                title: "Removed",
+                text: "The piece has been removed from your wishlist.",
                 icon: "success",
+                confirmButtonColor: "#8B6447"
               });
               refetch();
             }
@@ -63,116 +54,116 @@ const Wishlist = () => {
     });
   };
 
+  const getProductDetails = (productId) => {
+    return products?.find((p) => p._id === productId) || {};
+  };
+
   return (
-    <div className="container mb-36" style={{ fontFamily: "var(--poppins)" }}>
+    <main className="min-h-screen bg-[#F4EADB] font-body-base pt-12 text-on-surface">
       <CustomHelmet title="Wishlist" />
-      <div>
-        <div className="text-sm breadcrumbs">
-          <ul>
-            <li>
-              <Link to={"/"}>Home</Link>
-            </li>
-            <li>
-              <Link to="/wishlist">Wishlist</Link>
-            </li>
-          </ul>
+
+      <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap-lg min-h-[614px]">
+        {/* Header Group */}
+        <div className="text-center mb-16 space-y-2">
+          <span className="font-label-caps text-label-caps text-tertiary tracking-[0.2em]">YOUR FAVORITES</span>
+          <h1 className="font-display-lg text-display-lg text-primary">Wishlist</h1>
+          <div className="w-16 h-px bg-[#c8a684] mx-auto mt-6"></div>
         </div>
 
-        <h2
-          className="mt-1 font-bold text-4xl tracking-wider"
-          style={{ fontFamily: "var(--italiana)" }}
-        >
-          My Wishlist
-        </h2>
-      </div>
-
-      <div className="my-10 px-4">
         {isWishlistLoading ? (
-          <div>
-            {Array.from({ length: 6 }).map((_, idx) => (
-              <div
-                className="skeleton w-full h-16 my-4 rounded-none"
-                key={idx}
-              ></div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className="skeleton h-[400px] w-full rounded-sm"></div>
             ))}
           </div>
         ) : (
           <>
-            {wishlistData?.length ? (
-              <div className="overflow-x-auto">
-                <table className="table">
-                  <thead>
-                    <tr className="text-lg font-bold text-black border-b-2 border-b-black">
-                      <th>Product Name</th>
-                      <th>Price</th>
-                      <th>Stock Status</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {wishlistData?.map((product) => (
-                      <tr key={product._id} className="text-base">
-                        <td>
-                          <div className="flex items-center gap-3">
-                            <div className="avatar">
-                              <div className="mask mask-squircle w-12 h-12">
-                                <img
-                                  src={product.img}
-                                  alt={product.name}
-                                  className="bg-slate-200"
-                                />
-                              </div>
-                            </div>
-                            <div>
-                              <div className="font-bold">{product.name}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td>₹{product.discountPrice || product.price}</td>
-                        <td>{product.stock}</td>
-                        <th className="flex items-center gap-3">
-                          {handleExistInCart(product.productId) ? (
-                            <button
-                              className="btn btn-neutral btn-wide"
-                              disabled
-                            >
-                              Added to Cart
+            {wishlistData?.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {wishlistData.map((item) => {
+                  const productDetails = getProductDetails(item.productId);
+                  const isQuoteOnly = productDetails.isQuoteOnly;
+                  
+                  return (
+                    <div key={item._id} className="group relative flex flex-col h-full bg-surface-container border border-[#c8a684] overflow-hidden transition-all duration-500 hover:shadow-heritage">
+                      <div className="aspect-[4/5] overflow-hidden relative">
+                        <Link to={`/products/${item.productId}`}>
+                          <img
+                            src={item.img}
+                            alt={item.name}
+                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                          />
+                        </Link>
+                        <button
+                          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-primary transition-all duration-300 hover:bg-white hover:scale-110 cursor-pointer"
+                          onClick={() => handleDeleteFromWishlist(item._id)}
+                          aria-label="Remove from Wishlist"
+                        >
+                          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                        </button>
+                      </div>
+
+                      <div className="p-6 flex flex-col flex-grow text-center">
+                        <span className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-1">
+                          {productDetails.category || "Collection"}
+                        </span>
+                        <Link to={`/products/${item.productId}`}>
+                          <h3 className="font-headline-sm text-headline-sm text-primary mb-1 hover:text-secondary line-clamp-1">{item.name}</h3>
+                        </Link>
+                        
+                        <p className="font-body-base text-sm text-on-surface-variant mb-4">
+                          {productDetails.carate ? `${productDetails.carate}K Gold` : " "}
+                        </p>
+                        
+                        {!isQuoteOnly && (
+                          <p className="font-headline-sm text-primary mt-auto mb-6">
+                            ₹{item.discountPrice || item.price}
+                          </p>
+                        )}
+
+                        <div className="space-y-3 mt-auto">
+                          {isQuoteOnly ? (
+                            <Link to={`/products/${item.productId}`} className="block w-full">
+                              <button className="w-full py-3 border border-[#c8a684] text-primary font-button-text text-button-text hover:bg-surface-variant transition-colors cursor-pointer uppercase">
+                                GET QUOTE
+                              </button>
+                            </Link>
+                          ) : handleExistInCart(item.productId) ? (
+                            <button disabled className="w-full py-3 bg-surface-variant text-on-surface-variant font-button-text text-button-text opacity-80 cursor-not-allowed uppercase">
+                              ADDED TO BAG
                             </button>
                           ) : (
                             <button
-                              className="btn btn-neutral btn-wide"
-                              onClick={() => handleAddToCart(product.productId)}
+                              onClick={() => handleAddToCart(item.productId)}
+                              className="w-full py-3 bg-primary-container text-on-primary font-button-text text-button-text hover:scale-[1.02] transition-transform flex items-center justify-center uppercase cursor-pointer"
                             >
-                              Add to Cart
+                              ADD TO BAG
                             </button>
                           )}
-                          <div
-                            className="tooltip"
-                            data-tip="Remove from Wishlist"
-                            onClick={() =>
-                              handleDeleteFromWishlist(product._id)
-                            }
-                          >
-                            <RiCloseCircleLine className="text-2xl" />
-                          </div>
-                        </th>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
-              <h4 className="text-center font-bold">
-                No items found in your wishlist.{" "}
-                <Link to="/shop" className="underline text-blue-600">
-                  Browse products
+              <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
+                <div className="mb-8 opacity-40">
+                  <span className="material-symbols-outlined text-[120px] text-primary" style={{ fontVariationSettings: "'wght' 100" }}>heart_broken</span>
+                </div>
+                <span className="font-label-caps text-label-caps text-tertiary tracking-[0.1em] mb-2">Your wishlist is empty</span>
+                <p className="font-body-lg text-on-surface-variant max-w-md mb-10">Discover our meticulously curated collections and find pieces that resonate with your unique story.</p>
+                <Link to="/shop">
+                  <button className="px-12 py-4 border border-[#c8a684] text-primary font-button-text text-button-text hover:bg-primary-container hover:text-on-primary transition-all duration-500 hover:scale-105 cursor-pointer uppercase">
+                    BROWSE COLLECTION
+                  </button>
                 </Link>
-              </h4>
+              </div>
             )}
           </>
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
