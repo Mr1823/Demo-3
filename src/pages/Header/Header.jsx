@@ -52,22 +52,22 @@ const Header = () => {
   return (
     <>
       <header
-        className={`fixed z-50 w-full transition-all duration-500 ease-in-out border-b border-primary/10 backdrop-blur-md top-0 bg-surface/95 ${scrolled ? 'shadow-sm py-3' : 'py-4'}`}
+        className={`fixed z-50 w-full transition-all duration-500 ease-in-out border-b border-primary/5 top-0 ${scrolled ? 'bg-surface shadow-sm py-2' : 'bg-surface/90 backdrop-blur-md py-4'}`}
         id="main-nav"
       >
         <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto gap-4">
+          
           {/* Logo & Brand (Left) */}
           <div className="flex-shrink-0">
-            <Link className="flex items-center gap-3" to="/">
-              <img
-                alt="SRJ Heritage Logo"
-                className="h-20 w-auto object-contain cursor-pointer"
-                src="/images/logo.png"
+            <Link className="flex items-center gap-4 group" to="/">
+              <img 
+                alt="Sri Ram Jewellery Logo" 
+                className="h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105" 
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnkKiBYrjO5ja_yOK74ECm5mdzcfxXWJFezzcd6geLOcrRGlRUhiETPqKr3Zn23LkiSeCA-2yk2yZaZTExvLRljEPg8jgwT3M7OXFjr6FiN4jdTz7JOoLaGPpyrvz-XwlSXUBgBxuAPJBocfWIt-FNsBrSwcnsluG1KWLQq0yV48ay72CCsvOdBVp_E-WSzhmxhaMrUZ77yQ0VaQ1Q-Qt9JsuKN2h92bYepfcKNheJ0kLbbJ_6dnS5lHMnVY0f3wRUW6tuOZIJ4mY"
               />
-              <div className="flex flex-col">
-                <span className="font-display-lg text-[22px] leading-tight text-primary font-semibold">Sri Ram</span>
-                <span className="font-display-lg text-[18px] leading-tight text-primary/80">Jewellery</span>
-              </div>
+              <span className="font-display-lg text-body-lg md:text-headline-sm text-primary tracking-tight">
+                Sri Ram Jewellery
+              </span>
             </Link>
           </div>
 
@@ -78,9 +78,9 @@ const Header = () => {
                 key={link.label}
                 className={`
                   ${isActive(link.path) && link.label !== 'Categories'
-                    ? 'text-primary font-semibold border-b-2 border-primary/60 pb-1'
-                    : 'text-on-surface-variant hover:text-primary font-medium'
-                  } font-body-base transition-all text-sm uppercase tracking-wide
+                    ? 'text-on-surface border-b-2 border-primary pb-1'
+                    : 'text-on-surface-variant hover:text-primary transition-colors'
+                  } font-button-text text-button-text uppercase tracking-[0.2em]
                 `}
                 to={link.path}
               >
@@ -91,97 +91,135 @@ const Header = () => {
 
           {/* Search & Icons (Right) */}
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex relative group">
-              <div className="w-64 flex items-center bg-surface-container border border-primary/20 rounded-full px-5 py-2 gap-3 focus-within:ring-1 focus-within:ring-primary/40 transition-all">
-                <span className="material-symbols-outlined text-primary text-[20px]">search</span>
-                <input
-                  className="bg-transparent border-none focus:ring-0 p-0 w-full text-body-base text-on-surface text-sm placeholder:text-on-surface-variant/50"
-                  placeholder="Search jewelry..."
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && searchQuery.trim()) {
-                      window.location.href = `/shop?search=${encodeURIComponent(searchQuery.trim())}`;
-                    }
-                  }}
-                />
+            <div className="flex items-center gap-8">
+              <div className="hidden md:block relative group">
+                <div className="w-64 flex items-center bg-surface-container-low border border-primary/10 rounded-full px-5 py-2 gap-3">
+                  <span className="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+                  <input 
+                    className="bg-transparent border-none focus:ring-0 p-0 w-full text-body-base text-on-surface text-sm placeholder:text-on-surface-variant/40 outline-none" 
+                    placeholder="Search jewelry..." 
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link aria-label="Favorite" className="text-on-surface-variant hover:text-primary transition-colors" to="/wishlist">
-                <span className="material-symbols-outlined font-light">favorite</span>
-              </Link>
-              <button aria-label="Shopping Bag" className="text-on-surface-variant hover:text-primary transition-colors relative cursor-pointer" onClick={() => setShowCartDrawer(true)}>
-                <span className="material-symbols-outlined font-light">shopping_bag</span>
-                {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                    {cartCount > 9 ? '9+' : cartCount}
-                  </span>
-                )}
-              </button>
-              <Link aria-label="Profile" className="text-on-surface-variant hover:text-primary transition-colors" to={!isAuthLoading && user ? '/dashboard/myDashboard' : '/login'}>
-                <span className="material-symbols-outlined font-light" style={!isAuthLoading && user ? { fontVariationSettings: "'FILL' 1" } : {}}>person</span>
-              </Link>
               
-              {/* Mobile Menu Button */}
-              <button
-                aria-label="Menu"
-                className="lg:hidden text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                <span className="material-symbols-outlined text-[28px]">
-                  {mobileMenuOpen ? 'close' : 'menu'}
-                </span>
-              </button>
+              <div className="flex items-center gap-6">
+                <Link className="text-on-surface hover:text-primary transition-colors" to="/wishlist">
+                  <span className="material-symbols-outlined font-light">favorite</span>
+                </Link>
+                
+                <button 
+                  className="text-on-surface hover:text-primary transition-colors relative" 
+                  onClick={() => setShowCartDrawer(true)}
+                >
+                  <span className="material-symbols-outlined font-light">shopping_bag</span>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+
+                <Link className="text-on-surface hover:text-primary transition-colors" to={user ? "/dashboard" : "/login"}>
+                  <span className="material-symbols-outlined font-light">person</span>
+                </Link>
+
+                {/* Mobile menu toggle */}
+                <button 
+                  className="lg:hidden text-on-surface hover:text-primary transition-colors"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
+                  <span className="material-symbols-outlined">{mobileMenuOpen ? 'close' : 'menu'}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        <div
-          className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-            mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}
-        >
-          <nav className="flex flex-col gap-1 px-5 pb-6 pt-4 border-t border-outline-gold/20 mt-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                className={`
-                  ${isActive(link.path) && link.label !== 'Categories'
-                    ? 'text-primary font-semibold bg-surface-container-low'
-                    : 'text-on-surface-variant hover:text-primary hover:bg-surface-container-low'
-                  } font-body text-sm uppercase tracking-wide py-3 px-4 rounded transition-all
-                `}
-                to={link.path}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            {/* Mobile Search */}
-            <div className="mt-4 flex items-center bg-surface-container border border-primary/20 rounded-full px-5 py-2.5 gap-3">
-              <span className="material-symbols-outlined text-primary text-[20px]">search</span>
-              <input
-                className="bg-transparent border-none focus:ring-0 p-0 w-full font-body text-on-surface text-sm placeholder:text-on-surface-variant/50"
-                placeholder="Search jewelry..."
-                type="text"
-              />
+        {/* Mobile Navigation Dropdown */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 w-full bg-surface border-b border-primary/10 shadow-lg">
+            <div className="flex flex-col px-margin-mobile py-4 space-y-4">
+              <div className="flex items-center bg-surface-container-low border border-primary/10 rounded-full px-5 py-2 gap-3 mb-2">
+                <span className="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+                <input 
+                  className="bg-transparent border-none focus:ring-0 p-0 w-full text-body-base text-on-surface text-sm placeholder:text-on-surface-variant/40 outline-none" 
+                  placeholder="Search jewelry..." 
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              {navLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  className={`
+                    ${isActive(link.path) && link.label !== 'Categories'
+                      ? 'text-primary'
+                      : 'text-on-surface-variant'
+                    } font-button-text text-button-text uppercase tracking-[0.2em] py-2
+                  `}
+                  to={link.path}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
-          </nav>
-        </div>
+          </div>
+        )}
       </header>
 
-      {/* Cart Drawer */}
-      <RightSideDrawer
-        showRightDrawer={showCartDrawer}
-        setShowRightDrawer={setShowCartDrawer}
-        cartData={cartData}
-        removeFromCart={handleRemoveFromCart}
-        cartSubtotal={cartSubtotal}
-      />
+      {/* Cart Right Side Drawer */}
+      <RightSideDrawer 
+        isOpen={showCartDrawer} 
+        onClose={() => setShowCartDrawer(false)}
+        title="Your Cart"
+      >
+        <div className="flex flex-col h-full bg-surface">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {cartData?.length > 0 ? (
+              cartData.map(item => (
+                <div key={item._id} className="flex gap-4 border-b border-outline-variant/30 pb-4">
+                  <img src={item.productImage || item.img} alt={item.productName} className="w-20 h-20 object-cover rounded-sm" />
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div>
+                      <h4 className="font-display-lg text-sm text-on-surface line-clamp-1">{item.productName}</h4>
+                      <p className="font-body-base text-xs text-on-surface-variant">Qty: {item.quantity}</p>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="font-button-text text-sm text-primary font-bold">₹{item.price?.toLocaleString()}</p>
+                      <button onClick={() => handleRemoveFromCart(item._id)} className="text-error hover:text-error/80">
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-10 flex flex-col items-center">
+                <span className="material-symbols-outlined text-4xl text-outline-variant mb-2">shopping_bag</span>
+                <p className="font-body-base text-on-surface-variant">Your cart is empty</p>
+              </div>
+            )}
+          </div>
+          
+          <div className="p-4 border-t border-outline-variant/30 bg-surface-container-low">
+            <div className="flex justify-between items-center mb-4 font-display-lg">
+              <span className="text-on-surface">Subtotal</span>
+              <span className="text-primary font-bold">₹{cartSubtotal?.toLocaleString() || 0}</span>
+            </div>
+            <Link 
+              to="/checkout" 
+              onClick={() => setShowCartDrawer(false)}
+              className="w-full block text-center bg-primary text-white py-4 font-button-text tracking-widest hover:bg-primary-container transition-colors rounded-sm uppercase text-sm"
+            >
+              Checkout
+            </Link>
+          </div>
+        </div>
+      </RightSideDrawer>
     </>
   );
 };

@@ -18,18 +18,18 @@ const Categories = () => {
       {isCategoriesLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
           {[1, 2, 3].map(i => (
-             <div key={i} className="animate-pulse bg-surface-container h-[450px] md:h-[550px] rounded-sm"></div>
+             <div key={i} className="animate-pulse bg-surface-container h-[450px] md:h-[550px] rounded-lg"></div>
           ))}
         </div>
       ) : categories.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
           {categories.map((cat, idx) => (
-            <Link key={cat._id || idx} className="group relative h-[450px] md:h-[550px] overflow-hidden block rounded-sm shadow-sm" to={`/shop?category=${cat.categoryName.toLowerCase()}`}>
+            <Link key={cat._id || idx} className="group relative h-[450px] md:h-[550px] overflow-hidden block rounded-lg shadow-sm" to={`/shop?category=${cat.categoryName.toLowerCase()}`}>
               <img alt={cat.categoryName} className="w-full h-full object-cover absolute inset-0 z-0 transition-transform duration-1000 group-hover:scale-110" src={cat.image || cat.categoryPic || fallbackImg} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10"></div>
               <div className="absolute bottom-10 left-10 z-20 flex flex-col gap-2">
                 <span className="font-label-caps text-[10px] text-surface-container-low uppercase tracking-[0.25em]">
-                  {cat.productCount > 0 ? `${cat.productCount} Items` : "Collection"}
+                  Collection
                 </span>
                 <h3 className="font-display-lg text-headline-md text-white">{cat.categoryName}</h3>
               </div>

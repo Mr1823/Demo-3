@@ -5,7 +5,6 @@ import useCart from "../../hooks/useCart";
 import useAuthContext from "../../hooks/useAuthContext";
 import useWishlist from "../../hooks/useWishlist";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
-import ProductCard from "../../components/ProductCard/ProductCard";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const DynamicProduct = () => {
@@ -79,236 +78,242 @@ const DynamicProduct = () => {
 
   if (!dynamicProduct) {
     return (
-      <div className="w-full flex justify-center items-center py-40 bg-background">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="w-full flex justify-center items-center py-40 bg-surface">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
   }
 
-  // Price calculations are now provided directly by the backend via priceBreakdown
   const finalPrice = dynamicProduct.discountPrice || dynamicProduct.price;
   const breakdown = dynamicProduct.priceBreakdown;
+  const mainImage = dynamicProduct.images?.[0] || dynamicProduct.img;
 
   return (
-    <main className="pt-24 md:pt-32 pb-24 md:pb-32 max-w-7xl mx-auto px-4 md:px-8 font-body">
-      <CustomHelmet title={"Product Details"} />
+    <div className="font-body-base bg-background text-on-surface min-h-screen">
+      <CustomHelmet title={dynamicProduct.name || "Product Details"} />
       
-      {/* Breadcrumb */}
-      <nav className="mb-12">
-        <ol className="flex items-center gap-2 font-body text-xs text-on-surface-variant uppercase tracking-widest font-semibold">
-          <li><Link className="hover:text-primary transition-colors" to="/">Home</Link></li>
-          <li className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-sm">chevron_right</span> 
-            <Link className="hover:text-primary transition-colors" to="/shop">Jewellery</Link>
-          </li>
-          <li className="flex items-center gap-2 font-bold text-primary">
-            <span className="material-symbols-outlined text-sm">chevron_right</span> 
-            <span className="line-clamp-1">{dynamicProduct.name}</span>
-          </li>
-        </ol>
-      </nav>
+      <main className="pt-32 pb-section-gap-lg max-w-container-max mx-auto px-margin-desktop">
+        {/* Breadcrumb */}
+        <nav className="mb-12">
+          <ol className="flex items-center gap-2 text-label-caps font-label-caps text-on-surface-variant uppercase">
+            <li><Link className="hover:text-primary transition-colors" to="/">Home</Link></li>
+            <li className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-sm">chevron_right</span> 
+              <Link className="hover:text-primary transition-colors" to="/shop">Shop</Link>
+            </li>
+            <li className="flex items-center gap-2 font-bold text-primary">
+              <span className="material-symbols-outlined text-sm">chevron_right</span> 
+              {dynamicProduct.category || 'Jewellery'}
+            </li>
+          </ol>
+        </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
-        {/* Left Column: Imagery */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
-          <div className="bg-surface-container overflow-hidden border border-outline-variant/30 aspect-square group relative">
-            <img 
-              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
-              src={dynamicProduct.img} 
-              alt={dynamicProduct.name}
-            />
-            <button className="absolute top-4 right-4 bg-white/80 p-2 rounded-full backdrop-blur-sm hover:bg-white transition-colors cursor-pointer">
-              <span className="material-symbols-outlined text-primary">zoom_in</span>
-            </button>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          {/* Left Column: Imagery */}
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <div className="bg-surface-container overflow-hidden border border-[#D4AF37]/30 aspect-square group relative rounded-sm">
+              <img 
+                alt={dynamicProduct.name} 
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                src={mainImage || "https://placehold.co/800x800"} 
+              />
+              <button 
+                onClick={() => document.getElementById('imageModal').showModal()}
+                className="absolute top-4 right-4 bg-white/80 p-2 rounded-full backdrop-blur-sm hover:bg-white transition-colors"
+              >
+                <span className="material-symbols-outlined text-primary">zoom_in</span>
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-6">
+              {[1, 2, 3].map((num, idx) => (
+                <div key={idx} className="bg-surface-container border border-[#D4AF37]/30 aspect-square overflow-hidden cursor-pointer group rounded-sm">
+                  <img 
+                    alt={`${dynamicProduct.name} detail ${num}`} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    src={dynamicProduct.images?.[num] || mainImage || "https://placehold.co/400x400"} 
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="grid grid-cols-3 gap-6">
-            <div className="bg-surface-container border border-outline-variant/30 aspect-square overflow-hidden cursor-pointer group">
-              <img className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" src={dynamicProduct.img} alt="Thumbnail 1" />
-            </div>
-            <div className="bg-surface-container border border-outline-variant/30 aspect-square overflow-hidden cursor-pointer group">
-              <img className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-60" src={dynamicProduct.img} alt="Thumbnail 2" />
-            </div>
-            <div className="bg-surface-container border border-outline-variant/30 aspect-square overflow-hidden cursor-pointer group">
-              <img className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-60" src={dynamicProduct.img} alt="Thumbnail 3" />
-            </div>
-          </div>
-        </div>
 
-        {/* Right Column: Product Info */}
-        <div className="lg:col-span-5">
-          <div className="lg:sticky lg:top-40">
-            <div className="flex justify-between items-start">
-               <p className="font-body text-xs text-primary tracking-widest mb-4 uppercase font-bold">
-                 {dynamicProduct.category}
-               </p>
-               <button 
-                  className="text-on-surface-variant hover:text-[#93000a] transition-colors p-2"
-                  onClick={() => handleAddToCartWishlist("wishlist")}
-                  disabled={presentInWishlist}
-                  title="Add to Wishlist"
-                >
-                  <span className="material-symbols-outlined" style={{ fontVariationSettings: presentInWishlist ? "'FILL' 1" : "'FILL' 0", color: presentInWishlist ? "#93000a" : "inherit" }}>
-                    favorite
-                  </span>
-                </button>
-            </div>
-            <h1 className="font-display text-4xl text-on-surface mb-8 leading-tight">
-              {dynamicProduct.name}
-            </h1>
-
-            {/* Price Table or Get Quote UI */}
-            {dynamicProduct.isQuoteOnly ? (
-              <div className="bg-surface-container-lowest p-6 md:p-8 border border-outline-variant/30 mb-8 text-center flex flex-col items-center">
-                <span className="material-symbols-outlined text-primary text-4xl mb-4">diamond</span>
-                <h3 className="font-display text-2xl text-on-surface mb-2">Price on Request</h3>
-                <p className="font-body text-sm text-on-surface-variant mb-6">
-                  This is a bespoke heritage piece. Please request a quote to speak with our artisans regarding pricing and customization.
-                </p>
-                <button 
-                  onClick={() => setIsQuoteModalOpen(true)}
-                  className="w-full bg-primary-container text-white py-5 font-body text-sm font-bold tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-sm">request_quote</span>
-                  GET QUOTE
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="bg-surface-container-lowest p-6 md:p-8 border border-outline-variant/30 mb-8">
-                  <h3 className="font-body text-xs text-primary font-bold mb-6 tracking-widest border-b border-outline-variant/20 pb-2 uppercase">PRICE BREAKDOWN</h3>
-                  <div className="space-y-4">
-                    {breakdown ? (
-                      <>
-                        <div className="flex justify-between items-center">
-                          <span className="text-on-surface-variant font-body">{dynamicProduct.metalType === 'silver' ? 'Silver' : '22k Gold'} Value</span>
-                          <span className="font-semibold">₹ {breakdown.metalValue.toLocaleString('en-IN')}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-on-surface-variant font-body">Wastage ({dynamicProduct.wastagePercent}%)</span>
-                          <span className="font-semibold">₹ {breakdown.wastageValue.toLocaleString('en-IN')}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-on-surface-variant font-body">GST ({dynamicProduct.gstPercent}%)</span>
-                          <span className="font-semibold">₹ {breakdown.gst.toLocaleString('en-IN')}</span>
-                        </div>
-                      </>
-                    ) : (
+          {/* Right Column: Product Info */}
+          <div className="lg:col-span-5">
+            <div className="sticky top-40">
+              <p className="font-label-caps text-label-caps text-primary tracking-widest mb-4 uppercase">
+                {dynamicProduct.category || 'Jewellery'}
+              </p>
+              <h1 className="font-display-lg text-headline-md text-on-surface mb-8 leading-tight">
+                {dynamicProduct.name}
+              </h1>
+              
+              {/* Price Table */}
+              <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8 rounded-sm">
+                <h3 className="font-button-text text-button-text text-primary mb-6 tracking-wider border-b border-outline-variant/20 pb-2">PRICE BREAKDOWN</h3>
+                <div className="space-y-4">
+                  {breakdown ? (
+                    <>
                       <div className="flex justify-between items-center">
-                        <span className="text-on-surface-variant font-body">Base Price</span>
-                        <span className="font-semibold">₹ {finalPrice.toLocaleString('en-IN')}</span>
+                        <span className="text-on-surface-variant font-body-base">Base Material</span>
+                        <span className="font-semibold">₹ {breakdown.materialCost?.toLocaleString("en-IN") || 0}</span>
                       </div>
-                    )}
-                    <div className="pt-6 mt-6 border-t border-primary/20 flex justify-between items-center">
-                      <span className="font-display text-2xl text-primary uppercase">Net Payable</span>
-                      <span className="font-display text-2xl text-primary">₹ {finalPrice.toLocaleString('en-IN')}</span>
+                      <div className="flex justify-between items-center">
+                        <span className="text-on-surface-variant font-body-base">Making Charges</span>
+                        <span className="font-semibold">₹ {breakdown.makingCharges?.toLocaleString("en-IN") || 0}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-on-surface-variant font-body-base">GST (3%)</span>
+                        <span className="font-semibold">₹ {breakdown.gst?.toLocaleString("en-IN") || 0}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between items-center">
+                      <span className="text-on-surface-variant font-body-base">Base Price</span>
+                      <span className="font-semibold">₹ {finalPrice?.toLocaleString("en-IN") || 0}</span>
                     </div>
+                  )}
+                  <div className="pt-6 mt-6 border-t border-primary/20 flex justify-between items-center">
+                    <span className="font-display-lg text-headline-sm text-primary uppercase">Net Payable</span>
+                    <span className="font-display-lg text-headline-sm text-primary">₹ {finalPrice?.toLocaleString("en-IN") || 0}</span>
                   </div>
                 </div>
+              </div>
 
-                {/* Actions */}
-                <div className="flex flex-col gap-4 mb-12">
-                  <button 
-                    onClick={() => handleAddToCartWishlist("cart")}
-                    disabled={presentInCart || dynamicProduct.stock === 0}
-                    className="w-full bg-primary-container text-white py-5 font-body text-sm font-bold tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:brightness-100 uppercase cursor-pointer"
-                  >
-                    {presentInCart ? (
-                      <><span className="material-symbols-outlined text-sm">check</span> ADDED TO BAG</>
-                    ) : dynamicProduct.stock === 0 ? (
-                      <><span className="material-symbols-outlined text-sm">close</span> OUT OF STOCK</>
-                    ) : (
-                      <><span className="material-symbols-outlined text-sm">shopping_bag</span> ADD TO BAG</>
-                    )}
-                  </button>
-                  <button className="w-full bg-transparent border border-outline-variant text-primary py-5 font-body text-sm font-bold tracking-widest hover:bg-primary-container active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase cursor-pointer">
-                    <span className="material-symbols-outlined text-sm">mail</span>
-                    ENQUIRE NOW
-                  </button>
-                </div>
-              </>
-            )}
+              {/* Actions */}
+              <div className="flex flex-col gap-4 mb-12">
+                <button 
+                  onClick={() => handleAddToCartWishlist("cart")}
+                  className="w-full bg-primary-container text-white py-5 font-button-text text-button-text tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"
+                >
+                  <span className="material-symbols-outlined text-sm">shopping_bag</span>
+                  {presentInCart ? "ALREADY IN BAG" : "ADD TO BAG"}
+                </button>
+                <button 
+                  onClick={() => setIsQuoteModalOpen(true)}
+                  className="w-full bg-transparent border border-[#c8a684] text-primary py-5 font-button-text text-button-text tracking-widest hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"
+                >
+                  <span className="material-symbols-outlined text-sm">mail</span>
+                  ENQUIRE NOW
+                </button>
+              </div>
 
-            {/* Accordion Details */}
-            <div className="space-y-0">
-              <details className="group border-b border-outline-variant/30 py-4" open>
-                <summary className="flex justify-between items-center cursor-pointer list-none font-body text-sm font-bold text-on-surface uppercase tracking-widest">
-                  CRAFTSMANSHIP DETAILS
-                  <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
-                </summary>
-                <div className="pt-4 pb-2 text-on-surface-variant text-body leading-relaxed">
-                  {dynamicProduct.description || "Each link is individually forged by master artisans from the temple towns of South India. Ensures a finish that evolves with time."}
-                </div>
-              </details>
-              
-              <details className="group border-b border-outline-variant/30 py-4">
-                <summary className="flex justify-between items-center cursor-pointer list-none font-body text-sm font-bold text-on-surface uppercase tracking-widest">
-                  SHIPPING & RETURNS
-                  <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
-                </summary>
-                <div className="pt-4 pb-2 text-on-surface-variant text-body">
-                  Complimentary fully insured shipping within India. Returns accepted within 7 days in original, unworn condition with all authenticity certificates.
-                </div>
-              </details>
-              
-              <details className="group border-b border-outline-variant/30 py-4">
-                <summary className="flex justify-between items-center cursor-pointer list-none font-body text-sm font-bold text-on-surface uppercase tracking-widest">
-                  CARE GUIDE
-                  <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
-                </summary>
-                <div className="pt-4 pb-2 text-on-surface-variant text-body">
-                  Store in a soft pouch to avoid scratches. Clean with a dry cotton cloth after each use. Professional polishing service available at any SRJ boutique.
-                </div>
-              </details>
+              {/* Accordion Details */}
+              <div className="space-y-0">
+                <details className="group border-b border-outline-variant/30 py-4" open>
+                  <summary className="flex justify-between items-center cursor-pointer list-none font-button-text text-button-text text-on-surface">
+                    DETAILS
+                    <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                  </summary>
+                  <div className="pt-4 pb-2 text-on-surface-variant text-body-base leading-relaxed">
+                    {dynamicProduct.description || "Intricately designed jewellery piece crafted by artisans."}
+                  </div>
+                </details>
+                <details className="group border-b border-outline-variant/30 py-4">
+                  <summary className="flex justify-between items-center cursor-pointer list-none font-button-text text-button-text text-on-surface">
+                    SHIPPING & RETURNS
+                    <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                  </summary>
+                  <div className="pt-4 pb-2 text-on-surface-variant text-body-base">
+                    Complimentary fully insured shipping within India. Returns accepted within 7 days in original, unworn condition with all authenticity certificates.
+                  </div>
+                </details>
+                <details className="group border-b border-outline-variant/30 py-4">
+                  <summary className="flex justify-between items-center cursor-pointer list-none font-button-text text-button-text text-on-surface">
+                    CARE GUIDE
+                    <span className="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+                  </summary>
+                  <div className="pt-4 pb-2 text-on-surface-variant text-body-base">
+                    Store in a soft pouch to avoid scratches. Clean with a dry cotton cloth after each use. Professional polishing service available at any SRJ boutique.
+                  </div>
+                </details>
+              </div>
             </div>
-
           </div>
         </div>
-      </div>
-      
-      {/* You May Also Like Section */}
-      <section className="mt-32">
-        <div className="flex flex-col items-center mb-16">
-          <div className="w-16 h-px bg-[#c8a684] mb-6"></div>
-          <h2 className="font-display text-4xl text-on-surface text-center">You May Also Like</h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products?.filter(p => p.category === dynamicProduct.category && p._id !== dynamicProduct._id).slice(0, 4).map((product) => (
-            <ProductCard key={product._id} item={product} />
-          ))}
-        </div>
-      </section>
+      </main>
 
       {/* Quote Modal */}
       {isQuoteModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-surface-bright border border-primary/20 max-w-md w-full p-8 shadow-2xl relative">
-            <button 
-              onClick={() => setIsQuoteModalOpen(false)}
-              className="absolute top-4 right-4 text-on-surface-variant hover:text-error transition-colors cursor-pointer"
-            >
-              <span className="material-symbols-outlined">close</span>
-            </button>
-            <h3 className="font-display text-3xl text-primary mb-2 text-center">Request Quote</h3>
-            <p className="font-body text-sm text-on-surface-variant text-center mb-8">
-              Please provide your details. Our master artisans will contact you shortly regarding the {dynamicProduct.name}.
+        <dialog id="quote_modal" className="modal modal-open">
+          <div className="modal-box bg-surface border border-outline-variant/30 rounded-sm">
+            <form method="dialog">
+              <button 
+                onClick={() => setIsQuoteModalOpen(false)}
+                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-on-surface"
+              >
+                ✕
+              </button>
+            </form>
+            <h3 className="font-display-lg text-headline-sm text-primary mb-4">Request Quote</h3>
+            <p className="font-body-base text-on-surface-variant text-sm mb-6">
+              Our artisans will prepare a personalized quote and contact you.
             </p>
-            <form onSubmit={handleQuoteRequest} className="space-y-6">
-              <div className="input-focus-line">
-                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Full Name *</label>
-                <input required value={quoteName} onChange={(e) => setQuoteName(e.target.value)} type="text" className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body" placeholder="e.g. Aditya Vardhan" />
+            <form onSubmit={handleQuoteRequest} className="space-y-4">
+              <div>
+                <label className="block font-label-caps text-xs text-on-surface-variant uppercase tracking-wider mb-2">Name</label>
+                <input 
+                  type="text" 
+                  value={quoteName}
+                  onChange={(e) => setQuoteName(e.target.value)}
+                  className="w-full bg-surface-container-low border border-outline-variant/50 px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all rounded-sm"
+                  placeholder="Your Full Name"
+                  required 
+                />
               </div>
-              <div className="input-focus-line">
-                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Mobile Number *</label>
-                <input required value={quoteMobile} onChange={(e) => setQuoteMobile(e.target.value)} type="tel" className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body" placeholder="e.g. +91 9876543210" />
+              <div>
+                <label className="block font-label-caps text-xs text-on-surface-variant uppercase tracking-wider mb-2">WhatsApp Number</label>
+                <input 
+                  type="tel" 
+                  value={quoteMobile}
+                  onChange={(e) => setQuoteMobile(e.target.value)}
+                  className="w-full bg-surface-container-low border border-outline-variant/50 px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all rounded-sm"
+                  placeholder="+91"
+                  required 
+                />
               </div>
-              <button disabled={quoteLoading} type="submit" className="w-full bg-primary text-white py-4 font-body text-sm font-bold tracking-widest hover:bg-primary/90 transition-colors uppercase mt-4 cursor-pointer disabled:opacity-50">
+              <button 
+                type="submit" 
+                disabled={quoteLoading}
+                className="w-full mt-4 bg-primary text-white py-4 font-button-text uppercase tracking-widest hover:bg-primary-container transition-colors disabled:opacity-70 rounded-sm"
+              >
                 {quoteLoading ? "Submitting..." : "Submit Request"}
               </button>
             </form>
           </div>
-        </div>
+          <form method="dialog" className="modal-backdrop">
+            <button onClick={() => setIsQuoteModalOpen(false)}>close</button>
+          </form>
+        </dialog>
       )}
-    </main>
+
+      {/* Image Zoom Modal */}
+      <dialog id="imageModal" className="modal">
+        <div className="modal-box w-11/12 max-w-5xl bg-surface p-2 rounded-sm relative overflow-hidden h-[80vh]">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle bg-black/50 text-white border-none absolute right-4 top-4 hover:bg-black/70 z-50">✕</button>
+          </form>
+          <img src={mainImage} className="w-full h-full object-contain" alt="Zoomed Product" />
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
+
+      {/* Login Prompt Modal (Existing structure) */}
+      <dialog id="takeToLoginModal" className="modal">
+        <div className="modal-box bg-surface border border-outline-variant/30 rounded-sm">
+          <h3 className="font-display-lg text-headline-sm text-primary mb-4">Please Login</h3>
+          <p className="font-body-base text-on-surface-variant">You need to login <span id="loginModalTextContent"></span></p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="px-6 py-2 border border-outline text-on-surface hover:bg-surface-container transition-colors rounded-sm font-button-text mr-4">Cancel</button>
+              <Link to="/login" className="px-6 py-2 bg-primary text-white hover:bg-primary-container transition-colors rounded-sm font-button-text">Login</Link>
+            </form>
+          </div>
+        </div>
+      </dialog>
+    </div>
   );
 };
 
