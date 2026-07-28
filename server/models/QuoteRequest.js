@@ -6,6 +6,7 @@ const QuoteRequestSchema = new mongoose.Schema({
   productImage: { type: String },
   customerName: { type: String, required: true },
   customerMobile: { type: String, required: true },
+  status: { type: String, enum: ['Pending', 'Contacted', 'Closed'], default: 'Pending' },
   createdAt: { type: Date, default: Date.now },
 });
 

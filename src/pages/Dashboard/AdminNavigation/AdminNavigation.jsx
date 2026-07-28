@@ -1,237 +1,103 @@
-import React, { useState } from "react";
-import "./AdminNavigation.css";
-import {
-  FaAngleRight,
-  FaArrowLeft,
-  FaGift,
-  FaList,
-  FaSignOutAlt,
-  FaUsers,
-} from "react-icons/fa";
+import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import useAuthContext from "../../../hooks/useAuthContext";
 import useUserInfo from "../../../hooks/useUserInfo";
-import { FaDropbox, FaHouse } from "react-icons/fa6";
-import { NavLink } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { HashLink } from "react-router-hash-link";
 
-const AdminNavigation = ({ sidebarCollapsed, setSidebarCollapsed }) => {
+const AdminNavigation = () => {
   const { user, logOut } = useAuthContext();
   const [userFromDB] = useUserInfo();
-  const [productSubmenuCollapsed, setProductSubmenuCollapsed] = useState(true);
+  const location = useLocation();
 
-  const collapseSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
+  const handleLogout = () => {
+    logOut().catch((e) => console.error(e?.code));
   };
 
-  // handle logout user
-  const handleLogout = () => {
-    logOut()
-      .then(() => {
-        // logout successful
-      })
-      .catch((e) => console.error(e?.code));
+  const navLinkClass = (path) => {
+    const isActive = location.pathname.includes(path);
+    return `flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-300 ${
+      isActive
+        ? "bg-primary-container text-on-primary-container font-medium shadow-sm"
+        : "text-on-surface-variant hover:bg-surface-variant"
+    }`;
   };
 
   return (
-    <div>
-      <header className="min-h-16 bg-white top-0 w-full fixed shadow z-[9999]">
-        <div className="flex justify-between items-center h-16 gap-10 md:gap-0">
-          <div className={`flex justify-between items-center gap-x-3 ${!sidebarCollapsed ? "w-[85vw] md:w-[240px]" : "w-[65px] md:w-[65px]"} transition-all duration-500 ease-in-out border`}>
-            <div className="w-full flex items-center justify-center bg-surface-variant px-2 py-3 h-16 overflow-hidden">
-              <Link to={"/"} className="block w-full flex items-center justify-center">
-                <span
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                  className="text-lg font-extrabold tracking-wider text-black transition-all duration-500 uppercase whitespace-nowrap overflow-hidden"
-                >
-                  {!sidebarCollapsed ? "The Jewel Store" : "JS"}
-                </span>
-              </Link>
-            </div>
+    <aside className="w-72 bg-surface-container-low border-r border-outline-variant/30 flex flex-col z-50 h-screen shrink-0">
+      <div className="px-8 py-10">
+        <div className="flex flex-col gap-4">
+          <div className="w-24 h-24 mx-auto">
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrNSXG2SMYhyPtorDFWVyvwy4-mU1tSsorVJXWvd8l7jvfYHHZq3Vvhv3p6lzscI0uU-XwURt0lT_1hiZalq78rmS5U1vEkVtNQspNPoRd8xZJ0zyJqymo2VQW-14NJ34CwtsKE48wsigwEtJjY63BEU2MOu5FNXgA4lvIXWMy1LgUufhhPuV5JG5nsmjrGTTi4rFucteF-YEd09g4wb_Q_h8aVilTj7OG8VmtfHTAcnDG8ybAmT-e4NxXtFdSq35NjUcSwuS1TOw"
+              alt="Sri Ram Jewellery Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
-
-          <details className="dropdown dropdown-end bg-white shadow-none h-16 m-0 w-[16%] md:w-[5%] border-none">
-            <summary className="btn p-0 ml-auto flex gap-x-3 justify-center items-center w-full bg-white shadow-none rounded-none h-full hover:bg-base-200 border-none md:px-2">
-              <div className="w-full px-2 md:px-0">
-                <img
-                  src={user?.photoURL}
-                  alt={userFromDB?.name}
-                  className="w-full h-11 rounded-full border border-primary"
-                />
-              </div>
-            </summary>
-            <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 w-[300%] rounded-none border">
-              <li>
-                <Link to={"/"}>Home</Link>
-              </li>
-              <li>
-                <HashLink to="/#categories" smooth>
-                  Categories
-                </HashLink>
-              </li>
-              <li>
-                <HashLink to="/#products" smooth>
-                  Products
-                </HashLink>
-              </li>
-              <li>
-                <Link to="/shop">Shop</Link>
-              </li>
-              <li>
-                <HashLink to="/#reviews" smooth>
-                  Reviews
-                </HashLink>
-              </li>
-
-              <li>
-                <button
-                  className="border block text-center rounded-none"
-                  onClick={handleLogout}
-                >
-                  Sign Out
-                </button>
-              </li>
-            </ul>
-          </details>
+          <div className="text-center">
+            <h1 className="font-display-lg text-headline-sm text-primary tracking-tight">
+              Sri Ram Jewellery
+            </h1>
+            <p className="font-label-caps text-[10px] text-outline mt-1 uppercase tracking-widest">
+              Admin Portal
+            </p>
+          </div>
         </div>
-      </header>
+      </div>
 
-      <aside
-        className={`${
-          !sidebarCollapsed ? "w-[85vw] md:w-[240px]" : "w-[65px] md:w-[65px]"
-        } h-[calc(100vh-64px)] whitespace-nowrap fixed shadow overflow-x-visible transition-all duration-500 ease-in-out top-16 bg-neutral z-[9999]`}
-      >
-        <div className="sidebar-menu-con flex flex-col justify-between h-full">
-          <ul className="flex flex-col gap-2 mt-2 overflow-x-hidden overflow-y-auto flex-grow">
-            <li className="text-white">
-              {/* ------- ADMIN HOME --------- */}
-              <NavLink
-                className={({ isActive, isPending }) =>
-                  isPending ? "pending" : isActive ? `active` : ""
-                }
-                to="/dashboard/adminDashboard"
-              >
-                <div className="px-4">
-                  <FaHouse className="text-xl block" />
-                </div>
-                <p className={`whitespace-nowrap pt-1 pl-1`}>Dashboard</p>
-              </NavLink>
-            </li>
-            {/* ------------ CATEGORIES ------------ */}
-            <li className="text-white">
-              <NavLink
-                to="/dashboard/adminCategories"
-                className={({ isActive, isPending }) =>
-                  isPending ? "pending" : isActive ? `active` : ""
-                }
-              >
-                <div className="px-4">
-                  <FaList className="text-xl block" />
-                </div>
-                <p className={`whitespace-nowrap pt-1 pl-1`}>Categories</p>
-              </NavLink>
-            </li>
-            {/* ------------ PRODUCTS ------------ */}
-            <li className="text-white">
-              <button
-                onClick={function () {
-                  setProductSubmenuCollapsed(!productSubmenuCollapsed);
-                  setSidebarCollapsed(false);
-                }}
-                className={`product-collapse-link ${
-                  !productSubmenuCollapsed && "active"
-                }`}
-              >
-                <div className="px-4">
-                  <FaGift className="text-xl block" />
-                </div>
-                <p className={`whitespace-nowrap pt-1 pl-1`}>Products</p>
-                <div
-                  className={`ml-auto transition-all duration-200 ease-in-out ${
-                    !productSubmenuCollapsed ? "-rotate-90 mr-2" : "mr-2 mt-1"
-                  }`}
-                >
-                  <FaAngleRight />
-                </div>
-              </button>
-              <div
-                className={`submenu ${
-                  productSubmenuCollapsed ? "hidden" : "flex"
-                } flex-col w-full space-y-3`}
-              >
-                <NavLink
-                  to="/dashboard/adminProducts"
-                  className={({ isActive, isPending }) =>
-                    isPending ? "pending" : isActive ? `active` : ""
-                  }
-                >
-                  Manage Products
-                </NavLink>
-                <NavLink
-                  to="/dashboard/adminAddProducts"
-                  className={({ isActive, isPending }) =>
-                    isPending ? "pending" : isActive ? `active` : ""
-                  }
-                >
-                  Add Product
-                </NavLink>
-              </div>
-            </li>
-            {/* ------------ ORDERS ------------ */}
-            <li className="text-white">
-              <NavLink
-                to="/dashboard/adminOrders"
-                className={({ isActive, isPending }) =>
-                  isPending ? "pending" : isActive ? `active` : ""
-                }
-              >
-                <div className="px-4">
-                  <FaDropbox className="text-xl block" />
-                </div>
-                <p className={`whitespace-nowrap pt-1 pl-1`}>Orders</p>
-              </NavLink>
-            </li>
-            {/* ------------ USERS ------------ */}
-            <li className="text-white">
-              <NavLink
-                to="/dashboard/adminUsers"
-                className={({ isActive, isPending }) =>
-                  isPending ? "pending" : isActive ? `active` : ""
-                }
-              >
-                <div className="px-4">
-                  <FaUsers className="text-xl block" />
-                </div>
-                <p className={`whitespace-nowrap pt-1 pl-1`}>Users</p>
-              </NavLink>
-            </li>
-            {/* ------------------------ */}
-          </ul>
+      <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
+        <NavLink to="/dashboard/adminDashboard" className={navLinkClass("/adminDashboard")}>
+          <span className="material-symbols-outlined text-[20px]">dashboard</span>
+          <span className="font-button-text">Dashboard</span>
+        </NavLink>
+        <NavLink to="/dashboard/adminProducts" className={navLinkClass("/adminProducts")}>
+          <span className="material-symbols-outlined text-[20px]">inventory_2</span>
+          <span className="font-button-text">Products</span>
+        </NavLink>
+        <NavLink to="/dashboard/adminCategories" className={navLinkClass("/adminCategories")}>
+          <span className="material-symbols-outlined text-[20px]">category</span>
+          <span className="font-button-text">Categories</span>
+        </NavLink>
+        <NavLink to="/dashboard/adminOrders" className={navLinkClass("/adminOrders")}>
+          <span className="material-symbols-outlined text-[20px]">shopping_bag</span>
+          <span className="font-button-text">Orders</span>
+        </NavLink>
+        <NavLink to="/dashboard/adminQuoteRequests" className={navLinkClass("/adminQuoteRequests")}>
+          <span className="material-symbols-outlined text-[20px]">request_quote</span>
+          <span className="font-button-text">Quote Requests</span>
+        </NavLink>
 
-          <ul className="flex flex-col gap-1 mt-2 border-t border-gray-500">
-            <li className="text-white" onClick={handleLogout}>
-              <button className="logout-btn">
-                <div className="px-4">
-                  <FaSignOutAlt className="text-xl block" />
-                </div>
-                <p className={`whitespace-nowrap block pt-1 pl-1`}>Logout</p>
-              </button>
-            </li>
-          </ul>
+        <div className="pt-6 pb-2 px-4">
+          <span className="font-label-caps text-outline text-[10px]">Management</span>
         </div>
+        <NavLink to="/dashboard/adminLiveRates" className={navLinkClass("/adminLiveRates")}>
+          <span className="material-symbols-outlined text-[20px]">currency_rupee</span>
+          <span className="font-button-text">Live Rates</span>
+        </NavLink>
+        <NavLink to="/dashboard/adminManageUsers" className={navLinkClass("/adminManageUsers")}>
+          <span className="material-symbols-outlined text-[20px]">group</span>
+          <span className="font-button-text">Users</span>
+        </NavLink>
+      </nav>
 
-        <button
-          className="absolute top-1 -right-4 bg-slate-100 rounded-full p-2 opacity-70 hover:opacity-100"
-          onClick={collapseSidebar}
-        >
-          <FaArrowLeft
-            className={` block mx-auto transition-all duration-700 ease-in-out ${
-              sidebarCollapsed && "rotate-180"
-            }`}
-          />
-        </button>
-      </aside>
-    </div>
+      <div className="p-4 border-t border-outline-variant/30 mt-auto">
+        <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-highest/50">
+          <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white font-bold shrink-0">
+            {userFromDB?.name?.[0]?.toUpperCase() || "A"}
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <p className="font-button-text truncate">{userFromDB?.name || "Admin User"}</p>
+            <p className="text-[12px] text-outline truncate">
+              {userFromDB?.email || "admin@sriram.com"}
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="material-symbols-outlined text-outline hover:text-primary shrink-0"
+          >
+            logout
+          </button>
+        </div>
+      </div>
+    </aside>
   );
 };
 

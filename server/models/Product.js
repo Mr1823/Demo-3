@@ -20,6 +20,7 @@ const ProductSchema = new mongoose.Schema({
   sold: { type: Number, default: 0 },
   badge: { type: String },
   addedAt: { type: Date, default: Date.now },
+  isActive: { type: Boolean, default: true },
 
   // Pricing fields (PRD §4.4)
   weight: { type: Number, default: 0 },           // grams

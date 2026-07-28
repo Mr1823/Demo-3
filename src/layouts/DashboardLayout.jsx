@@ -19,22 +19,14 @@ const DashboardLayout = () => {
         {!isAuthLoading && user && (
           <>
             {!isUserLoading && userFromDB?.admin ? (
-              <div>
+              <div className="flex h-screen w-full overflow-hidden">
                 <AdminNavigation
                   sidebarCollapsed={sidebarCollapsed}
                   setSidebarCollapsed={setSidebarCollapsed}
                 />
-                <div className="mt-20 mb-24 overflow-x-hidden">
-                  <div
-                    className={`w-[calc(100vw-70px)] ml-[65px] ${
-                      !sidebarCollapsed
-                        ? "md:w-[calc(100vw-280px)] md:ml-[260px]"
-                        : "md:ml-[85px] md:w-[calc(100vw-110px)]"
-                    } py-5 px-3 transition-all duration-500 ease-in-out md:px-6 overflow-x-auto`}
-                  >
-                    <Outlet />
-                  </div>
-                </div>
+                <main className="flex-1 h-full overflow-hidden bg-background">
+                  <Outlet />
+                </main>
               </div>
             ) : (
               <main className="max-w-[1280px] mx-auto px-5 md:px-16 py-16 flex flex-col md:flex-row gap-8 lg:gap-16 min-h-[calc(100vh-100px)]">

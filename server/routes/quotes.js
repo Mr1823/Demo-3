@@ -50,4 +50,28 @@ router.get("/", verifyJWT, requireAdmin, async (req, res) => {
   }
 });
 
+// PATCH /api/quotes/:id/status — update quote request status (admin only)
+router.patch("/:id/status", verifyJWT, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (!["Pending", "Contacted", "Closed"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    const quote = await QuoteRequest.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!quote) {
+      return res.status(404).json({ error: "Quote request not found" });
+    }
+
+    res.json({ success: true, data: quote });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update quote status" });
+  }
+});
+
 export default router;

@@ -25,6 +25,8 @@ import AdminAddProduct from "../pages/Dashboard/AdminAddProduct/AdminAddProduct"
 import AdminManageUsers from "../pages/AdminManageUsers/AdminManageUsers";
 import AdminCategories from "../pages/AdminCategories/AdminCategories";
 import AdminOrders from "../pages/Dashboard/AdminOrders/AdminOrders";
+import AdminQuoteRequests from "../pages/Dashboard/AdminQuoteRequests/AdminQuoteRequests";
+import AdminLiveRates from "../pages/Dashboard/AdminLiveRates/AdminLiveRates";
 import About from "../pages/About/About";
 
 const router = createBrowserRouter([
@@ -89,13 +91,15 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      {
-        path: "dashboard",
-        element: (
-          <PrivateRoute>
-            <DashboardLayout />
-          </PrivateRoute>
-        ),
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
         children: [
           {
             path: "myDashboard",
@@ -162,6 +166,22 @@ const router = createBrowserRouter([
               </AdminRoute>
             ),
           },
+          {
+            path: "adminQuoteRequests",
+            element: (
+              <AdminRoute>
+                <AdminQuoteRequests />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "adminLiveRates",
+            element: (
+              <AdminRoute>
+                <AdminLiveRates />
+              </AdminRoute>
+            ),
+          },
         ],
       },
 
@@ -187,8 +207,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-    ],
-  },
 ]);
 
 export default router;

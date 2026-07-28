@@ -9,20 +9,16 @@ import LineChartComponent from "../../../components/LineChartComponent/LineChart
 import useAdminStats from "../../../hooks/useAdminStats";
 import useAuthContext from "../../../hooks/useAuthContext";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import AnimateText from "@moxy/react-animate-text";
+import 'react-pagination-bar/dist/index.css';
 
 const AdminOrders = () => {
   const location = useLocation();
   const [userFromDB] = useUserInfo();
   const [axiosSecure] = useAxiosSecure();
   const { user, isAuthLoading } = useAuthContext();
-  const {
-    data: allOrders,
-    isLoading: isOrdersLoading,
-    refetch,
-  } = useQuery({
-    enabled:
-      !isAuthLoading && user !== null && user !== undefined && userFromDB?.admin === true,
+  
+  const { data: allOrders, isLoading: isOrdersLoading, refetch } = useQuery({
+    enabled: !isAuthLoading && user !== null && user !== undefined && userFromDB?.admin === true,
     queryKey: ["all-orders"],
     queryFn: async () => {
       const result = await axiosSecure.get("/admin/orders");
@@ -30,179 +26,159 @@ const AdminOrders = () => {
     },
   });
 
-  // Order chart data
   const { incomeStats } = useAdminStats();
 
-  // update order status
-  const handleStatusChange = (selectedOption) => {
-    axiosSecure
-      .patch(`/admin/update-order/${selectedOption.orderId}`, {
-        orderStatus: selectedOption.value,
-      })
-      .then((res) => {
-        if (res.data.modifiedCount > 0) {
-          toast.success("Order status updated successfully");
-          refetch();
-        }
-      })
-      .catch((e) => console.error(e));
+  const handleStatusChange = (selectedOption, orderId) => {
+    axiosSecure.patch(`/admin/update-order/${orderId}`, {
+      orderStatus: selectedOption.value,
+    })
+    .then((res) => {
+      if (res.data.modifiedCount > 0) {
+        toast.success("Order status updated");
+        refetch();
+      }
+    })
+    .catch((e) => console.error(e));
   };
 
-  // pagination settings
   const [currentPage, setCurrentPage] = useState(1);
   const pageProductLimit = 6;
 
+  const selectStyles = {
+    control: (base) => ({
+      ...base,
+      backgroundColor: 'transparent',
+      borderColor: '#d4c3b9',
+      boxShadow: 'none',
+      '&:hover': {
+        borderColor: '#704c31'
+      },
+      minHeight: '36px',
+      fontSize: '13px'
+    }),
+    option: (base, { isFocused, isSelected }) => ({
+      ...base,
+      backgroundColor: isSelected ? '#8b6447' : isFocused ? '#f7edde' : 'transparent',
+      color: isSelected ? 'white' : '#1f1b12',
+      fontSize: '13px'
+    })
+  };
+
   return (
-    <div className="px-4">
-      <div>
-        <div className="text-sm breadcrumbs">
-          <ul>
-            <li>
-              <Link to={"/dashboard/adminDashboard"}>Dashboard</Link>
-            </li>
-            <li>
-              <Link to="/dashboard/adminOrders">Orders</Link>
-            </li>
-          </ul>
+    <div className="flex-1 flex flex-col overflow-hidden bg-background">
+      {/* Top Bar */}
+      <header className="h-20 flex items-center justify-between px-6 md:px-margin-desktop bg-background/80 backdrop-blur-md border-b border-outline-variant/30 z-40 shrink-0">
+        <h2 className="font-display-lg text-headline-md text-primary">Orders</h2>
+      </header>
+
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto p-4 md:p-margin-desktop custom-scrollbar">
+        {/* Chart Section */}
+        <div className="bg-surface-dim border border-secondary/20 rounded-xl p-4 md:p-6 mb-8 h-auto">
+          <h3 className="font-headline-sm text-primary mb-4 font-display">Revenue Trend</h3>
+          <div className="h-[250px]">
+            <LineChartComponent data={incomeStats} />
+          </div>
         </div>
 
-        <h2
-          className="mt-1 font-bold text-3xl"
-          style={{ fontFamily: "var(--italiana)" }}
-        >
-          <AnimateText initialDelay={0.2} wordDelay={0.2} separator="">
-            <span>Orders</span>
-          </AnimateText>
-        </h2>
-      </div>
-
-      <div className="w-full mx-auto mt-8 mb-10 h-[300px] p-4 pt-6 rounded border shadow">
-        <LineChartComponent data={incomeStats} />
-      </div>
-
-      <div className="overflow-x-auto mt-8 border shadow p-4 rounded">
-        {isOrdersLoading ? (
-          <div>
-            {Array.from({ length: 6 }).map((_, idx) => (
-              <div
-                className="skeleton w-full h-16 my-4 rounded-none"
-                key={idx}
-              ></div>
-            ))}
-          </div>
-        ) : (
-          <table className="table table-zebra">
-            {/* head */}
-            <thead>
-              <tr className="text-black font-bold">
-                <th>Number</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Payment</th>
-                <th>Status</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {allOrders
-                ?.slice(
-                  (currentPage - 1) * pageProductLimit,
-                  currentPage * pageProductLimit
-                )
-                .map((order) => (
-                  <tr key={order._id}>
-                    <td>{order.orderId}</td>
-                    <td>{order.date.slice(0, 10)}</td>
-                    <td>{order.name}</td>
-                    <td>
-                      <span
-                        className={`text-sm px-2 rounded ${
-                          order.paymentStatus.toLowerCase() === "paid"
-                            ? "bg-[#c4f89f] text-[#599f2b]"
-                            : "bg-[#f98d8daa] text-[#aa2f2f]"
-                        }`}
-                      >
-                        {order.paymentStatus.toUpperCase()}
-                      </span>
-
-                      {order.paymentMethod === "cod" ? (
-                        <span
-                          className={`block mt-1 text-xs px-2 rounded bg-[#f1e4a2] text-[#6a5c10] w-fit`}
-                        >
-                          Cash On Delivery
-                        </span>
-                      ) : (
-                        <span
-                          className={`block mt-1 text-xs px-2 rounded bg-[#a2c7f1] text-[#172664] w-fit`}
-                        >
-                          {order.transactionId}
-                        </span>
-                      )}
+        {/* Table Section */}
+        <div className="bg-surface-dim border border-secondary/20 rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="border-b border-outline-variant/50 bg-surface-container-high/50">
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Order #</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Date</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Customer</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Payment</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Total</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Status</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px] text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/20">
+                {isOrdersLoading ? (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-10 text-center text-outline">Loading orders...</td>
+                  </tr>
+                ) : allOrders?.slice((currentPage - 1) * pageProductLimit, currentPage * pageProductLimit).map((order) => (
+                  <tr key={order._id} className="hover:bg-white/40 transition-colors group">
+                    <td className="px-6 py-4">
+                      <p className="font-button-text text-primary">#{order.orderId}</p>
                     </td>
-                    <td>
+                    <td className="px-6 py-4">
+                      <p className="text-[13px] text-on-surface-variant">{order.date?.slice(0, 10)}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-button-text text-on-surface">{order.name}</p>
+                      <p className="text-[12px] text-outline mt-1">{order.orderDetails?.length} items</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-medium uppercase tracking-wider w-fit border ${
+                          order.paymentStatus?.toLowerCase() === "paid" 
+                            ? "bg-[#4e6e58]/10 text-[#4e6e58] border-[#4e6e58]/20" 
+                            : "bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20"
+                        }`}>
+                          {order.paymentStatus}
+                        </span>
+                        <span className="text-[11px] text-outline">
+                          {order.paymentMethod === "cod" ? "COD" : order.transactionId}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-button-text">₹ {order.total}</p>
+                    </td>
+                    <td className="px-6 py-4">
                       <Select
                         options={[
-                          {
-                            orderId: order._id,
-                            value: "PROCESSING",
-                            label: "PROCESSING",
-                          },
-                          {
-                            orderId: order._id,
-                            value: "SHIPPED",
-                            label: "SHIPPED",
-                          },
-                          {
-                            orderId: order._id,
-                            value: "DELIVERED",
-                            label: "DELIVERED",
-                          },
+                          { value: "PROCESSING", label: "PROCESSING" },
+                          { value: "SHIPPED", label: "SHIPPED" },
+                          { value: "DELIVERED", label: "DELIVERED" },
                         ]}
-                        defaultValue={{
-                          value: order.orderStatus.toUpperCase(),
-                          label: order.orderStatus.toUpperCase(),
-                        }}
-                        onChange={(e) => handleStatusChange(e)}
-                        className="w-max md:w-fit"
+                        value={{ value: order.orderStatus?.toUpperCase(), label: order.orderStatus?.toUpperCase() }}
+                        onChange={(e) => handleStatusChange(e, order._id)}
+                        styles={selectStyles}
+                        className="w-36"
+                        isSearchable={false}
                       />
                     </td>
-                    <td>{order.orderDetails.length}</td>
-                    <td>₹{order.total}</td>
-                    <td>
-                      <Link
-                        to={"/order-success"}
-                        state={{ from: location, orderId: order._id }}
-                        className="underline text-blue-500"
-                      >
-                        View Details
+                    <td className="px-6 py-4 text-right">
+                      <Link to="/order-success" state={{ from: location, orderId: order._id }}>
+                        <button className="px-4 py-1.5 rounded border border-outline-variant/50 text-[12px] font-medium text-outline hover:text-primary hover:border-primary transition-all">
+                          View
+                        </button>
                       </Link>
                     </td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
-        )}
-        <div>
-          <p className="text-xs mt-3">
-            Showing {currentPage > 1 ? currentPage - 1 : currentPage}
-            {currentPage > 1 && allOrders?.length > 10 && "1"} to{" "}
-            {Math.ceil(allOrders?.length / 10) === currentPage
-              ? allOrders?.length % 10 !== 0
-                ? (currentPage - 1) * 10 + (allOrders?.length % 10)
-                : currentPage * 10
-              : currentPage * 10}{" "}
-            of {allOrders?.length}
-          </p>
-          <Pagination
-            currentPage={currentPage}
-            totalItems={allOrders?.length}
-            onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
-            itemsPerPage={pageProductLimit}
-            pageNeighbours={3}
-          />
+                {allOrders?.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-10 text-center text-outline">No orders found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+          
+          {/* Pagination */}
+          {allOrders?.length > 0 && (
+            <div className="p-4 border-t border-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-container-high/20">
+              <p className="text-[12px] text-outline">
+                Showing {(currentPage - 1) * pageProductLimit + 1} to {Math.min(currentPage * pageProductLimit, allOrders.length)} of {allOrders.length} orders
+              </p>
+              <div className="scale-90 sm:scale-100 origin-right">
+                <Pagination
+                  currentPage={currentPage}
+                  totalItems={allOrders.length}
+                  onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
+                  itemsPerPage={pageProductLimit}
+                  pageNeighbours={1}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
