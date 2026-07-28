@@ -43,7 +43,7 @@ const Header = () => {
   const navLinks = [
     { path: '/', label: 'Home' },
     { path: '/shop', label: 'Shop' },
-    { path: '/shop?category=gold', label: 'Categories', exact: false },
+    { path: '/#categories', label: 'Categories' },
     { path: '/about', label: 'About' },
   ];
 
@@ -73,20 +73,32 @@ const Header = () => {
 
           {/* Navigation Links (Centered) */}
           <nav className="hidden lg:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                className={`
+            {navLinks.map((link) => {
+              const linkClasses = `
                   ${isActive(link.path) && link.label !== 'Categories'
                     ? 'text-on-surface border-b-2 border-primary pb-1'
                     : 'text-on-surface-variant hover:text-primary transition-colors'
                   } font-button-text text-button-text uppercase tracking-[0.2em]
-                `}
-                to={link.path}
-              >
-                {link.label}
-              </Link>
-            ))}
+                `;
+                
+              if (link.path.includes('#')) {
+                return (
+                  <a key={link.label} href={link.path} className={linkClasses}>
+                    {link.label}
+                  </a>
+                );
+              }
+              
+              return (
+                <Link
+                  key={link.label}
+                  className={linkClasses}
+                  to={link.path}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Search & Icons (Right) */}
@@ -152,20 +164,32 @@ const Header = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  className={`
+              {navLinks.map((link) => {
+                const linkClasses = `
                     ${isActive(link.path) && link.label !== 'Categories'
                       ? 'text-primary'
                       : 'text-on-surface-variant'
                     } font-button-text text-button-text uppercase tracking-[0.2em] py-2
-                  `}
-                  to={link.path}
-                >
-                  {link.label}
-                </Link>
-              ))}
+                  `;
+                  
+                if (link.path.includes('#')) {
+                  return (
+                    <a key={link.label} href={link.path} className={linkClasses}>
+                      {link.label}
+                    </a>
+                  );
+                }
+                
+                return (
+                  <Link
+                    key={link.label}
+                    className={linkClasses}
+                    to={link.path}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}
@@ -173,53 +197,12 @@ const Header = () => {
 
       {/* Cart Right Side Drawer */}
       <RightSideDrawer 
-        isOpen={showCartDrawer} 
-        onClose={() => setShowCartDrawer(false)}
-        title="Your Cart"
-      >
-        <div className="flex flex-col h-full bg-surface">
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {cartData?.length > 0 ? (
-              cartData.map(item => (
-                <div key={item._id} className="flex gap-4 border-b border-outline-variant/30 pb-4">
-                  <img src={item.productImage || item.img} alt={item.productName} className="w-20 h-20 object-cover rounded-sm" />
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-display-lg text-sm text-on-surface line-clamp-1">{item.productName}</h4>
-                      <p className="font-body-base text-xs text-on-surface-variant">Qty: {item.quantity}</p>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <p className="font-button-text text-sm text-primary font-bold">₹{item.price?.toLocaleString()}</p>
-                      <button onClick={() => handleRemoveFromCart(item._id)} className="text-error hover:text-error/80">
-                        <span className="material-symbols-outlined text-[18px]">delete</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-10 flex flex-col items-center">
-                <span className="material-symbols-outlined text-4xl text-outline-variant mb-2">shopping_bag</span>
-                <p className="font-body-base text-on-surface-variant">Your cart is empty</p>
-              </div>
-            )}
-          </div>
-          
-          <div className="p-4 border-t border-outline-variant/30 bg-surface-container-low">
-            <div className="flex justify-between items-center mb-4 font-display-lg">
-              <span className="text-on-surface">Subtotal</span>
-              <span className="text-primary font-bold">₹{cartSubtotal?.toLocaleString() || 0}</span>
-            </div>
-            <Link 
-              to="/checkout" 
-              onClick={() => setShowCartDrawer(false)}
-              className="w-full block text-center bg-primary text-white py-4 font-button-text tracking-widest hover:bg-primary-container transition-colors rounded-sm uppercase text-sm"
-            >
-              Checkout
-            </Link>
-          </div>
-        </div>
-      </RightSideDrawer>
+        showRightDrawer={showCartDrawer} 
+        setShowRightDrawer={setShowCartDrawer} 
+        cartData={cartData} 
+        removeFromCart={handleRemoveFromCart} 
+        cartSubtotal={cartSubtotal}
+      />
     </>
   );
 };

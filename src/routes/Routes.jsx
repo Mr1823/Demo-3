@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import Home from "../pages/Home/Home";
@@ -173,6 +173,10 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
         children: [
+          {
+            index: true,
+            element: <Navigate to="description" replace />,
+          },
           {
             path: "description",
             element: <ProductDescription />,

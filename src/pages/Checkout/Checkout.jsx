@@ -67,72 +67,50 @@ const Checkout = () => {
   };
 
   return (
-    <main className="max-w-container-max mx-auto px-5 md:px-16 py-12 md:py-24 min-h-screen bg-background font-body-base">
+    <main className="pt-32 pb-section-gap-lg max-w-container-max mx-auto px-margin-desktop min-h-screen font-body-base bg-background">
       <CustomHelmet title="Checkout" />
-
-      {/* Breadcrumbs */}
-      <nav className="mb-12 flex items-center gap-2 text-on-surface-variant font-label-caps text-label-caps">
-        <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-        <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-        <Link to="/shop" className="hover:text-primary transition-colors">Shop</Link>
-        <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-        <span className="text-primary">Checkout</span>
-      </nav>
-
-      {/* Page Title */}
-      <div className="text-center mb-12">
-        <h1 className="text-primary text-4xl md:text-5xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-          Checkout
-        </h1>
-        <div className="w-16 h-px bg-[#e4c09d] mx-auto mt-4"></div>
-      </div>
-
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
-        {/* Left Side — Shipping Address & Payment */}
-        <div className="lg:col-span-7 space-y-12">
-
-          {/* Shipping Address */}
-          <div>
-            <div className="flex items-center justify-between mb-6 border-b border-outline-variant/30 pb-4">
-              <h2 className="text-primary text-2xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                Shipping Address
-              </h2>
-              <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center text-[11px] font-bold">1</span>
-                Step One
-              </span>
-            </div>
+      <div className="flex flex-col lg:flex-row gap-gutter">
+        {/* Left Side: Form (60%) */}
+        <div className="w-full lg:w-[60%] fade-in">
+          {/* Breadcrumbs */}
+          <nav className="flex items-center gap-3 mb-10 text-on-surface-variant font-label-caps tracking-widest text-[11px]">
+            <Link to="/shop" className="hover:text-primary transition-colors">SHOP</Link>
+            <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span className="text-primary font-bold">CHECKOUT</span>
+          </nav>
+          
+          <section className="mb-12">
+            <h2 className="font-display-lg text-headline-sm mb-8 text-primary">Shipping Address</h2>
             {userFromDB?.shippingAddress ? (
-              <div className="border border-outline-variant/30 bg-surface-container-low p-6 space-y-4">
+              <div className="p-6 border border-outline-variant/30 bg-white space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest block mb-1">Name</span>
+                    <span className="font-label-caps text-xs text-on-surface-variant uppercase tracking-[0.2em] block mb-1">Name</span>
                     <p className="text-on-surface font-semibold">
-                      {userFromDB?.shippingAddress.firstName}{" "}
-                      {userFromDB?.shippingAddress.lastName}
+                      {userFromDB?.shippingAddress.firstName} {userFromDB?.shippingAddress.lastName}
                     </p>
                   </div>
                   <div>
-                    <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest block mb-1">Email</span>
+                    <span className="font-label-caps text-xs text-on-surface-variant uppercase tracking-[0.2em] block mb-1">Email</span>
                     <p className="text-on-surface font-semibold">
                       {userFromDB?.shippingAddress.email}
                     </p>
                   </div>
                   <div>
-                    <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest block mb-1">Phone</span>
+                    <span className="font-label-caps text-xs text-on-surface-variant uppercase tracking-[0.2em] block mb-1">Phone</span>
                     <p className="text-on-surface font-semibold">
                       {userFromDB?.shippingAddress.number || userFromDB?.shippingAddress.mobileNumber}
                     </p>
                   </div>
                   <div>
-                    <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest block mb-1">City</span>
+                    <span className="font-label-caps text-xs text-on-surface-variant uppercase tracking-[0.2em] block mb-1">City</span>
                     <p className="text-on-surface font-semibold">
                       {userFromDB?.shippingAddress.city}
                     </p>
                   </div>
                 </div>
                 <div className="pt-2 border-t border-outline-variant/20">
-                  <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest block mb-1">Full Address</span>
+                  <span className="font-label-caps text-xs text-on-surface-variant uppercase tracking-[0.2em] block mb-1">Full Address</span>
                   <p className="text-on-surface">
                     {userFromDB?.shippingAddress.streetAddress}, {userFromDB?.shippingAddress.city},{" "}
                     {userFromDB?.shippingAddress.state} - {userFromDB?.shippingAddress.postalCode},{" "}
@@ -140,11 +118,11 @@ const Checkout = () => {
                   </p>
                 </div>
                 <Link
-                  to="/dashboard/address-book"
-                  className="inline-flex items-center gap-2 text-primary font-button-text text-button-text uppercase tracking-widest border border-primary px-6 py-3 hover:bg-primary-container hover:text-on-primary hover:border-primary-container transition-all duration-300 mt-2"
+                  to="/dashboard/myAddress"
+                  className="inline-flex items-center gap-2 text-primary hover:text-secondary transition-colors font-label-caps text-xs mt-4"
                 >
                   <span className="material-symbols-outlined text-[16px]">edit</span>
-                  Edit Address
+                  EDIT ADDRESS
                 </Link>
               </div>
             ) : (
@@ -152,65 +130,40 @@ const Checkout = () => {
                 <span className="material-symbols-outlined text-5xl text-on-surface-variant/40">location_on</span>
                 <p className="text-on-surface-variant">You have not added a shipping or billing address yet.</p>
                 <Link
-                  to="/dashboard/address-book"
-                  className="inline-flex items-center gap-2 bg-primary text-on-primary font-button-text text-button-text uppercase tracking-widest px-8 py-4 hover:opacity-90 transition-opacity"
+                  to="/dashboard/myAddress"
+                  className="inline-flex items-center gap-2 bg-primary text-white font-button-text uppercase tracking-[0.2em] px-8 py-4 hover:opacity-90 transition-opacity"
                 >
                   <span className="material-symbols-outlined text-[16px]">add</span>
                   Add Address
                 </Link>
               </div>
             )}
-          </div>
+          </section>
 
-          {/* Payment Method */}
-          <div>
-            <div className="flex items-center justify-between mb-6 border-b border-outline-variant/30 pb-4">
-              <h2 className="text-primary text-2xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                Payment Method
-              </h2>
-              <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center text-[11px] font-bold">2</span>
-                Step Two
-              </span>
-            </div>
-            <p className="text-on-surface-variant text-sm mb-6">
-              All transactions are secured and encrypted by{" "}
-              <a
-                href="https://razorpay.com"
-                target="_blank"
-                rel="noreferrer"
-                className="text-primary underline font-semibold hover:text-secondary transition-colors"
-              >
-                Razorpay
-              </a>
-            </p>
-
+          <section className="mb-12">
+            <h2 className="font-display-lg text-headline-sm mb-8 text-primary">Payment Method</h2>
             <div className="space-y-4">
-              {/* Pay with Card */}
-              <div
-                className={`border p-6 transition-all duration-300 cursor-pointer ${paymentMethod === "card"
-                    ? "border-primary bg-surface-container-low"
-                    : "border-outline-variant/30 hover:border-primary/50"
-                  }`}
-                onClick={() => setPaymentMethod("card")}
+              <label 
+                className={`flex flex-col p-5 bg-white border cursor-pointer hover:border-primary transition-all group ${paymentMethod === 'card' ? 'border-primary' : 'border-outline-variant'}`}
+                onClick={() => setPaymentMethod('card')}
               >
-                <div className="flex items-center gap-4">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "card" ? "border-primary" : "border-outline-variant"
-                    }`}>
-                    {paymentMethod === "card" && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                    )}
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-4">
+                    <input 
+                      checked={paymentMethod === 'card'} 
+                      readOnly
+                      className="text-primary focus:ring-primary w-5 h-5 border-outline-variant" 
+                      type="radio" 
+                      name="payment" 
+                    />
+                    <span className="font-label-caps text-on-surface">CREDIT CARD</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-primary">credit_card</span>
-                    <span className={`font-button-text text-button-text uppercase tracking-widest ${paymentMethod === "card" ? "text-primary font-bold" : "text-on-surface"
-                      }`}>
-                      Pay with Card
-                    </span>
+                  <div className="flex gap-2">
+                    <span className="material-symbols-outlined text-on-surface-variant">credit_card</span>
                   </div>
                 </div>
-                {paymentMethod === "card" && (
-                  <div className="mt-6 pl-9">
+                {paymentMethod === 'card' && (
+                  <div className="mt-6 pt-6 border-t border-outline-variant/30 px-2" onClick={(e) => e.stopPropagation()}>
                     <PaymentContext.Provider
                       value={{
                         orderTotal: cartSubtotal?.subtotal,
@@ -221,146 +174,144 @@ const Checkout = () => {
                     </PaymentContext.Provider>
                   </div>
                 )}
-              </div>
+              </label>
 
-              {/* Cash on Delivery */}
-              <div
-                className={`border p-6 transition-all duration-300 cursor-pointer ${paymentMethod === "cod"
-                    ? "border-primary bg-surface-container-low"
-                    : "border-outline-variant/30 hover:border-primary/50"
-                  }`}
-                onClick={() => setPaymentMethod("cod")}
+              <label 
+                className={`flex items-center justify-between p-5 bg-white border cursor-pointer hover:border-primary transition-all group ${paymentMethod === 'upi' ? 'border-primary' : 'border-outline-variant'}`}
+                onClick={() => setPaymentMethod('upi')}
               >
                 <div className="flex items-center gap-4">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "cod" ? "border-primary" : "border-outline-variant"
-                    }`}>
-                    {paymentMethod === "cod" && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-primary">payments</span>
-                    <span className={`font-button-text text-button-text uppercase tracking-widest ${paymentMethod === "cod" ? "text-primary font-bold" : "text-on-surface"
-                      }`}>
-                      Cash on Delivery
-                    </span>
-                  </div>
+                  <input 
+                    checked={paymentMethod === 'upi'}
+                    readOnly
+                    className="text-primary focus:ring-primary w-5 h-5 border-outline-variant" 
+                    type="radio" 
+                    name="payment" 
+                  />
+                  <span className="font-label-caps text-on-surface">UPI / QR SCAN</span>
                 </div>
-              </div>
+                <span className="material-symbols-outlined text-on-surface-variant">qr_code_2</span>
+              </label>
+
+              <label 
+                className={`flex items-center justify-between p-5 bg-white border cursor-pointer hover:border-primary transition-all group ${paymentMethod === 'cod' ? 'border-primary' : 'border-outline-variant'}`}
+                onClick={() => setPaymentMethod('cod')}
+              >
+                <div className="flex items-center gap-4">
+                  <input 
+                    checked={paymentMethod === 'cod'}
+                    readOnly
+                    className="text-primary focus:ring-primary w-5 h-5 border-outline-variant" 
+                    type="radio" 
+                    name="payment" 
+                  />
+                  <span className="font-label-caps text-on-surface">CASH ON DELIVERY</span>
+                </div>
+                <span className="material-symbols-outlined text-on-surface-variant">payments</span>
+              </label>
             </div>
+          </section>
+
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-outline-variant/30">
+            <Link to="/shop" className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-caps text-[12px]">
+              <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+              RETURN TO SHOP
+            </Link>
+            <button 
+              className="w-full md:w-auto px-12 py-5 bg-primary-container text-on-primary-container font-button-text text-button-text uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/10 text-center disabled:opacity-50 disabled:hover:scale-100 flex justify-center items-center gap-2"
+              onClick={handlePlaceOrder}
+              disabled={
+                (!paymentInfo && paymentMethod === "card") ||
+                !userFromDB?.shippingAddress ||
+                isPlacingOrder ||
+                !cartData?.length
+              }
+            >
+              {isPlacingOrder ? (
+                <>
+                  <span className="loading loading-spinner loading-sm"></span>
+                  Processing...
+                </>
+              ) : 'Complete Order'}
+            </button>
           </div>
         </div>
 
-        {/* Right Side — Order Summary */}
-        <div className="lg:col-span-5">
-          <div className="sticky top-[120px] border border-outline-variant/30 bg-surface-container-low">
-            <div className="p-6 border-b border-outline-variant/30">
-              <h2 className="text-primary text-2xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                Order Summary
-              </h2>
-            </div>
-
-            {/* Cart Items */}
-            <div className="p-6 space-y-6 max-h-[400px] overflow-y-auto">
+        {/* Right Side: Order Summary (40%) */}
+        <aside className="w-full lg:w-[40%]">
+          <div className="sticky top-32 p-8 bg-surface-container border border-outline-variant/30 rounded-none fade-in">
+            <h3 className="font-display-lg text-headline-sm mb-8 text-primary border-b border-outline-variant/30 pb-4">Order Summary</h3>
+            
+            {/* Item List */}
+            <div className="space-y-6 mb-8 max-h-[400px] overflow-y-auto pr-2">
               {cartData?.map((item) => (
-                <div key={item._id} className="flex gap-4 group">
-                  <div className="w-20 h-20 shrink-0 bg-surface-container overflow-hidden border border-outline-variant/30">
-                    <img
-                      src={item.img || item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500"
+                <div key={item._id} className="flex items-center gap-4 group">
+                  <div className="w-20 h-20 bg-white border border-outline-variant/20 overflow-hidden flex-shrink-0">
+                    <img 
+                      src={item.img || item.image} 
+                      alt={item.name} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                     />
                   </div>
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <h4 className="text-sm font-semibold text-on-surface line-clamp-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                        {item.name}
-                      </h4>
-                      <p className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">
-                        Qty: {item.quantity || 1}
-                      </p>
-                    </div>
-                    <p className="text-sm font-semibold text-primary mt-1">
-                      ₹{(item.price || item.discountPrice)?.toLocaleString("en-IN")}
-                    </p>
+                  <div className="flex-grow">
+                    <p className="font-display-lg text-body-lg text-on-surface line-clamp-1">{item.name}</p>
+                    <p className="text-[12px] font-label-caps text-on-surface-variant mt-1">Qty: {item.quantity || 1}</p>
                   </div>
+                  <p className="font-label-caps text-primary">₹{(item.price || item.discountPrice)?.toLocaleString("en-IN")}</p>
                 </div>
               ))}
               {(!cartData || cartData.length === 0) && (
-                <div className="text-center py-8 text-on-surface-variant/60">
-                  <span className="material-symbols-outlined text-4xl mb-2 block">shopping_bag</span>
-                  <p style={{ fontFamily: "'Cormorant Garamond', serif" }}>Your cart is empty.</p>
+                <div className="text-center py-10 flex flex-col items-center">
+                  <span className="material-symbols-outlined text-4xl text-outline-variant mb-2">shopping_bag</span>
+                  <p className="font-body-base text-on-surface-variant">Your cart is empty</p>
                 </div>
               )}
             </div>
 
             {/* Totals */}
-            <div className="p-6 border-t border-outline-variant/30 space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-on-surface-variant text-sm">Subtotal</span>
-                <span className="text-on-surface font-semibold">
-                  ₹{(cartSubtotal?.subtotal || 0).toLocaleString("en-IN")}
-                </span>
+            <div className="space-y-4 pt-8 border-t border-outline-variant/30">
+              <div className="flex justify-between items-center text-on-surface-variant font-label-caps text-[12px]">
+                <span>SUBTOTAL</span>
+                <span>₹{(cartSubtotal?.subtotal || 0).toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-on-surface-variant text-sm">Shipping</span>
-                <span className="text-on-surface-variant text-sm italic">Calculated at next step</span>
+              <div className="flex justify-between items-center text-on-surface-variant font-label-caps text-[12px]">
+                <span>ESTIMATED SHIPPING</span>
+                <span className="text-secondary">FREE</span>
               </div>
-              {paymentMethod === "cod" && (
-                <div className="flex justify-between items-center pt-2 border-t border-outline-variant/20">
-                  <span className="text-on-surface-variant text-sm">Payment Method</span>
-                  <span className="text-primary font-semibold text-sm">Cash on Delivery</span>
-                </div>
-              )}
               {paymentInfo && (
-                <div className="flex justify-between items-center pt-2 border-t border-outline-variant/20">
-                  <span className="text-on-surface-variant text-sm">Payment Status</span>
-                  <span className="text-green-700 font-semibold text-sm flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
+                <div className="flex justify-between items-center text-on-surface-variant font-label-caps text-[12px]">
+                  <span>PAYMENT STATUS</span>
+                  <span className="text-green-600 font-bold flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                     PAID
                   </span>
                 </div>
               )}
-              <div className="flex justify-between items-center pt-4 border-t border-outline-variant/30">
-                <span className="text-primary text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Total</span>
-                <span className="text-primary text-2xl font-semibold" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <div className="flex justify-between items-center pt-6 mt-4 border-t border-primary/20">
+                <span className="font-display-lg text-headline-sm text-primary">Total</span>
+                <span className="font-display-lg text-headline-sm text-primary">
                   ₹{(cartSubtotal?.subtotal || 0).toLocaleString("en-IN")}
                 </span>
               </div>
             </div>
-
-            {/* Place Order Button */}
-            <div className="p-6 pt-0">
-              <button
-                className="w-full bg-primary text-on-primary font-button-text text-button-text uppercase tracking-[0.2em] py-5 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:hover:scale-100"
-                disabled={
-                  (!paymentInfo && paymentMethod !== "cod") ||
-                  !userFromDB?.shippingAddress ||
-                  isPlacingOrder ||
-                  !cartData?.length
-                }
-                onClick={handlePlaceOrder}
-              >
-                {isPlacingOrder ? (
-                  <>
-                    <span className="loading loading-spinner loading-sm"></span>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
-                    Place Order
-                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                  </>
-                )}
-              </button>
-              <p className="text-[11px] text-on-surface-variant text-center mt-3">
-                By placing your order, you agree to our Terms of Service and Privacy Policy.
-              </p>
+            
+            <div className="mt-8 pt-8 border-t border-outline-variant/30 grid grid-cols-3 gap-4 text-center">
+              <div className="flex flex-col items-center gap-2 text-on-surface-variant">
+                <span className="material-symbols-outlined text-[20px]">verified_user</span>
+                <span className="text-[10px] font-label-caps tracking-widest">SECURE</span>
+              </div>
+              <div className="flex flex-col items-center gap-2 text-on-surface-variant">
+                <span className="material-symbols-outlined text-[20px]">local_shipping</span>
+                <span className="text-[10px] font-label-caps tracking-widest">INSURED</span>
+              </div>
+              <div className="flex flex-col items-center gap-2 text-on-surface-variant">
+                <span className="material-symbols-outlined text-[20px]">workspace_premium</span>
+                <span className="text-[10px] font-label-caps tracking-widest">GUARANTEE</span>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </aside>
+      </div>
     </main>
   );
 };

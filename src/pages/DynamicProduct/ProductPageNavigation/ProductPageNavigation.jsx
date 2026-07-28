@@ -1,34 +1,46 @@
 import React from "react";
-import "./ProductPageNavigation.css";
 import { NavLink, useParams } from "react-router-dom";
 
 const ProductPageNavigation = () => {
   const { id } = useParams();
-  return (
-    <div className="relative">
-      <div
-        className="product-navbar border-gray-200 flex items-center gap-7 container font-bold"
-        style={{ fontFamily: "var(--italiana)" }}
-      >
-        <NavLink
-          to={`/products/${id}/description`}
-          className={({ isActive, isPending }) =>
-            isPending ? "pending" : isActive ? "active" : ""
-          }
-        >
-          Description
-        </NavLink>
+  
+  const baseClass = "px-6 py-4 font-label-caps text-[11px] uppercase tracking-[0.2em] transition-all relative";
+  const inactiveClass = "text-on-surface-variant hover:text-primary";
+  const activeClass = "text-primary font-bold";
 
-        <NavLink
-          to={`/products/${id}/reviews`}
-          className={({ isActive, isPending }) =>
-            isPending ? "pending" : isActive ? "active" : ""
-          }
-        >
-          Reviews
-        </NavLink>
-      </div>
-      <div className="divider h-[2px] absolute -bottom-4 left-0 right-0"></div>
+  return (
+    <div className="max-w-container-max mx-auto px-margin-desktop flex items-center justify-center gap-4 py-2">
+      <NavLink
+        to={`/products/${id}/description`}
+        className={({ isActive }) => 
+          `${baseClass} ${isActive ? activeClass : inactiveClass}`
+        }
+      >
+        {({ isActive }) => (
+          <>
+            Description
+            {isActive && (
+              <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary mx-4"></div>
+            )}
+          </>
+        )}
+      </NavLink>
+
+      <NavLink
+        to={`/products/${id}/reviews`}
+        className={({ isActive }) => 
+          `${baseClass} ${isActive ? activeClass : inactiveClass}`
+        }
+      >
+        {({ isActive }) => (
+          <>
+            Client Reviews
+            {isActive && (
+              <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary mx-4"></div>
+            )}
+          </>
+        )}
+      </NavLink>
     </div>
   );
 };

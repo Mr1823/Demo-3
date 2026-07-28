@@ -115,184 +115,126 @@ const OrderSuccess = () => {
       {location?.state?.orderId ? (
         <>
           {/* Breadcrumbs */}
-          <nav className="mb-12 flex items-center gap-2 text-on-surface-variant font-label-caps text-label-caps">
-            <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-            <span className="material-symbols-outlined text-[12px]">chevron_right</span>
-            <span className="text-primary">Order Confirmed</span>
-          </nav>
-
-          {/* Success Banner */}
-          <div className="text-center mb-16">
-            <div className="w-20 h-20 rounded-full bg-green-50 border-2 border-green-200 flex items-center justify-center mx-auto mb-6">
-              <span className="material-symbols-outlined text-4xl text-green-600" style={{ fontVariationSettings: "'FILL' 1" }}>
-                check_circle
-              </span>
+          {/* Header Section */}
+          <div className="text-center mb-12 fade-in-up">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-container-low border border-outline-variant/30 mb-6 relative">
+              <span className="material-symbols-outlined text-[32px] text-primary relative z-10">done</span>
+              <div className="absolute inset-0 border border-primary/20 rounded-full scale-110 animate-pulse"></div>
             </div>
-            <h1 className="text-primary text-4xl md:text-5xl mb-4 font-display-lg">
-              Order Confirmed
-            </h1>
-            <p className="text-on-surface-variant max-w-lg mx-auto">
+            <h1 className="font-display-lg text-headline-lg text-on-background mb-3">Order Confirmed</h1>
+            <p className="font-body-base text-on-surface-variant max-w-md mx-auto">
               {location?.state?.from?.pathname === "checkout"
                 ? "Thank you! Your order has been received and is being prepared with the utmost care."
                 : `Thank you! Your order has been ${orderObj?.orderStatus || "confirmed"}.`}
             </p>
-            <div className="w-16 h-px bg-primary/30 mx-auto mt-6"></div>
+            <div className="mt-4 font-label-caps text-sm text-primary tracking-widest">
+              ORDER #{orderObj?._id?.slice(-8).toUpperCase() || "N/A"}
+            </div>
           </div>
 
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-
-            {/* Left: Order Details + Address */}
-            <div className="space-y-10">
-
-              {/* Order Details */}
-              <div className="border border-outline-variant/30 bg-surface-container-low">
-                <div className="p-6 border-b border-outline-variant/30">
-                  <h2 className="text-primary text-2xl font-display-lg">
-                    Order Details
-                  </h2>
-                </div>
-                <div className="p-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-1">Order ID</span>
-                      <p className="text-on-surface font-semibold text-sm break-all">#{orderObj?._id}</p>
-                    </div>
-                    <div>
-                      <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-1">Date</span>
-                      <p className="text-on-surface font-semibold text-sm">
-                        {orderDate?.month} {orderDate?.date}, {orderDate?.year}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-1">Ordered By</span>
-                      <p className="text-on-surface font-semibold text-sm">{orderObj?.name}</p>
-                    </div>
-                    <div>
-                      <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-1">Total</span>
-                      <p className="text-primary font-semibold text-lg font-display-lg">
-                        ₹{orderObj?.total?.toLocaleString("en-IN")}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-1">Payment Method</span>
-                      <p className="text-on-surface font-semibold text-sm">
-                        {orderObj?.paymentMethod === "cod" ? "Cash on Delivery" : "Card"}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-1">Payment Status</span>
-                      <p className={`font-semibold text-sm flex items-center gap-2 ${orderObj?.paymentStatus === "paid" ? "text-green-700" : "text-orange-600"}`}>
-                        <span className={`w-2 h-2 rounded-full ${orderObj?.paymentStatus === "paid" ? "bg-green-600" : "bg-orange-500"} animate-pulse`}></span>
-                        {orderObj?.paymentStatus?.toUpperCase()}
-                      </p>
-                    </div>
-                  </div>
-                  {orderObj?.transactionId && (
-                    <div className="pt-4 border-t border-outline-variant/20">
-                      <span className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest block mb-1">Transaction ID</span>
-                      <p className="text-green-700 font-semibold text-sm">{orderObj?.transactionId}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Shipping Address */}
-              <div className="border border-outline-variant/30 bg-surface-container-low">
-                <div className="p-6 border-b border-outline-variant/30">
-                  <h2 className="text-primary text-2xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                    Shipping Address
-                  </h2>
-                </div>
-                <div className="p-6 space-y-3">
-                  <p className="text-on-surface">
-                    <span className="font-semibold">{orderObj?.shippingAddress?.streetAddress}</span>
-                  </p>
-                  <p className="text-on-surface-variant text-sm">
-                    {orderObj?.shippingAddress?.city}, {orderObj?.shippingAddress?.state} - {orderObj?.shippingAddress?.postalCode}
-                  </p>
-                  <p className="text-on-surface-variant text-sm">{orderObj?.shippingAddress?.country}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Order Summary + Actions */}
-            <div className="space-y-8">
-
-              {/* Order Summary Table */}
-              <div className="border border-outline-variant/30 bg-surface-container-low">
-                <div className="p-6 border-b border-outline-variant/30">
-                  <h2 className="text-primary text-2xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                    Order Summary
-                  </h2>
-                </div>
-                <div className="p-6">
-                  <div className="border-b border-outline-variant/30 pb-3 mb-4 grid grid-cols-12 gap-2 font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">
-                    <span className="col-span-6">Product</span>
-                    <span className="col-span-3 text-center">Qty</span>
-                    <span className="col-span-3 text-right">Price</span>
-                  </div>
-                  <div className="space-y-4">
-                    {orderObj?.orderDetails?.map((product) => (
-                      <div key={product._id} className="grid grid-cols-12 gap-2 items-center">
-                        <span className="col-span-6 text-sm text-on-surface line-clamp-1">{product.name}</span>
-                        <span className="col-span-3 text-center text-sm text-on-surface-variant">×{product.quantity}</span>
-                        <span className="col-span-3 text-right text-sm font-semibold text-on-surface">
-                          ₹{product.price?.toLocaleString("en-IN")}
-                        </span>
+          {/* Details Section */}
+          <section className="w-full max-w-4xl mx-auto mb-16 fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <div className="border border-outline-variant/30 flex flex-col md:flex-row bg-surface">
+              {/* Items Column */}
+              <div className="p-8 border-b md:border-b-0 md:border-r border-outline-variant/30 flex-grow">
+                <h2 className="font-label-caps text-on-surface-variant mb-6 tracking-widest">PURCHASED ITEMS</h2>
+                <div className="flex flex-col gap-6">
+                  {orderObj?.orderDetails?.map((product) => (
+                    <div key={product._id} className="flex gap-4 items-start">
+                      <div className="w-20 h-20 bg-surface-container rounded overflow-hidden flex-shrink-0 border border-outline-variant/30">
+                        <img 
+                          className="w-full h-full object-cover" 
+                          alt={product.name} 
+                          src={product.img || product.image} 
+                        />
                       </div>
-                    ))}
-                  </div>
-                  <div className="border-t border-outline-variant/30 mt-6 pt-4 flex justify-between items-center">
-                    <span className="text-primary text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Total</span>
-                    <span className="text-primary text-2xl font-semibold" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                      ₹{orderObj?.total?.toLocaleString("en-IN")}
-                    </span>
-                  </div>
+                      <div className="flex flex-col flex-grow">
+                        <h3 className="font-display-lg text-on-background text-[18px] mb-1 line-clamp-1">{product.name}</h3>
+                        <span className="font-body-base text-on-surface-variant text-sm mb-2">{product.category || 'Jewellery'}</span>
+                        <div className="flex justify-between items-center w-full">
+                          <span className="font-body-base text-on-surface-variant text-sm">Qty: {product.quantity}</span>
+                          <span className="font-button-text text-primary">₹{product.price?.toLocaleString("en-IN")}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="space-y-4">
-                <button
-                  className="w-full border border-primary text-primary font-button-text text-button-text uppercase tracking-[0.2em] py-5 hover:bg-primary hover:text-on-primary transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50"
-                  onClick={handleDownloadInvoice}
-                  disabled={invoiceLoading}
-                >
-                  {invoiceLoading ? (
-                    <span className="loading loading-spinner loading-sm"></span>
-                  ) : (
-                    <>
-                      <span className="material-symbols-outlined text-sm">download</span>
-                      Download Invoice
-                    </>
-                  )}
-                </button>
-                <button
-                  className="w-full bg-primary text-on-primary font-button-text text-button-text uppercase tracking-[0.2em] py-5 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-3"
-                  onClick={() => {
-                    navigate("/", { state: {}, replace: true });
-                  }}
-                >
-                  <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                  Continue Shopping
-                </button>
+              {/* Details Column */}
+              <div className="p-8 bg-surface-container-low/30 md:w-80 flex-shrink-0">
+                <div className="mb-8">
+                  <h2 className="font-label-caps text-on-surface-variant mb-4 flex items-center gap-2 tracking-widest">
+                    <span className="material-symbols-outlined text-[18px]">local_shipping</span>
+                    SHIPPING ADDRESS
+                  </h2>
+                  <address className="not-italic font-body-base text-on-background leading-relaxed text-sm">
+                    <span className="block font-medium mb-1">{orderObj?.name}</span>
+                    {orderObj?.shippingAddress?.streetAddress}<br />
+                    {orderObj?.shippingAddress?.city}, {orderObj?.shippingAddress?.state}<br />
+                    {orderObj?.shippingAddress?.postalCode}<br />
+                    {orderObj?.shippingAddress?.country}
+                  </address>
+                </div>
+                <div>
+                  <h2 className="font-label-caps text-on-surface-variant mb-4 flex items-center gap-2 tracking-widest">
+                    <span className="material-symbols-outlined text-[18px]">receipt_long</span>
+                    PAYMENT SUMMARY
+                  </h2>
+                  <div className="flex flex-col gap-3 font-body-base text-on-surface-variant text-sm">
+                    <div className="flex justify-between">
+                      <span>Total</span>
+                      <span>₹{orderObj?.total?.toLocaleString("en-IN")}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Shipping</span>
+                      <span className="italic text-secondary">Complimentary</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Method</span>
+                      <span className="capitalize">{orderObj?.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Card'}</span>
+                    </div>
+                    <div className="w-full h-[1px] bg-outline-variant/30 my-2"></div>
+                    <div className="flex justify-between items-center font-button-text text-primary text-[16px]">
+                      <span>TOTAL PAID</span>
+                      <span>₹{orderObj?.total?.toLocaleString("en-IN")}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          </section>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full max-w-md mx-auto mb-12 fade-in-up" style={{ animationDelay: '0.4s' }}>
+            <button 
+              className="w-full sm:w-auto px-8 py-4 bg-primary text-on-primary font-button-text tracking-widest text-center hover:scale-[1.02] hover:bg-primary-container transition-all duration-300 disabled:opacity-50"
+              onClick={handleDownloadInvoice}
+              disabled={invoiceLoading}
+            >
+              {invoiceLoading ? <span className="loading loading-spinner loading-sm"></span> : 'DOWNLOAD INVOICE'}
+            </button>
+            <Link 
+              to="/shop"
+              className="w-full sm:w-auto px-8 py-4 bg-transparent text-primary font-button-text tracking-widest text-center border border-primary/50 hover:bg-surface-container-low transition-colors duration-300"
+            >
+              CONTINUE SHOPPING
+            </Link>
           </div>
+
+          <p className="font-body-base text-sm text-on-surface-variant text-center max-w-md mx-auto">
+            Need help? Contact our concierge at <a className="text-primary hover:underline underline-offset-4" href="mailto:support@sriramjewellery.com">support@sriramjewellery.com</a>
+          </p>
         </>
       ) : (
-        /* No Order State */
         <div className="flex flex-col justify-center items-center min-h-[60vh] text-center space-y-6">
           <span className="material-symbols-outlined text-7xl text-on-surface-variant/30">inventory_2</span>
-          <h2 className="text-primary text-3xl" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-            No Order Found
-          </h2>
+          <h2 className="text-primary text-3xl font-display-lg">No Order Found</h2>
           <p className="text-on-surface-variant max-w-md">
             It seems like no order was placed. Browse our collection and discover something special.
           </p>
           <Link
-            to="/"
+            to="/shop"
             className="inline-flex items-center gap-2 bg-primary text-on-primary font-button-text text-button-text uppercase tracking-widest px-8 py-4 hover:opacity-90 transition-opacity"
           >
             Explore Collections

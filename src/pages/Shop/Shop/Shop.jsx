@@ -64,7 +64,7 @@ const Shop = () => {
                 {categories?.map(c => (
                   <button 
                     key={c._id}
-                    onClick={() => setSearchParams({category: c.categoryName.toLowerCase()})} 
+                    onClick={() => setSearchParams({category: c.categoryName?.toLowerCase()})} 
                     className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase"
                   >
                     {c.categoryName}

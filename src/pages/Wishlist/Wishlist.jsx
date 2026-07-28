@@ -87,7 +87,7 @@ const Wishlist = () => {
                   return (
                     <div key={item._id} className="group relative flex flex-col h-full bg-surface-container border border-outline-variant overflow-hidden transition-all duration-500 hover:shadow-heritage">
                       <div className="aspect-[4/5] overflow-hidden relative">
-                        <Link to={`/products/${item.productId}`}>
+                        <Link to={`/products/${item.productId}/description`}>
                           <img
                             src={item.img}
                             alt={item.name}
@@ -107,7 +107,7 @@ const Wishlist = () => {
                         <span className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-1">
                           {productDetails.category || "Collection"}
                         </span>
-                        <Link to={`/products/${item.productId}`}>
+                        <Link to={`/products/${item.productId}/description`}>
                           <h3 className="font-headline-sm text-headline-sm text-primary mb-1 hover:text-secondary line-clamp-1">{item.name}</h3>
                         </Link>
                         
@@ -123,7 +123,7 @@ const Wishlist = () => {
 
                         <div className="space-y-3 mt-auto">
                           {isQuoteOnly ? (
-                            <Link to={`/products/${item.productId}`} className="block w-full">
+                            <Link to={`/products/${item.productId}/description`} className="block w-full">
                               <button className="w-full py-3 border border-[#c8a684] text-primary font-button-text text-button-text hover:bg-surface-variant transition-colors cursor-pointer uppercase">
                                 GET QUOTE
                               </button>

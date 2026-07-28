@@ -6,10 +6,10 @@ import useCart from '../../hooks/useCart';
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const [, refetch] = useCart();
+  const { refetch } = useCart();
   
   const handleCardClick = () => {
-    navigate(`/product/${product._id}`);
+    navigate(`/products/${product._id}/description`);
   };
 
   return (
@@ -18,7 +18,7 @@ const ProductCard = ({ product }) => {
         <img 
           alt={product.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-          src={product.images?.[0] || "https://placehold.co/400x500"}
+          src={product.images?.[0] || product.img || "https://placehold.co/400x500"}
         />
         <button 
           onClick={(e) => {

@@ -57,6 +57,38 @@ router.patch("/me", verifyJWT, async (req, res) => {
 
 // ─── Addresses ───────────────────────────────────────────────────────────────
 
+// PATCH /api/users/shipping-address
+router.patch("/shipping-address", verifyJWT, async (req, res) => {
+  try {
+    const email = req.query.email;
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $set: { shippingAddress: req.body } },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ success: true, modifiedCount: 1, data: user });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update address" });
+  }
+});
+
+// PATCH /api/users/delete-address
+router.patch("/delete-address", verifyJWT, async (req, res) => {
+  try {
+    const email = req.query.email;
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $unset: { shippingAddress: "" } },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ success: true, modifiedCount: 1, data: user });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete address" });
+  }
+});
+
 // GET /api/users/me/addresses
 router.get("/me/addresses", verifyJWT, async (req, res) => {
   try {

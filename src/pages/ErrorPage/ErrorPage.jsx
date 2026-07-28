@@ -36,10 +36,11 @@ const ErrorPage = () => {
         )}
 
         {/* CTA */}
-        <Link to="/">
-          <button className="mt-10 px-10 py-4 bg-primary text-white font-body text-xs font-bold uppercase tracking-[0.2em] hover:bg-primary/90 transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] cursor-pointer">
-            Return to Home
-          </button>
+        <Link 
+          to="/"
+          className="mt-10 inline-block px-10 py-4 bg-primary text-white font-body text-xs font-bold uppercase tracking-[0.2em] hover:bg-primary/90 transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
+        >
+          Return to Home
         </Link>
 
         {/* Secondary link */}

@@ -25,15 +25,12 @@ const useCart = () => {
 
   const isCartLoading = isAuthLoading || (hasValidQuery && isQueryLoading);
 
-  // fetch subtotal amount of cart
-  const { data: cartSubtotal } = useQuery({
-    enabled: hasValidQuery,
-    queryKey: ["cart-subtotal", user?._id || user?.email],
-    queryFn: async () => {
-      const res = await axiosSecure.get("/cart/subtotal");
-      return res.data;
-    },
-  });
+  // calculate subtotal amount of cart directly from cartData
+  const cartSubtotal = {
+    subtotal: cartData?.reduce((total, item) => {
+      return total + ((item.price || item.discountPrice || 0) * (item.quantity || 1));
+    }, 0) || 0
+  };
 
   // post product data to cart
   const addToCart = async (productData, quantity = 1) => {

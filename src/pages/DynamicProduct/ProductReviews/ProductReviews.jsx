@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./ProductReviews.css";
 import { useLocation, useParams } from "react-router-dom";
 import useProducts from "../../../hooks/useProducts";
 import useDynamicRating from "../../../hooks/useDynamicRating";
@@ -149,97 +148,85 @@ const ProductReviews = () => {
   };
 
   return (
-    <div className="mt-7 mb-32 px-3" id="productReviews">
-      <div className="border-2 rounded-xl border-[var(--pink-gold)] flex flex-col items-center p-8 md:w-[40%] space-y-5 mx-auto">
-        <h1 className="text-6xl font-extrabold text-black">{averageRating}</h1>
+    <div className="py-16 px-4 md:px-12 flex flex-col gap-16 border-b border-outline-variant/30 max-w-4xl mx-auto" id="productReviews">
+      <div className="flex flex-col items-center justify-center p-12 bg-surface-container-low border border-outline-variant/30 rounded-sm">
+        <h1 className="font-display-lg text-6xl text-primary mb-4">{averageRating}</h1>
         <StarRatings
           rating={averageRating}
-          starDimension="28px"
+          starDimension="24px"
           starSpacing="4px"
-          starRatedColor="#d4647c"
-          starEmptyColor="#c7c7c7"
-          svgIconPath="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7c0.1,0.1,0.3,0.1,0.5,0.1v0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1"
-          svgIconViewBox="0 0 24 24"
+          starRatedColor="#c8a684"
+          starEmptyColor="#ebe1d2"
         />
-        <p className="text-gray-600 text-lg">Product Rating</p>
+        <p className="font-label-caps text-xs text-on-surface-variant uppercase tracking-widest mt-6">Product Rating</p>
       </div>
 
       {dynamicProduct?.review?.length > 0 && (
-        <div>
-          <h4
-            className="text-2xl font-bold mb-10 mt-16"
-            style={{ fontFamily: "var(--poppins)" }}
-          >
-            CUSTOMERS FEEDBACK
+        <div className="space-y-12">
+          <h4 className="font-display-lg text-headline-sm text-primary text-center">
+            CLIENT FEEDBACK
           </h4>
 
-          <div className="md:pl-10 md:pr-20 product-reviews-con">
+          <div className="space-y-10">
             {dynamicProduct?.review
               ?.slice(0, reviewsLength)
               .sort((a, b) => b.reviewDate.localeCompare(a.reviewDate))
               .map((r) => (
-                <div key={r._id} className="flex items-start gap-4 ">
-                  <div className="avatar">
-                    <div className="mask mask-circle w-12 h-12">
-                      <img src={r.reviewerImg} alt={r.reviewerName} />
-                    </div>
+                <div key={r._id} className="flex items-start gap-6 pb-10 border-b border-outline-variant/20 last:border-0">
+                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-outline-variant/30">
+                    <img src={r.reviewerImg || "https://ui-avatars.com/api/?name="+r.reviewerName} alt={r.reviewerName} className="w-full h-full object-cover" />
                   </div>
 
-                  <div className="md:w-[95%]">
-                    <div className="flex items-center gap-4">
-                      <h5 className="text-xl text-black font-semibold">
-                        {r.reviewerName}
-                      </h5>
-
-                      {/* User friendly Review Date */}
-                      <p className="text-sm text-gray-600">
-                        <TimeAgo timeStamp={r.reviewDate} />
-                      </p>
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <h5 className="font-display-lg text-lg text-primary">
+                          {r.reviewerName}
+                        </h5>
+                        <p className="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">
+                          <TimeAgo timeStamp={r.reviewDate} />
+                        </p>
+                      </div>
 
                       {user && user?.email === r.reviewerEmail && (
-                        <CiEdit
-                          className="text-xl text-black"
-                          onClick={deleteProductReview}
-                        />
+                        <button onClick={deleteProductReview} className="text-on-surface-variant hover:text-error transition-colors" title="Delete Review">
+                          <span className="material-symbols-outlined text-sm">delete</span>
+                        </button>
                       )}
                     </div>
+                    
                     <StarRatings
                       rating={r.rating}
-                      starDimension="16px"
-                      starSpacing="3px"
-                      starRatedColor="#d4647c"
-                      starEmptyColor="#c7c7c7"
-                      svgIconPath="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7c0.1,0.1,0.3,0.1,0.5,0.1v0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1"
-                      svgIconViewBox="0 0 24 24"
+                      starDimension="14px"
+                      starSpacing="2px"
+                      starRatedColor="#c8a684"
+                      starEmptyColor="#ebe1d2"
                     />
 
-                    <div className="mt-4 space-y-2">
-                      <h5 className="text-lg text-black">{r.title}</h5>
-                      <p className="text-gray-600">{r.desc}</p>
+                    <div className="pt-2">
+                      <h5 className="font-display-lg text-lg text-on-surface mb-2">{r.title}</h5>
+                      <p className="font-body-base text-on-surface-variant leading-relaxed text-sm">{r.desc}</p>
                     </div>
 
                     <button
-                      className="flex gap-1 mt-5 text-gray-700 cursor-pointer transition-all duration-300"
+                      className="flex items-center gap-2 mt-4 text-xs font-label-caps uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors"
                       onClick={() => handleLikeStatus(r._id)}
                       disabled={updateLikeLoading?.status}
                     >
                       {r.likedBy?.includes(user?.email) ? (
-                        <IoHeartCircleSharp className="text-[var(--light-pink)] text-2xl" />
+                        <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
                       ) : (
-                        <IoHeartCircleOutline className="text-2xl" />
+                        <span className="material-symbols-outlined text-sm">favorite</span>
                       )}
 
-                      {updateLikeLoading?.status &&
-                      updateLikeLoading?.id === r._id ? (
-                        <span className="loading loading-ring block mt-[2px]"></span>
+                      {updateLikeLoading?.status && updateLikeLoading?.id === r._id ? (
+                        <span className="animate-pulse">...</span>
                       ) : (
                         <span>
                           {r.likeCount > 0 ? (
-                            <span className="font-bold mt-[2px] block">
-                              {r.likeCount}
-                            </span>
+                            <span>{r.likeCount} Helpful</span>
                           ) : (
-                            <span className="mt-[2px] block">Like</span>
+                            <span>Helpful</span>
                           )}
                         </span>
                       )}
@@ -248,28 +235,29 @@ const ProductReviews = () => {
                 </div>
               ))}
           </div>
-          <button
-            onClick={handleShowReviews}
-            className={`mx-auto block border-b-2 border-b-black ${
-              dynamicProduct?.review?.length <= 2 && "hidden"
-            }`}
-          >
-            {showAllReviews ? "Show Less" : "View All Reviews"}
-          </button>
+          
+          {dynamicProduct?.review?.length > 2 && (
+            <button
+              onClick={handleShowReviews}
+              className="mx-auto flex items-center justify-center gap-2 font-label-caps text-xs text-primary uppercase tracking-widest hover:bg-primary/5 px-6 py-3 border border-primary/20 transition-colors rounded-sm"
+            >
+              {showAllReviews ? "Show Less" : "View All Reviews"}
+            </button>
+          )}
         </div>
       )}
 
-      <div className="mt-16">
+      <div className="pt-8 mt-8 border-t border-outline-variant/30">
         {!user ? (
-          <div>
-            <h4 className="font-bold text-2xl uppercase mb-4">
+          <div className="text-center bg-surface-container-low p-10 border border-outline-variant/30">
+            <h4 className="font-display-lg text-headline-sm text-primary mb-4">
               Write a Review
             </h4>
-            <p>
+            <p className="font-body-base text-on-surface-variant">
               You must be{" "}
               <Link
                 to="/login"
-                className="text-primary"
+                className="text-primary font-bold border-b border-primary/30 hover:border-primary transition-colors"
                 state={{ from: location }}
               >
                 logged in
@@ -280,58 +268,58 @@ const ProductReviews = () => {
         ) : (
           <>
             {!hasUserReviewed && (
-              <div>
-                <h4 className="font-bold text-2xl uppercase">Write a Review</h4>
+              <div className="bg-surface-container-low p-8 md:p-12 border border-outline-variant/30 rounded-sm">
+                <h4 className="font-display-lg text-headline-sm text-primary mb-8 text-center">Share Your Experience</h4>
                 <form
                   onSubmit={handleSubmitProductReview}
-                  className="mt-8 px-2 space-y-8"
+                  className="space-y-8 max-w-2xl mx-auto"
                 >
                   {productReviewError && (
-                    <p className="text-error">{productReviewError}</p>
+                    <p className="text-error font-body-base text-sm bg-error-container text-on-error-container p-4 rounded-sm">{productReviewError}</p>
                   )}
-                  <div className="space-y-2">
-                    <h5 className="font-bold">
-                      What would you rate the product?
+                  
+                  <div className="space-y-3 flex flex-col items-center">
+                    <h5 className="font-label-caps text-xs text-on-surface-variant uppercase tracking-widest">
+                      Rate this product
                     </h5>
                     <StarRatings
                       rating={starRating}
-                      starRatedColor="#d4647c"
-                      starHoverColor="#d4647c"
-                      starEmptyColor="#c7c7c7"
+                      starRatedColor="#c8a684"
+                      starHoverColor="#c8a684"
+                      starEmptyColor="#ebe1d2"
                       changeRating={handleRatingChange}
                       numberOfStars={5}
-                      starDimension="22px"
+                      starDimension="28px"
                       starSpacing="4px"
                       required="true"
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <h5 className="font-bold">Review Title</h5>
-                    <textarea
-                      rows={1}
+                  <div className="space-y-3">
+                    <label className="font-label-caps text-xs text-on-surface-variant uppercase tracking-widest">Review Title</label>
+                    <input
                       required
                       name="reviewTitle"
-                      placeholder="Great Product"
-                      className="outline-none border-2 border-black rounded-lg w-full p-3"
+                      placeholder="e.g. Absolutely Beautiful Craftsmanship"
+                      className="w-full bg-surface border border-outline-variant/50 px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all rounded-sm font-body-base"
                       minLength={10}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <h5 className="font-bold">Review Content</h5>
+                  <div className="space-y-3">
+                    <label className="font-label-caps text-xs text-on-surface-variant uppercase tracking-widest">Review Details</label>
                     <textarea
                       rows={5}
                       required
                       name="reviewDesc"
-                      placeholder="Write a detailed review about what you liked about the product ..."
-                      className="outline-none border-2 border-black rounded-lg w-full p-3"
+                      placeholder="Share what you liked about the piece..."
+                      className="w-full bg-surface border border-outline-variant/50 px-4 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all rounded-sm font-body-base"
                       minLength={20}
                     />
                   </div>
 
-                  <button className="btn btn-outline btn-neutral btn-wide border-2">
-                    Submit
+                  <button className="w-full bg-primary text-white py-4 font-button-text uppercase tracking-widest hover:bg-primary-container transition-colors rounded-sm">
+                    Submit Review
                   </button>
                 </form>
               </div>

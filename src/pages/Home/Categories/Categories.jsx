@@ -9,7 +9,7 @@ const Categories = () => {
   const fallbackImg = "https://lh3.googleusercontent.com/aida-public/AB6AXuCx1uzQ5_Pm7hjudm1Kz3Ei6m5M0andEbw7aNU0c9L1hkXg9y5NvcxLr5MtutB5oelU3o1nIqmdltUr1xXWbhkZZ2bI6qtl4n_NbOKst-Wzj3rFYkKPIM-V1McNph0YxzzB3XVxR6j6U1hpDQ_TVrQjAihaqe_G2U4W2h17HMuYAsyVL8vtKoDT3JtgOK0Rmv9cL54OyYWfMHXJ3s_10Ny4ogkgtIRUjZ36VVc-NWbBX_3hBozvFPDhA6Xluj9EEeYv_44Ssqb-k0Q";
 
   return (
-    <section className="space-y-16">
+    <section id="categories" className="space-y-16">
       <div className="text-center space-y-4">
         <h2 className="font-display-lg text-headline-md md:text-display-lg text-primary italic">Shop by Metal</h2>
         <div className="w-24 h-[1px] bg-primary/30 mx-auto"></div>

@@ -10,18 +10,20 @@ import Select from "react-select";
 import Swal from "sweetalert2";
 import useProducts from "../../../hooks/useProducts";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useCategories from "../../../hooks/useCategories";
 
 const AdminAddProduct = () => {
   const { user } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
   const [productError, setProductError] = useState(null);
-  const [categories, setCategories] = useState([]);
+  const { categories } = useCategories();
+
   const [defaultBadges, setDefaultBadges] = useState([]);
 
   // find product to edit the product
   const location = useLocation();
   const productId = location.state?.id;
-  const [dynamicProduct, setDynamicProduct] = useState({});
+  const [dynamicProduct, setDynamicProduct] = useState(null);
   const [products] = useProducts();
 
   useEffect(() => {
@@ -30,17 +32,6 @@ const AdminAddProduct = () => {
       setDynamicProduct(product);
     }
   }, [productId, products]);
-
-  // fetch categories
-  useEffect(() => {
-    if (user) {
-      const apiBaseUrl = getApiBaseUrl();
-      axios
-        .get(`${apiBaseUrl}/categories`)
-        .then((res) => setCategories(res.data))
-        .catch((e) => console.error(e));
-    }
-  }, [user]);
 
   // react hook form settings
   const {
@@ -75,23 +66,24 @@ const AdminAddProduct = () => {
     if (dynamicProduct) {
       let defaultValues = {};
 
-      defaultValues.name = dynamicProduct.name;
-      defaultValues.description = dynamicProduct.details?.description;
-      defaultValues.advantages = dynamicProduct.details?.advantages.join(", ");
-      defaultValues.price = dynamicProduct.price;
+      defaultValues.name = dynamicProduct.name || "";
+      defaultValues.description = dynamicProduct.details?.description || "";
+      defaultValues.advantages = dynamicProduct.details?.advantages?.join(", ") || "";
+      defaultValues.price = dynamicProduct.price || 0;
       defaultValues.discountPrice = dynamicProduct.discountPrice || null;
-      defaultValues.category = dynamicProduct.category;
+      defaultValues.category = dynamicProduct.category || "";
       defaultValues.selectedBadges = defaultBadges;
-      defaultValues.stock = dynamicProduct.stock;
-      defaultValues.size = dynamicProduct.size;
-      defaultValues.carate = dynamicProduct.carate;
+      defaultValues.stock = dynamicProduct.stock?.toString() || "";
+      defaultValues.size = dynamicProduct.size || "";
+      defaultValues.carate = dynamicProduct.carate?.toString() || "";
 
       reset({ ...defaultValues });
     }
   }, [reset, dynamicProduct, defaultBadges]);
 
   const onSubmit = (data) => {
-    const badges = data?.selectedBadges?.map((b) => b?.value);
+    try {
+      const badges = data?.selectedBadges?.map((b) => b?.value);
     const product = {
       name: data.name,
       category: data.category,
@@ -104,9 +96,9 @@ const AdminAddProduct = () => {
       discountPercentage: data.discountPrice
         ? (((data.price - data.discountPrice) / data.price) * 100).toFixed(2)
         : null,
-      size: data.size,
-      stock: parseInt(data.stock),
-      carate: parseInt(data.carate),
+      size: data.size || "",
+      stock: parseInt(data.stock) || 0,
+      carate: data.carate ? parseInt(data.carate) : null,
       newArrival: badges?.indexOf("newArrival") !== -1 ? true : false,
       badge: badges?.indexOf("hot") !== -1 ? "HOT" : false,
       flashSale: badges?.indexOf("flashSale") !== -1 ? true : false,
@@ -125,7 +117,7 @@ const AdminAddProduct = () => {
         confirmButtonText: "Yes, Publish it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          const imgFile = data.productImg[0];
+          const imgFile = data.productImg?.[0];
           if (imgFile?.size > 2097152) {
             Swal.fire({
               title: "Image Size Exceeded!",
@@ -136,10 +128,27 @@ const AdminAddProduct = () => {
           }
 
           // upload product image to imgbb
-          const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${
-            import.meta.env.VITE_IMGHOSTINGKEY
-          }`;
+          const apiKey = import.meta.env.VITE_IMGHOSTINGKEY;
+          
+          if (!apiKey) {
+            // Fallback if no ImgBB key is configured
+            product.img = "https://placehold.co/800x800";
+            axiosSecure
+              .post("/products", product)
+              .then((res) => {
+                if (res.data.success) {
+                  Swal.fire({
+                    title: "Success!",
+                    text: "Product added (using placeholder image)",
+                    icon: "success",
+                  });
+                }
+              })
+              .catch((error) => console.error(error));
+            return;
+          }
 
+          const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${apiKey}`;
           const formData = new FormData();
           formData.append("image", data.productImg[0]);
 
@@ -148,12 +157,12 @@ const AdminAddProduct = () => {
             .then((res) => {
               if (res.data.success) {
                 // add image link to product
-                product.img = res.data.display_url;
+                product.img = res.data.data.display_url;
 
                 axiosSecure
                   .post("/products", product)
                   .then((res) => {
-                    if (res.data.insertedId) {
+                    if (res.data.success) {
                       Swal.fire({
                         title: "Success!",
                         text: "Product has been added successfully",
@@ -164,7 +173,10 @@ const AdminAddProduct = () => {
                   .catch((error) => console.error(error));
               }
             })
-            .catch((imgHostingError) => console.error(imgHostingError));
+            .catch((imgHostingError) => {
+              console.error(imgHostingError);
+              Swal.fire("Upload Failed", "Could not upload image to ImgBB", "error");
+            });
         }
       });
     }
@@ -181,12 +193,28 @@ const AdminAddProduct = () => {
         confirmButtonText: "Yes, Publish it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          if (data.productImg.length > 0) {
+          if (data.productImg?.length > 0) {
             // upload product image to imgbb
-            const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${
-              import.meta.env.VITE_IMGHOSTINGKEY
-            }`;
+            const apiKey = import.meta.env.VITE_IMGHOSTINGKEY;
+            
+            if (!apiKey) {
+              product.img = "https://placehold.co/800x800";
+              axiosSecure
+                .patch(`/products/${dynamicProduct?._id}`, product)
+                .then((res) => {
+                  if (res.data.success) {
+                    Swal.fire({
+                      title: "Success!",
+                      text: "Product updated (using placeholder image)",
+                      icon: "success",
+                    });
+                  }
+                })
+                .catch((e) => console.error(e));
+              return;
+            }
 
+            const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${apiKey}`;
             const formData = new FormData();
             formData.append("image", data.productImg[0]);
 
@@ -196,9 +224,9 @@ const AdminAddProduct = () => {
                 if (res.data.success) {
                   product.img = res.data.data.display_url;
                   axiosSecure
-                    .put(`/products/${dynamicProduct?._id}`, product)
+                    .patch(`/products/${dynamicProduct?._id}`, product)
                     .then((res) => {
-                      if (res.data.modifiedCount > 0) {
+                      if (res.data.success) {
                         Swal.fire({
                           title: "Success!",
                           text: "Product has been updated successfully",
@@ -209,13 +237,16 @@ const AdminAddProduct = () => {
                     .catch((e) => console.error(e));
                 }
               })
-              .catch((e) => console.error(e));
+              .catch((e) => {
+                console.error(e);
+                Swal.fire("Upload Failed", "Could not upload image to ImgBB", "error");
+              });
           } else {
             product.img = dynamicProduct.img;
             axiosSecure
-              .put(`/products/${dynamicProduct?._id}`, product)
+              .patch(`/products/${dynamicProduct?._id}`, product)
               .then((res) => {
-                if (res.data.modifiedCount > 0) {
+                if (res.data.success) {
                   Swal.fire({
                     title: "Success!",
                     text: "Product has been updated successfully",
@@ -227,6 +258,10 @@ const AdminAddProduct = () => {
           }
         }
       });
+    }
+    } catch (err) {
+      console.error("Submit Error: ", err);
+      Swal.fire("Submit Error", "An error occurred during submission: " + err.message, "error");
     }
   };
 
@@ -255,6 +290,23 @@ const AdminAddProduct = () => {
       </div>
 
       <div>
+        {/* Debug: Show all form errors to catch hidden validation issues */}
+        {Object.keys(errors).length > 0 && (
+          <div className="alert alert-error mb-8 rounded-lg text-white">
+            <span className="font-bold">Form Validation Errors:</span>
+            <pre className="text-xs text-left overflow-auto mt-2 p-2 bg-black/20 rounded">
+              {JSON.stringify(
+                Object.keys(errors).reduce((acc, key) => {
+                  acc[key] = errors[key]?.message || errors[key]?.type || "error";
+                  return acc;
+                }, {}),
+                null,
+                2
+              )}
+            </pre>
+          </div>
+        )}
+
         {/* error notification */}
         {productError && (
           <div
@@ -313,7 +365,6 @@ const AdminAddProduct = () => {
                     rows="8"
                     className="w-full border-2 border-gray-400 mt-3 p-4"
                     {...register("description", { required: true })}
-                    minLength={100}
                   ></textarea>
                   {errors.description && (
                     <span className="text-red-500 mt-1 block">
@@ -331,9 +382,8 @@ const AdminAddProduct = () => {
                     className="w-full border-2 border-gray-400 mt-3 p-4"
                     {...register("advantages", { required: true })}
                     placeholder="Separate each advantage with comma(,)"
-                    minLength={30}
                   ></textarea>
-                  {errors.description && (
+                  {errors.advantages && (
                     <span className="text-red-500 mt-1 block">
                       Product Advantages is required
                     </span>
@@ -506,15 +556,15 @@ const AdminAddProduct = () => {
                     name="size"
                     control={control}
                     defaultValue=""
-                    rules={{ required: "Please select an option" }}
+                    rules={{ required: false }}
                     render={({ field, fieldState }) => (
                       <>
                         <select
                           {...field}
                           className="border border-gray-300 w-full outline-none rounded py-3 px-2 category-container"
                         >
-                          <option value="" disabled>
-                            Select the size
+                          <option value="">
+                            Select the size (Optional)
                           </option>
                           <option value="Large">Large</option>
                           <option value="Medium">Medium</option>
@@ -538,15 +588,15 @@ const AdminAddProduct = () => {
                     name="carate"
                     control={control}
                     defaultValue=""
-                    rules={{ required: "Please select an option" }}
+                    rules={{ required: false }}
                     render={({ field, fieldState }) => (
                       <>
                         <select
                           {...field}
                           className="border border-gray-300 w-full outline-none rounded py-3 px-2 category-container"
                         >
-                          <option value="" disabled>
-                            Select the carate
+                          <option value="">
+                            Select the carate (Optional)
                           </option>
                           <option value="8">8K</option>
                           <option value="10">10K</option>
