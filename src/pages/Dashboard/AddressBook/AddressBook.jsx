@@ -148,13 +148,13 @@ const AddressBook = () => {
 
         {/* Existing Address Card */}
         {!isFormVisible && shippingAdd && (
-          <div className="bg-primary-container border border-primary/10 p-8 flex flex-col justify-between h-64 relative overflow-hidden group transition-all duration-400 hover:-translate-y-1 hover:border-primary/50 hover:shadow-heritage">
+          <div className="bg-surface-container border border-outline-variant p-8 flex flex-col justify-between h-64 relative overflow-hidden group transition-all duration-500 hover:shadow-heritage hover:border-outline-variant/80">
             <div>
               <div className="flex justify-between items-start mb-6">
-                <h3 className="font-display text-2xl text-on-surface">
+                <h3 className="font-display text-2xl text-primary">
                   {shippingAdd.firstName} {shippingAdd.lastName}
                 </h3>
-                <span className="px-3 py-1 border border-primary/40 text-[10px] font-body font-bold text-primary uppercase tracking-widest bg-white/30">
+                <span className="px-3 py-1 border border-outline-variant text-[10px] font-body font-bold text-on-surface-variant uppercase tracking-widest bg-surface-variant/30">
                   Default
                 </span>
               </div>
@@ -213,7 +213,7 @@ const AddressBook = () => {
                 <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">First Name</label>
                 <input
                   type="text"
-                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                   {...register("firstName", { required: true })}
                 />
                 {errors.firstName && <span className="text-error text-xs italic mt-1 block">Required</span>}
@@ -223,7 +223,7 @@ const AddressBook = () => {
                 <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Last Name</label>
                 <input
                   type="text"
-                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                   {...register("lastName", { required: true })}
                 />
                 {errors.lastName && <span className="text-error text-xs italic mt-1 block">Required</span>}
@@ -235,7 +235,7 @@ const AddressBook = () => {
               <input
                 type="text"
                 readOnly
-                className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface opacity-70 cursor-not-allowed font-body"
+                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface opacity-70 cursor-not-allowed font-body"
                 {...register("email", { required: true })}
                 defaultValue={userFromDB?.email}
               />
@@ -245,7 +245,7 @@ const AddressBook = () => {
               <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Street Address</label>
               <input
                 type="text"
-                className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                 {...register("streetAddress", { required: true })}
               />
               {errors.streetAddress && <span className="text-error text-xs italic mt-1 block">Required</span>}
@@ -255,7 +255,7 @@ const AddressBook = () => {
               <div className="input-focus-line">
                 <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Country</label>
                 <select
-                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
                   {...register("country", { required: true })}
                   onChange={(e) => setCountryCode(e.target.value)}
                   defaultValue={countryCode}
@@ -269,7 +269,7 @@ const AddressBook = () => {
               <div className="input-focus-line">
                 <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">State / Province</label>
                 <select
-                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
                   {...register("state", { required: true })}
                   onChange={(e) => setStateCode(e.target.value)}
                   defaultValue={stateCode}
@@ -286,7 +286,7 @@ const AddressBook = () => {
                 <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">City / Town</label>
                 {cityData?.length ? (
                   <select
-                    className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
+                    className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
                     {...register("city", { required: true })}
                     defaultValue={cityData[0].name}
                   >
@@ -297,7 +297,7 @@ const AddressBook = () => {
                 ) : (
                   <input
                     type="text"
-                    className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                    className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                     {...register("city", { required: true })}
                   />
                 )}
@@ -307,7 +307,7 @@ const AddressBook = () => {
                 <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Zip / Postal Code</label>
                 <input
                   type="text"
-                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                   {...register("postalCode", { required: true })}
                 />
               </div>
@@ -316,12 +316,12 @@ const AddressBook = () => {
             <div className="input-focus-line relative">
               <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Mobile Number</label>
               <div className="flex items-center gap-2">
-                <span className="text-on-surface bg-surface-variant px-3 py-2 border-b border-secondary">
+                <span className="text-on-surface bg-surface-variant px-3 py-2 border-b border-outline-variant">
                   +{Country?.getCountryByCode(countryCode)?.phonecode || ''}
                 </span>
                 <input
                   type="number"
-                  className="w-full bg-transparent border-0 border-b border-secondary py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                   {...register("mobileNumber", { required: "Required" })}
                   onInput={(e) => {
                     if (e.target.value.length > e.target.maxLength)

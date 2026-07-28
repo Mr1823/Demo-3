@@ -16,7 +16,7 @@ const useWishlist = () => {
     refetch,
   } = useQuery({
     enabled: hasValidQuery,
-    queryKey: ["wishlist", user?._id || user?.email],
+    queryKey: ["wishlist", user?._id || user?.userId],
     queryFn: async () => {
       const res = await axiosSecure.get("/wishlist");
       return res.data;

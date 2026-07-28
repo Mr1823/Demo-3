@@ -124,7 +124,7 @@ const Wishlist = () => {
                         <div className="space-y-3 mt-auto">
                           {isQuoteOnly ? (
                             <Link to={`/products/${item.productId}/description`} className="block w-full">
-                              <button className="w-full py-3 border border-[#c8a684] text-primary font-button-text text-button-text hover:bg-surface-variant transition-colors cursor-pointer uppercase">
+                              <button className="w-full py-3 border border-outline-variant text-primary font-button-text text-button-text hover:bg-surface-variant transition-colors cursor-pointer uppercase">
                                 GET QUOTE
                               </button>
                             </Link>
@@ -147,14 +147,14 @@ const Wishlist = () => {
                 })}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-                <div className="mb-8 opacity-40">
-                  <span className="material-symbols-outlined text-[120px] text-primary" style={{ fontVariationSettings: "'wght' 100" }}>heart_broken</span>
+              <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in border border-outline-variant/30 bg-surface-container/30">
+                <div className="mb-6 opacity-60">
+                  <span className="material-symbols-outlined text-[48px] text-primary" style={{ fontVariationSettings: "'wght' 200" }}>auto_awesome</span>
                 </div>
-                <span className="font-label-caps text-label-caps text-tertiary tracking-[0.1em] mb-2">Your wishlist is empty</span>
-                <p className="font-body-lg text-on-surface-variant max-w-md mb-10">Discover our meticulously curated collections and find pieces that resonate with your unique story.</p>
+                <h3 className="font-display-lg text-headline-sm text-on-surface mb-2">Awaiting Inspiration</h3>
+                <p className="font-body-base text-on-surface-variant max-w-md mb-8">Discover our meticulously curated collections and find pieces that resonate with your unique story.</p>
                 <Link to="/shop">
-                  <button className="px-12 py-4 border border-[#c8a684] text-primary font-button-text text-button-text hover:bg-primary-container hover:text-on-primary transition-all duration-500 hover:scale-105 cursor-pointer uppercase">
+                  <button className="px-12 py-4 border border-outline-variant text-primary font-button-text text-button-text hover:bg-surface-variant transition-all duration-500 cursor-pointer uppercase tracking-widest text-[11px]">
                     BROWSE COLLECTION
                   </button>
                 </Link>

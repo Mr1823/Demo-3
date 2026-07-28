@@ -36,9 +36,9 @@ const MainLayout = () => {
 
   // ─── Login Nudge: 30-second timer (PRD §4.3) ──────────────────────────────
   useEffect(() => {
-    // Only show if user is NOT logged in and hasn't dismissed it this session
+    // Only start timer if user is NOT logged in and hasn't dismissed it this session
     if (user || isAuthLoading) return;
-
+    
     const alreadyShown = sessionStorage.getItem("login-nudge-shown");
     if (alreadyShown) return;
 
@@ -46,7 +46,6 @@ const MainLayout = () => {
       // Double-check user hasn't logged in during the 30s
       if (!user) {
         setShowLoginNudge(true);
-        sessionStorage.setItem("login-nudge-shown", "true");
       }
     }, 30000); // 30 seconds
 
@@ -55,7 +54,10 @@ const MainLayout = () => {
 
   const handleCloseNudge = () => {
     setShowLoginNudge(false);
+    sessionStorage.setItem("login-nudge-shown", "true");
   };
+
+  const isAuthRoute = location.pathname === "/login" || location.pathname === "/register";
 
   return (
     <div className="w-full">
@@ -73,11 +75,13 @@ const MainLayout = () => {
           },
         }}
       />
-      <TakeToLoginModal
-        isOpen={showLoginNudge}
-        onClose={handleCloseNudge}
-        message="Sign in to explore our exclusive collection and enjoy a personalized shopping experience."
-      />
+      {!isAuthRoute && (
+        <TakeToLoginModal
+          isOpen={showLoginNudge}
+          onClose={handleCloseNudge}
+          message="Save your favorites and track orders effortlessly. Enjoy exclusive access to our collections."
+        />
+      )}
     </div>
   );
 };
