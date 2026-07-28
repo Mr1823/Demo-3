@@ -72,7 +72,7 @@ const AdminNavigation = () => {
           <span className="material-symbols-outlined text-[20px]">currency_rupee</span>
           <span className="font-button-text">Live Rates</span>
         </NavLink>
-        <NavLink to="/dashboard/adminManageUsers" className={navLinkClass("/adminManageUsers")}>
+        <NavLink to="/dashboard/adminUsers" className={navLinkClass("/adminUsers")}>
           <span className="material-symbols-outlined text-[20px]">group</span>
           <span className="font-button-text">Users</span>
         </NavLink>

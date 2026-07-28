@@ -64,16 +64,17 @@ const AdminDashboard = () => {
   const comparisonText = lastMonth ? `vs ${lastMonth}, ${lastYear}` : "";
 
   return (
-    <div className="px-4 md:px-0 font-body-base">
-      {/* Header */}
-      <div className="mb-10 border-b border-outline-variant/30 pb-6">
-        <h1 className="text-primary text-3xl md:text-4xl mb-2 font-display-lg">
-          Dashboard Overview
-        </h1>
-        <p className="text-on-surface-variant text-sm">
-          Welcome back. Here's your store performance at a glance.
-        </p>
-      </div>
+    <div className="flex-1 overflow-y-auto p-6 md:p-margin-desktop bg-background custom-scrollbar font-body-base">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-10 border-b border-outline-variant/30 pb-6 pt-4">
+          <h1 className="text-primary text-3xl md:text-4xl mb-2 font-display-lg">
+            Dashboard Overview
+          </h1>
+          <p className="text-on-surface-variant text-sm">
+            Welcome back. Here's your store performance at a glance.
+          </p>
+        </div>
 
       {/* KPI Grid */}
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -176,7 +177,13 @@ const AdminDashboard = () => {
                     </td>
                     <td className="p-4 text-sm text-on-surface-variant">{product.category}</td>
                     <td className="p-4 text-sm font-semibold text-primary">
-                      ₹{(product.discountPrice || product.price)?.toLocaleString("en-IN")}
+                      {product.isQuoteOnly ? (
+                        <span className="italic text-outline font-normal">Quote</span>
+                      ) : product.price ? (
+                        `₹ ${(product.discountPrice || product.price).toLocaleString("en-IN")}`
+                      ) : (
+                        <span className="italic text-outline font-normal">Dynamic</span>
+                      )}
                     </td>
                     <td className="p-4 text-sm font-bold text-on-surface text-right">{product.sold}</td>
                   </tr>
@@ -252,6 +259,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 };

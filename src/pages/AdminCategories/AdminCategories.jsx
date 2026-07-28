@@ -122,7 +122,7 @@ const AdminCategories = () => {
   };
 
   return (
-    <div>
+    <div className="flex-1 overflow-y-auto p-6 md:p-margin-desktop bg-background custom-scrollbar w-full">
       <div className="text-sm breadcrumbs">
         <ul>
           <li>

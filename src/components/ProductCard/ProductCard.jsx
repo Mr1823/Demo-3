@@ -40,7 +40,13 @@ const ProductCard = ({ product }) => {
         </h3>
         
         <div className="mt-2 text-primary font-bold">
-            ₹ {product.price?.toLocaleString("en-IN")}
+          {product.isQuoteOnly ? (
+            <span className="italic text-outline text-sm">Quote</span>
+          ) : product.price ? (
+            `₹ ${product.price.toLocaleString("en-IN")}`
+          ) : (
+            <span className="italic text-outline text-sm">Dynamic</span>
+          )}
         </div>
         
         <button 

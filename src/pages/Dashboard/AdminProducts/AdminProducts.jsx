@@ -104,9 +104,11 @@ const AdminProducts = () => {
                   </td>
                   <td className="px-6 py-4">
                     {product.isQuoteOnly ? (
-                      <p className="font-button-text italic">Quote Only</p>
-                    ) : (
+                      <p className="font-button-text italic text-outline">Quote Only</p>
+                    ) : product.price ? (
                       <p className="font-button-text">₹ {product.price}</p>
+                    ) : (
+                      <p className="font-button-text italic text-outline">Dynamic</p>
                     )}
                     <p className="text-[11px] text-tertiary-container uppercase tracking-tighter">
                       {product.metalType || "Gold"} | {product.weight}g

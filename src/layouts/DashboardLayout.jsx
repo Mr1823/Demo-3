@@ -24,7 +24,7 @@ const DashboardLayout = () => {
                   sidebarCollapsed={sidebarCollapsed}
                   setSidebarCollapsed={setSidebarCollapsed}
                 />
-                <main className="flex-1 h-full overflow-hidden bg-background">
+                <main className="flex-1 h-full flex flex-col overflow-hidden bg-background">
                   <Outlet />
                 </main>
               </div>
