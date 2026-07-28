@@ -37,6 +37,7 @@ router.post("/", verifyJWT, async (req, res) => {
 
     res.json({ insertedId: productId, success: true });
   } catch (error) {
+    console.error("Wishlist POST Error:", error);
     res.status(500).json({ error: "Failed to add to wishlist" });
   }
 });

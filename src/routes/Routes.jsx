@@ -12,6 +12,7 @@ import Shop from "../pages/Shop/Shop/Shop";
 import Wishlist from "../pages/Wishlist/Wishlist";
 import PrivateRoute from "./PrivateRoute/PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
+import CategoryGold from "../pages/CategoryGold/CategoryGold";
 import MyDashboard from "../pages/Dashboard/MyDashboard/MyDashboard";
 import MyOrders from "../pages/Dashboard/MyOrders/MyOrders";
 import AddressBook from "../pages/Dashboard/AddressBook/AddressBook";
@@ -48,6 +49,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Shop />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "categories",
+        element: (
+          <PrivateRoute>
+            <CategoryGold />
           </PrivateRoute>
         ),
       },

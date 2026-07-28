@@ -2,12 +2,19 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthContext from '../../hooks/useAuthContext';
 import useCart from '../../hooks/useCart';
+import useWishlist from '../../hooks/useWishlist';
+import useAxiosSecure from '../../hooks/useAxiosSecure';
+import toast from 'react-hot-toast';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const { refetch } = useCart();
+  const [wishlistData, , refetchWishlist, addToWishlist] = useWishlist();
+  const [axiosSecure] = useAxiosSecure();
   
+  const presentInWishlist = wishlistData?.some((item) => item.productId === product._id);
+
   const handleCardClick = () => {
     navigate(`/products/${product._id}/description`);
   };
@@ -23,11 +30,31 @@ const ProductCard = ({ product }) => {
         <button 
           onClick={(e) => {
             e.stopPropagation();
-            // TODO: implement wishlist toggle
+            if (!user) {
+              const loginText = document.getElementById("loginModalTextContent");
+              if (loginText) loginText.innerText = "to add products into your Wishlist.";
+              document.getElementById("takeToLoginModal")?.showModal();
+              return;
+            }
+            if (presentInWishlist) {
+              const wishlistItem = wishlistData.find(item => item.productId === product._id);
+              axiosSecure.delete(`/wishlist/${wishlistItem._id}`).then(() => {
+                toast.success("Removed from wishlist");
+                refetchWishlist();
+              });
+            } else {
+              addToWishlist(product);
+            }
           }}
-          className="absolute top-4 right-4 text-on-surface-variant hover:text-primary transition-colors z-10 bg-white/60 p-2 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 duration-300"
+          className={`absolute top-4 right-4 transition-colors z-10 p-2 rounded-full backdrop-blur-sm duration-300 ${
+            presentInWishlist 
+              ? 'bg-primary/10 text-primary opacity-100' 
+              : 'bg-white/60 text-on-surface-variant hover:text-primary opacity-0 group-hover:opacity-100'
+          }`}
         >
-          <span className="material-symbols-outlined text-[20px]">favorite_border</span>
+          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: presentInWishlist ? "'FILL' 1" : "'FILL' 0" }}>
+            favorite
+          </span>
         </button>
       </div>
       

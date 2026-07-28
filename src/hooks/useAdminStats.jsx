@@ -23,39 +23,41 @@ const useAdminStats = () => {
     },
   });
 
-  // TOP SELLING CATEGORIES
-  useEffect(() => {
-    if (hasValidUser) {
-      axiosSecure.get("/admin-dashboard/top-selling-categories").then((res) => {
-        setTotalCategories(res.data.totalCategories);
-        setTopCategories(res.data.topCategories);
-      }).catch(() => {});
+  const { data: revenueStats } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-revenue"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/revenue?period=monthly");
+      return res.data?.data || [];
+    },
+  });
 
-      axiosSecure.get("/admin-dashboard/income-stats").then((res) => {
-        setIncomeStats(res.data);
-      }).catch(() => {});
-    }
-  }, [hasValidUser]);
+  const { data: salesByCategory } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-sales-by-category"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/sales-by-category");
+      return res.data?.data || [];
+    },
+  });
 
-  // BEST SELLING POPULAR PRODUCTS
-  useEffect(() => {
-    if (hasValidUser) {
-      axiosSecure
-        .get("/admin-dashboard/popular-products")
-        .then((res) => setPopularProducts(res.data))
-        .catch(() => {});
-    }
-  }, [hasValidUser]);
+  const { data: bestSelling } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-best-selling"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/best-selling");
+      return res.data?.data || [];
+    },
+  });
 
-  // Recent Reviews
-  useEffect(() => {
-    if (hasValidUser) {
-      axiosSecure
-        .get("/admin-dashboard/recent-reviews")
-        .then((res) => setRecentReviews(res.data))
-        .catch(() => {});
-    }
-  }, [hasValidUser]);
+  const { data: mostWishlisted } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-most-wishlisted"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/most-wishlisted");
+      return res.data?.data || [];
+    },
+  });
 
   return {
     adminStats,
@@ -64,6 +66,10 @@ const useAdminStats = () => {
     incomeStats,
     popularProducts,
     recentReviews,
+    revenueStats,
+    salesByCategory,
+    bestSelling,
+    mostWishlisted,
   };
 };
 

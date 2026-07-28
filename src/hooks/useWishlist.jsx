@@ -27,12 +27,12 @@ const useWishlist = () => {
 
   const addToWishlist = (productData) => {
     if (!isAuthLoading && user) {
-      const { _id, productId, name, img, image, category, price } = productData;
+      const { _id, productId, name, img, image, images, category, price } = productData;
       const wishlistPayload = {
         productId: productId || _id,
         name,
-        img: img || image,
-        image: img || image,
+        img: img || image || (images && images[0]) || "/logo.png",
+        image: img || image || (images && images[0]) || "/logo.png",
         category,
         price,
       };

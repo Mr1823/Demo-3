@@ -10,6 +10,8 @@ dotenv.config();
 
 const router = express.Router();
 
+import Razorpay from "razorpay";
+
 // Lazy-load Razorpay to avoid crashes if not installed or keys missing
 let razorpayInstance = null;
 const getRazorpay = () => {
@@ -20,9 +22,9 @@ const getRazorpay = () => {
       return null;
     }
     try {
-      const Razorpay = require("razorpay");
       razorpayInstance = new Razorpay({ key_id: keyId, key_secret: keySecret });
-    } catch {
+    } catch (e) {
+      console.error("Failed to initialize Razorpay:", e);
       return null;
     }
   }
@@ -69,7 +71,8 @@ router.post("/create-order", verifyJWT, async (req, res) => {
         return res.status(400).json({ error: `Quote-only products cannot be purchased: ${product.name}` });
       }
 
-      const serverPrice = computePrice(product, rateMap);
+      const priceData = computePrice(product, rateMap);
+      const serverPrice = priceData ? priceData.finalPrice : (product.price || 0);
       const quantity = item.quantity || 1;
       totalAmount += serverPrice * quantity;
 

@@ -1,43 +1,23 @@
 import React, { useState } from "react";
 import RadarChartComponent from "../../../components/RadarChartComponent/RadarChartComponent";
 import BarChartComponent from "../../../components/BarChartComponent/BarChartComponent";
-import StarRatings from "react-star-ratings";
 import useAdminStats from "../../../hooks/useAdminStats";
+import useQuotes from "../../../hooks/useQuotes";
+import useRates from "../../../hooks/useRates";
 
-const StatCard = ({ title, value, icon, changeData, subtitle }) => {
-  const direction = changeData?.direction;
-  const percentage = parseFloat(changeData?.percentageValue || 0).toFixed(1);
-
+const StatCard = ({ title, value, icon, subtitle }) => {
   return (
-    <div className="bg-surface-container p-6 rounded-lg border border-outline-variant/50 flex flex-col justify-between hover:shadow-sm transition-shadow group">
+    <div className="bg-[#E6D2BA] p-6 rounded-lg border border-outline-variant/20 flex flex-col justify-between hover:shadow-sm transition-shadow group">
       <div className="flex items-start justify-between mb-4">
-        <span className="text-on-surface-variant font-medium text-sm">{title}</span>
-        <span className="material-symbols-outlined text-primary-container">{icon}</span>
+        <span className="text-on-surface-variant font-medium text-xs uppercase tracking-wider">{title}</span>
+        <span className="material-symbols-outlined text-primary/60">{icon}</span>
       </div>
       <div>
-        <p className="text-3xl text-on-surface font-display">
+        <p className="font-display-lg text-headline-md text-on-surface">
           {value}
         </p>
-        <div className="flex items-center gap-2 mt-2">
-          {direction === "up" ? (
-            <span className="text-sm text-secondary flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">arrow_upward</span>
-              {percentage}%
-            </span>
-          ) : direction === "down" ? (
-            <span className="text-sm text-error flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">arrow_downward</span>
-              {percentage}%
-            </span>
-          ) : (
-            <span className="text-sm text-on-surface-variant flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">trending_flat</span>
-              No change
-            </span>
-          )}
-        </div>
         {subtitle && (
-          <p className="text-[11px] text-on-surface-variant mt-1">{subtitle}</p>
+          <p className="text-xs text-secondary mt-1">{subtitle}</p>
         )}
       </div>
     </div>
@@ -46,219 +26,293 @@ const StatCard = ({ title, value, icon, changeData, subtitle }) => {
 
 const AdminDashboard = () => {
   const {
-    adminStats,
-    topCategories,
-    totalCategories,
-    incomeStats,
-    popularProducts,
-    recentReviews,
+    revenueStats,
+    salesByCategory,
+    bestSelling,
+    mostWishlisted,
   } = useAdminStats();
 
-  const [showFullReview, setShowFullReview] = useState({
-    state: false,
-    id: null,
-  });
+  const { quotes, updateQuoteStatus } = useQuotes();
+  const { rates, updateRates } = useRates();
 
-  const lastMonth = adminStats?.lastMonthStatsData?.lastMonth;
-  const lastYear = adminStats?.lastMonthStatsData?.year;
-  const comparisonText = lastMonth ? `vs ${lastMonth}, ${lastYear}` : "";
+  const [goldInput, setGoldInput] = useState("");
+  const [silverInput, setSilverInput] = useState("");
+  
+  // Calculate some aggregate values for KPI cards
+  const totalRevenue = revenueStats?.reduce((acc, curr) => acc + curr.totalRevenue, 0) || 0;
+  const totalOrders = revenueStats?.reduce((acc, curr) => acc + curr.orderCount, 0) || 0;
+  const totalWishlisted = mostWishlisted?.reduce((acc, curr) => acc + curr.wishlistCount, 0) || 0;
+  const pendingQuotes = quotes?.filter((q) => q.status === "Pending").length || 0;
+
+  const handleUpdateRate = (metal) => {
+    if (metal === "gold" && goldInput) {
+      updateRates.mutate({ gold: Number(goldInput) });
+      setGoldInput("");
+    } else if (metal === "silver" && silverInput) {
+      updateRates.mutate({ silver: Number(silverInput) });
+      setSilverInput("");
+    }
+  };
+
+  const handleQuoteStatus = (id, status) => {
+    updateQuoteStatus.mutate({ id, status });
+  };
 
   return (
     <div className="flex-1 overflow-y-auto p-6 md:p-margin-desktop bg-background custom-scrollbar font-body-base">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto space-y-section-gap-sm pb-section-gap-lg">
         {/* Header */}
-        <div className="mb-10 border-b border-outline-variant/30 pb-6 pt-4">
-          <h1 className="text-primary text-3xl md:text-4xl mb-2 font-display-lg">
-            Dashboard Overview
-          </h1>
-          <p className="text-on-surface-variant text-sm">
-            Welcome back. Here's your store performance at a glance.
-          </p>
+        <div className="flex items-center gap-4 mb-6">
+          <h1 className="font-headline-sm text-headline-sm text-on-surface">Overview</h1>
         </div>
 
-      {/* KPI Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Sales"
-          value={`₹${parseFloat(adminStats?.currentMonthStatsData?.totalSells || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          icon="payments"
-          changeData={adminStats?.lastMonthComparisonPercentage?.totalSellsPercentage}
-          subtitle={comparisonText}
-        />
-        <StatCard
-          title="Orders Received"
-          value={adminStats?.currentMonthStatsData?.totalOrders || 0}
-          icon="shopping_cart"
-          changeData={adminStats?.lastMonthComparisonPercentage?.totalOrdersPercentage}
-          subtitle={comparisonText}
-        />
-        <StatCard
-          title="Avg Order Value"
-          value={`₹${parseFloat(adminStats?.currentMonthStatsData?.averageOrderValue || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          icon="bar_chart"
-          changeData={adminStats?.lastMonthComparisonPercentage?.averageOrderValuePercentage}
-          subtitle={comparisonText}
-        />
-        <StatCard
-          title="New Customers"
-          value={adminStats?.customerStatsData?.newCustomers || 0}
-          icon="group"
-          changeData={adminStats?.lastMonthComparisonPercentage?.customersPercentage}
-          subtitle={comparisonText}
-        />
-      </section>
+        {/* KPI Overview Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+          <StatCard
+            title="Total Sales"
+            value={`₹${totalRevenue.toLocaleString("en-IN")}`}
+            icon="payments"
+            subtitle="Overall revenue"
+          />
+          <StatCard
+            title="Total Orders"
+            value={totalOrders}
+            icon="shopping_cart"
+            subtitle="Overall orders placed"
+          />
+          <StatCard
+            title="Pending Quotes"
+            value={pendingQuotes}
+            icon="contact_mail"
+            subtitle="Requires attention"
+          />
+          <StatCard
+            title="Total Wishlisted"
+            value={totalWishlisted}
+            icon="favorite"
+            subtitle="Top 10 engagement"
+          />
+        </section>
 
-      {/* Charts */}
-      <section className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Radar Chart */}
-        <div className="lg:col-span-5 border border-outline-variant/30 rounded-lg bg-surface-container-lowest overflow-hidden">
-          <div className="p-6 border-b border-outline-variant/30">
-            <h3 className="text-on-surface text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              Top Categories
-            </h3>
-            <p className="text-on-surface-variant text-xs mt-1">
-              out of {totalCategories} categories
-            </p>
+        {/* Charts Section */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-gutter mt-12">
+          {/* Revenue Over Time (Bar Chart) */}
+          <div className="bg-surface rounded shadow-sm border border-outline-variant/10 overflow-hidden">
+            <div className="p-6 border-b border-outline-variant/10">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">Revenue Over Time</h2>
+            </div>
+            <div className="h-[380px] p-4 pb-12">
+              <BarChartComponent data={revenueStats || []} />
+            </div>
           </div>
-          <div className="h-[380px] pb-8">
-            <RadarChartComponent data={topCategories} />
-          </div>
-        </div>
 
-        {/* Bar Chart */}
-        <div className="lg:col-span-7 border border-outline-variant/30 rounded-lg bg-surface-container-lowest overflow-hidden">
-          <div className="p-6 border-b border-outline-variant/30">
-            <h3 className="text-on-surface text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              Income Statistics
-            </h3>
-            <p className="text-on-surface-variant text-xs mt-1">
-              Monthly revenue breakdown
-            </p>
+          {/* Sales by Category (Radar Chart) */}
+          <div className="bg-surface rounded shadow-sm border border-outline-variant/10 overflow-hidden">
+            <div className="p-6 border-b border-outline-variant/10">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">Sales by Category</h2>
+            </div>
+            <div className="h-[380px] pb-8">
+              <RadarChartComponent data={salesByCategory || []} />
+            </div>
           </div>
-          <div className="h-[380px] p-4 pb-12">
-            <BarChartComponent data={incomeStats} />
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Popular Products & Reviews */}
-      <section className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-6 mb-16">
-
-        {/* Popular Products */}
-        <div className="lg:col-span-7 border border-outline-variant/30 rounded-lg bg-surface-container-lowest overflow-hidden">
-          <div className="p-6 border-b border-outline-variant/30 flex justify-between items-center">
-            <h3 className="text-on-surface text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              Popular Products
-            </h3>
-            <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
-              By sales
-            </span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-surface-container-low text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest">
-                  <th className="p-4 border-b border-outline-variant/30 font-semibold">Product</th>
-                  <th className="p-4 border-b border-outline-variant/30 font-semibold">Category</th>
-                  <th className="p-4 border-b border-outline-variant/30 font-semibold">Price</th>
-                  <th className="p-4 border-b border-outline-variant/30 font-semibold text-right">Sold</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-outline-variant/20">
-                {popularProducts?.map((product) => (
-                  <tr key={product._id} className="hover:bg-surface-container-low/50 transition-colors">
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded border border-outline-variant/30 overflow-hidden bg-surface-container shrink-0">
-                          <img src={product.img} alt={product.name} className="w-full h-full object-cover mix-blend-multiply" />
-                        </div>
-                        <span className="text-sm font-medium text-on-surface line-clamp-1">{product.name}</span>
-                      </div>
-                    </td>
-                    <td className="p-4 text-sm text-on-surface-variant">{product.category}</td>
-                    <td className="p-4 text-sm font-semibold text-primary">
-                      {product.isQuoteOnly ? (
-                        <span className="italic text-outline font-normal">Quote</span>
-                      ) : product.price ? (
-                        `₹ ${(product.discountPrice || product.price).toLocaleString("en-IN")}`
-                      ) : (
-                        <span className="italic text-outline font-normal">Dynamic</span>
-                      )}
-                    </td>
-                    <td className="p-4 text-sm font-bold text-on-surface text-right">{product.sold}</td>
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-gutter mt-12">
+          {/* Best-Selling Products */}
+          <div className="bg-surface rounded shadow-sm border border-outline-variant/10 overflow-hidden">
+            <div className="p-6 border-b border-outline-variant/10">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">Best-Selling</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-[#E6D2BA]/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold">Product</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold text-right">Sold</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-outline-variant/10">
+                  {bestSelling?.slice(0, 5).map((p) => (
+                    <tr key={p.productId} className="hover:bg-[#E6D2BA]/10 transition-colors">
+                      <td className="p-4 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded border border-outline-variant/30 overflow-hidden shrink-0">
+                          <img src={p.productImage} className="w-full h-full object-cover" alt={p.productName} />
+                        </div>
+                        <span className="text-sm font-medium text-on-surface">{p.productName}</span>
+                      </td>
+                      <td className="p-4 text-right text-on-surface-variant font-medium">{p.totalUnitsSold}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
 
-        {/* Recent Reviews */}
-        <div className="lg:col-span-5 border border-outline-variant/30 rounded-lg bg-surface-container-lowest overflow-hidden">
-          <div className="p-6 border-b border-outline-variant/30">
-            <h3 className="text-on-surface text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              Recent Reviews
-            </h3>
+          {/* Wishlist Engagement */}
+          <div className="bg-surface rounded shadow-sm border border-outline-variant/10 overflow-hidden">
+            <div className="p-6 border-b border-outline-variant/10">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">Wishlist Engagement</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-[#E6D2BA]/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold">Product</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold text-right">Adds</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant/10">
+                  {mostWishlisted?.slice(0, 5).map((p) => (
+                    <tr key={p.productId} className="hover:bg-[#E6D2BA]/10 transition-colors">
+                      <td className="p-4 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded border border-outline-variant/30 overflow-hidden shrink-0">
+                          <img src={p.productImage} className="w-full h-full object-cover" alt={p.productName} />
+                        </div>
+                        <span className="text-sm font-medium text-on-surface">{p.productName}</span>
+                      </td>
+                      <td className="p-4 text-right text-on-surface-variant font-medium">{p.wishlistCount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div className="divide-y divide-outline-variant/20 max-h-[500px] overflow-y-auto">
-            {recentReviews?.map((reviewObj) => (
-              <div key={reviewObj._id} className="p-5 hover:bg-surface-container-low/30 transition-colors">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
-                    <img
-                      src={reviewObj.img}
-                      alt={reviewObj.name}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start gap-2">
-                      <div>
-                        <h4 className="text-sm font-semibold text-on-surface">{reviewObj.name}</h4>
-                        <p className="text-[11px] text-on-surface-variant">{reviewObj.location}</p>
-                      </div>
-                      <div className="shrink-0 scale-75 origin-top-right">
-                        <StarRatings
-                          rating={reviewObj.rating}
-                          starDimension="16px"
-                          starSpacing="2px"
-                          starRatedColor="#c8a684"
-                          starEmptyColor="#ebe1d2"
-                          svgIconPath="M22,10.1c0.1-0.5-0.3-1.1-0.8-1.1l-5.7-0.8L12.9,3c-0.1-0.2-0.2-0.3-0.4-0.4C12,2.3,11.4,2.5,11.1,3L8.6,8.2L2.9,9C2.6,9,2.4,9.1,2.3,9.3c-0.4,0.4-0.4,1,0,1.4l4.1,4l-1,5.7c0,0.2,0,0.4,0.1,0.6c0.3,0.5,0.9,0.7,1.4,0.4l5.1-2.7l5.1,2.7c0.1,0.1,0.3,0.1,0.5,0.1v0c0.1,0,0.1,0,0.2,0c0.5-0.1,0.9-0.6,0.8-1.2l-1-5.7l4.1-4C21.9,10.5,22,10.3,22,10.1"
-                          svgIconViewBox="0 0 24 24"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-on-surface-variant leading-relaxed">
-                  <span>
-                    {showFullReview?.state && showFullReview?.id === reviewObj._id
-                      ? reviewObj.review
-                      : reviewObj.review?.slice(0, 150) + (reviewObj.review?.length > 150 ? "..." : "")}
-                  </span>
-                  {reviewObj.review?.length > 150 && (
-                    <button
-                      className="ml-2 text-primary text-xs font-semibold hover:text-secondary transition-colors"
-                      onClick={() =>
-                        setShowFullReview({
-                          state: !(showFullReview?.state && showFullReview?.id === reviewObj._id),
-                          id: reviewObj._id,
-                        })
-                      }
-                    >
-                      {showFullReview?.state && showFullReview?.id === reviewObj._id
-                        ? "Show Less"
-                        : "Read More"}
-                    </button>
+        </section>
+
+        {/* Quote Requests & Live Rates */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-gutter mt-12">
+          {/* Quote Requests Table */}
+          <section className="lg:col-span-2 bg-surface rounded shadow-sm overflow-hidden border border-outline-variant/10">
+            <div className="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-lowest">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">Recent Quote Requests</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-[#E6D2BA]/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold">Customer</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold">Interested In</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold">Contact</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold">Status</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant/10">
+                  {quotes?.map((quote) => (
+                    <tr key={quote._id} className="hover:bg-[#E6D2BA]/10 transition-colors group">
+                      <td className="p-4 font-medium text-on-surface">{quote.customerName}</td>
+                      <td className="p-4 text-on-surface-variant text-sm">{quote.productName}</td>
+                      <td className="p-4 text-on-surface-variant text-sm">{quote.customerMobile}</td>
+                      <td className="p-4">
+                        {quote.status === "Pending" && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-error-container/50 text-on-error-container font-label-caps text-[10px]">Pending</span>
+                        )}
+                        {quote.status === "Contacted" && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/50 text-on-secondary-container font-label-caps text-[10px]">Contacted</span>
+                        )}
+                        {quote.status === "Closed" && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-dim text-on-surface font-label-caps text-[10px]">Closed</span>
+                        )}
+                      </td>
+                      <td className="p-4 text-right">
+                        <select
+                          className="bg-surface border border-outline-variant/30 text-xs text-on-surface rounded p-1"
+                          value={quote.status}
+                          onChange={(e) => handleQuoteStatus(quote._id, e.target.value)}
+                        >
+                          <option value="Pending">Pending</option>
+                          <option value="Contacted">Contacted</option>
+                          <option value="Closed">Closed</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                  {!quotes?.length && (
+                    <tr>
+                      <td colSpan="5" className="p-8 text-center text-on-surface-variant">
+                        No quote requests found.
+                      </td>
+                    </tr>
                   )}
-                </p>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* Live Rates Panel */}
+          <section className="lg:col-span-1 bg-[#E6D2BA]/40 rounded shadow-sm p-6 flex flex-col border border-outline-variant/10">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">Daily Rates</h2>
+              <span className="text-[10px] uppercase tracking-wider text-on-surface-variant/70 bg-white/50 px-2 py-1 rounded">Live</span>
+            </div>
+            <div className="space-y-4 flex-1">
+              {/* Gold Rate */}
+              <div className="bg-surface p-4 rounded border border-outline-variant/10 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFD700]"></span>
+                    <span className="font-medium text-on-surface text-sm">Gold (22K)</span>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-tighter text-on-surface-variant">per gram</span>
+                </div>
+                <div className="flex items-end gap-2">
+                  <span className="font-display-lg text-headline-md text-primary">
+                    ₹{rates?.gold?.ratePerGram || 0}
+                  </span>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <input
+                    className="w-full bg-[#E6D2BA]/20 border border-outline-variant/20 rounded px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:ring-0 transition-colors font-body-base"
+                    placeholder="Update Rate"
+                    type="number"
+                    value={goldInput}
+                    onChange={(e) => setGoldInput(e.target.value)}
+                  />
+                  <button
+                    onClick={() => handleUpdateRate("gold")}
+                    disabled={updateRates.isLoading || !goldInput}
+                    className="bg-primary text-white px-3 py-1.5 rounded font-button-text text-button-text hover:bg-primary/90 transition-colors flex items-center justify-center disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">check</span>
+                  </button>
+                </div>
               </div>
-            ))}
-          </div>
+
+              {/* Silver Rate */}
+              <div className="bg-surface p-4 rounded border border-outline-variant/10 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#C0C0C0]"></span>
+                    <span className="font-medium text-on-surface text-sm">Silver (999)</span>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-tighter text-on-surface-variant">per gram</span>
+                </div>
+                <div className="flex items-end gap-2">
+                  <span className="font-display-lg text-headline-md text-primary">
+                    ₹{rates?.silver?.ratePerGram || 0}
+                  </span>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <input
+                    className="w-full bg-[#E6D2BA]/20 border border-outline-variant/20 rounded px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:ring-0 transition-colors font-body-base"
+                    placeholder="Update Rate"
+                    type="number"
+                    value={silverInput}
+                    onChange={(e) => setSilverInput(e.target.value)}
+                  />
+                  <button
+                    onClick={() => handleUpdateRate("silver")}
+                    disabled={updateRates.isLoading || !silverInput}
+                    className="bg-primary text-white px-3 py-1.5 rounded font-button-text text-button-text hover:bg-primary/90 transition-colors flex items-center justify-center disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">check</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p className="mt-6 text-[10px] text-center text-on-surface-variant italic">Rates update globally across the boutique website</p>
+          </section>
         </div>
-      </section>
       </div>
     </div>
   );

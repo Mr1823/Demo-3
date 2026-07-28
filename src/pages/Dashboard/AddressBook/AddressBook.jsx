@@ -98,9 +98,9 @@ const AddressBook = () => {
     data.number = `+${phoneNumInfo?.phoneCode || ''} ${data.mobileNumber}`;
 
     axiosSecure
-      .patch(`/users/shipping-address?email=${data.email}`, data)
+      .patch(`/users/shipping-address?email=${userFromDB?.email}`, data)
       .then((res) => {
-        if (res.data.modifiedCount > 0) {
+        if (res.data.modifiedCount > 0 || res.data.success) {
           toast.success("Shipping address saved");
           refetch();
           setIsFormVisible(false);
@@ -233,12 +233,12 @@ const AddressBook = () => {
             <div className="input-focus-line">
               <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Email</label>
               <input
-                type="text"
-                readOnly
-                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface opacity-70 cursor-not-allowed font-body"
+                type="email"
+                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
                 {...register("email", { required: true })}
                 defaultValue={userFromDB?.email}
               />
+              {errors.email && <span className="text-error text-xs italic mt-1 block">Required</span>}
             </div>
 
             <div className="input-focus-line">

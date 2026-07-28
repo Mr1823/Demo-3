@@ -1,20 +1,15 @@
-import { useQuery } from "react-query";
-import useAuthContext from "./useAuthContext";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import useAxiosSecure from "./useAxiosSecure";
+import useAuthContext from "./useAuthContext";
 
 const useRates = () => {
   const { user, isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
+  const queryClient = useQueryClient();
+  const hasValidUser = !isAuthLoading && !!user;
 
-  const hasValidQuery = !isAuthLoading && user !== null && user !== undefined;
-
-  const {
-    data: rates,
-    isLoading: isRatesLoading,
-    refetch,
-    isError,
-  } = useQuery({
-    enabled: hasValidQuery,
+  const { data: rates, isLoading, refetch } = useQuery({
+    enabled: hasValidUser,
     queryKey: ["rates"],
     queryFn: async () => {
       const res = await axiosSecure.get("/rates");
@@ -22,7 +17,17 @@ const useRates = () => {
     },
   });
 
-  return { rates, isRatesLoading, isError, refetch };
+  const updateRates = useMutation({
+    mutationFn: async (newRates) => {
+      const res = await axiosSecure.patch("/rates", newRates);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["rates"]);
+    },
+  });
+
+  return { rates, isLoading, refetch, updateRates };
 };
 
 export default useRates;

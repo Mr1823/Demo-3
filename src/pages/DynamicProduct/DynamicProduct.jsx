@@ -15,7 +15,7 @@ const DynamicProduct = () => {
   const [presentInWishlist, setPresentInWishlist] = useState(false);
   const [products] = useProducts();
   const { cartData, addToCart } = useCart();
-  const [wishlistData, , , addToWishlist] = useWishlist();
+  const [wishlistData, , refetchWishlist, addToWishlist] = useWishlist();
   const navigate = useNavigate();
   const [axiosSecure] = useAxiosSecure();
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
@@ -40,9 +40,23 @@ const DynamicProduct = () => {
 
   const handleAddToCartWishlist = (where) => {
     if (user) {
-      where === "cart"
-        ? addToCart(dynamicProduct, 1)
-        : addToWishlist(dynamicProduct);
+      if (where === "cart") {
+        addToCart(dynamicProduct, 1);
+      } else if (where === "wishlist") {
+        if (presentInWishlist) {
+          const wishlistItem = wishlistData.find(item => item.productId === id);
+          if (wishlistItem) {
+            axiosSecure.delete(`/wishlist/${wishlistItem._id}`).then(() => {
+              import('react-hot-toast').then(({ default: toast }) => {
+                toast.success("Removed from wishlist");
+                refetchWishlist();
+              });
+            });
+          }
+        } else {
+          addToWishlist(dynamicProduct);
+        }
+      }
     } else {
       document.getElementById("loginModalTextContent").innerText =
         "to add products into Cart or Wishlist.";

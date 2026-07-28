@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import useCart from "../../hooks/useCart";
+import useUserInfo from "../../hooks/useUserInfo";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuthContext from "../../hooks/useAuthContext";
 import { PaymentContext } from "../Checkout/Checkout";
 
 const Payment = () => {
-  const { cartSubtotal } = useCart();
+  const { cartData, cartSubtotal } = useCart();
+  const [userFromDB] = useUserInfo();
   const [axiosSecure] = useAxiosSecure();
   const { user } = useAuthContext();
   const { orderTotal, setPaymentInfo } = useContext(PaymentContext);
@@ -46,42 +48,82 @@ const Payment = () => {
     setLoadingPayment(true);
     setPaymentError(null);
 
-    const orderPrice = cartSubtotal?.subtotal;
+    if (!cartData || !cartData.length) {
+      setPaymentError("Your cart is empty.");
+      setLoadingPayment(false);
+      return;
+    }
+
+    if (!userFromDB?.shippingAddress) {
+      setPaymentError("Please provide a shipping address before proceeding.");
+      setLoadingPayment(false);
+      return;
+    }
 
     try {
-      // 1. Create order on the backend server if endpoint exists
+      // 1. Create order on the backend server securely with cart items
       let orderId = null;
+      let amount = 0;
+      let razorpayKey = null;
       try {
-        const response = await axiosSecure.post("/create-razorpay-order", { orderPrice });
-        orderId = response.data?.id;
+        const response = await axiosSecure.post("/payment/create-order", { 
+          items: cartData,
+          shippingAddress: userFromDB?.shippingAddress 
+        });
+        orderId = response.data?.razorpayOrderId;
+        amount = response.data?.amount;
+        razorpayKey = response.data?.key;
       } catch (err) {
-        console.warn("Backend order creation failed, relying on frontend checkout fallback", err);
+        console.error("Backend order creation failed", err);
+        setPaymentError("Failed to initialize payment. Please try again.");
+        setLoadingPayment(false);
+        return;
       }
 
       // 2. Open Razorpay Checkout modal
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_YOUR_KEY_HERE",
-        amount: Math.round(orderPrice * 100), // Razorpay expects amount in paise (1 INR = 100 paise)
+        key: razorpayKey || import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_YOUR_KEY_HERE",
+        amount: Math.round(amount * 100), // Razorpay expects amount in paise (1 INR = 100 paise)
         currency: "INR",
-        name: "The Jewel Store",
+        name: "Sri Ram Jewellery",
         description: "Secure purchase of premium jewelry",
         image: "/logo.png",
         order_id: orderId,
-        handler: function (response) {
-          setPaymentInfo({
-            id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-          });
-          setPaymentSuccess(true);
-          setLoadingPayment(false);
+        handler: async function (response) {
+          try {
+            setLoadingPayment(true);
+            
+            // 3. Verify signature securely on backend
+            const verifyRes = await axiosSecure.post("/payment/verify", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (verifyRes.data.success) {
+              setPaymentInfo({
+                id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              });
+              setPaymentSuccess(true);
+            } else {
+              setPaymentError("Payment verification failed. If money was deducted, it will be refunded.");
+            }
+          } catch (verifyErr) {
+            console.error("Verification error:", verifyErr);
+            setPaymentError("Payment verification failed or timed out.");
+          } finally {
+            setLoadingPayment(false);
+          }
         },
         prefill: {
           name: user?.displayName || "",
           email: user?.email || "",
+          contact: userFromDB?.shippingAddress?.number || userFromDB?.shippingAddress?.mobileNumber || "",
         },
         theme: {
-          color: "#ad8e72", // Matching the application's brand color
+          color: "#704c31", // Matching the application's brand color
         },
         modal: {
           ondismiss: function () {
@@ -91,6 +133,11 @@ const Payment = () => {
       };
 
       const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response){
+        console.error("Payment failed:", response.error);
+        setPaymentError(response.error.description || "Payment failed. Please try again.");
+        setLoadingPayment(false);
+      });
       rzp.open();
     } catch (error) {
       console.error("Razorpay initiation failed:", error);

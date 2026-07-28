@@ -11,11 +11,13 @@ const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   
   const categoryParam = searchParams.get('category');
+  const metalParam = searchParams.get('metal');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('featured');
 
   const filteredProducts = products?.filter(p => {
     if (categoryParam && p.category?.toLowerCase() !== categoryParam.toLowerCase()) return false;
+    if (metalParam && p.metalType?.toLowerCase() !== metalParam.toLowerCase()) return false;
     if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   }) || [];
