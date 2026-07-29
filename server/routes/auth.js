@@ -62,8 +62,14 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
       return res.status(400).json({ error: "Phone number is required" });
     }
 
-    // Generate a 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate a 6-digit OTP (use 123456 as fallback if MSG91 is not configured)
+    const authKey = process.env.MSG91_AUTH_KEY;
+    const templateId = process.env.MSG91_TEMPLATE_ID;
+    
+    const otp = (authKey && templateId) 
+      ? Math.floor(100000 + Math.random() * 900000).toString()
+      : "123456";
+
     const otpHash = await bcrypt.hash(otp, BCRYPT_SALT_ROUNDS);
     const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
 
@@ -77,9 +83,6 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
     await user.save();
 
     // Send via MSG91 (if keys configured)
-    const authKey = process.env.MSG91_AUTH_KEY;
-    const templateId = process.env.MSG91_TEMPLATE_ID;
-    
     if (authKey && templateId) {
       await axios.post(
         `https://control.msg91.com/api/v5/otp?template_id=${templateId}&mobile=${phone}&authkey=${authKey}&otp=${otp}`,
