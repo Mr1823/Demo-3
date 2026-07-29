@@ -5,6 +5,9 @@ import CustomHelmet from "../components/CustomHelmet/CustomHelmet";
 import useUserInfo from "../hooks/useUserInfo";
 import AdminNavigation from "../pages/Dashboard/AdminNavigation/AdminNavigation";
 import useAuthContext from "../hooks/useAuthContext";
+import Header from "../pages/Header/Header";
+import Footer from "../pages/Footer/Footer";
+import { Toaster } from "react-hot-toast";
 
 const DashboardLayout = () => {
   const [userFromDB, isUserLoading] = useUserInfo();
@@ -12,8 +15,8 @@ const DashboardLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="font-body bg-background min-h-screen text-on-surface">
-      <CustomHelmet title={"Dashboard | Sri Ram Jewellery"} />
+    <div className="font-body-base bg-surface text-on-surface min-h-screen flex flex-col overflow-x-hidden">
+      <CustomHelmet title={"My Account | Sri Ram Jewellery"} />
 
       <>
         {!isAuthLoading && user && (
@@ -29,21 +32,32 @@ const DashboardLayout = () => {
                 </main>
               </div>
             ) : (
-              <main className="max-w-[1280px] mx-auto px-5 md:px-16 py-16 flex flex-col md:flex-row gap-8 lg:gap-16 min-h-[calc(100vh-100px)]">
-                {/* Sidebar Navigation */}
-                <aside className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-outline-variant/30 pb-8 md:pb-0 md:pr-8">
+              <div className="flex-grow flex flex-col">
+                <Header />
+                <div className="flex-grow max-w-container-max mx-auto w-full px-margin-mobile md:px-margin-desktop pt-32 pb-12 md:pt-40 md:pb-24 relative flex flex-col md:flex-row gap-12">
                   <DashboardNav />
-                </aside>
-                
-                {/* Main Content Area */}
-                <section className="flex-1 w-full overflow-hidden">
-                  <Outlet />
-                </section>
-              </main>
+                  <main className="flex-1 w-full overflow-hidden fade-in">
+                    <Outlet />
+                  </main>
+                </div>
+                <Footer />
+              </div>
             )}
           </>
         )}
       </>
+      
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          className: "font-bold py-8",
+          style: {
+            fontFamily: "var(--poppins)",
+            padding: "15px 20px",
+            maxWidth: "max-content",
+          },
+        }}
+      />
     </div>
   );
 };

@@ -75,7 +75,7 @@ const Payment = () => {
         razorpayKey = response.data?.key;
       } catch (err) {
         console.error("Backend order creation failed", err);
-        setPaymentError("Failed to initialize payment. Please try again.");
+        setPaymentError(err.response?.data?.error || "Failed to initialize payment. Please try again.");
         setLoadingPayment(false);
         return;
       }

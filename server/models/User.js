@@ -15,9 +15,11 @@ const AddressSchema = new mongoose.Schema({
 
 const UserSchema = new mongoose.Schema({
   name: { type: String },
-  email: { type: String, required: true, unique: true },
+  email: { type: String, unique: true, sparse: true }, // Not required for OTP-based customers
   passwordHash: { type: String }, // bcrypt hash — never store plaintext
-  phone: { type: String },
+  phone: { type: String, unique: true, sparse: true }, // unique and required for customers
+  otpHash: { type: String }, // For MSG91 OTP
+  otpExpiresAt: { type: Date },
   role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
   photoURL: { type: String },
   addresses: { type: [AddressSchema], default: [] },

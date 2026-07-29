@@ -485,3 +485,276 @@
 [1] 
 [1] Node.js v26.3.0
 [1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[0] 8:13:32 PM [vite] .env changed, restarting server...
+[0] 8:13:32 PM [vite] server restarted.
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] 🚀 API Server running seamlessly on http://localhost:5000
+[1] ⚠️ Local MongoDB connection failed (Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/). Falling back to in-memory MongoDB...
+[1] Starting in-memory MongoDB server at: mongodb://127.0.0.1:49991/
+[1] In-Memory MongoDB Connected: 127.0.0.1
+[1] 🌱 Database is empty. Seeding initial products, categories, gold rates, and admin user...
+[1]    ✅ Admin user created: admin@buildwithus (password: Buildwith@us)
+[1]    ✅ Test user created: user@test.com (password: TestUser@123)
+[1] 🎉 Seeding complete successfully!
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[1] ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] ◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ override existing { override: true }
+[1] ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[1] ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] ValidationError: Custom keyGenerator appears to use request IP without calling the ipKeyGenerator helper function for IPv6 addresses. This could allow IPv6 users to bypass limits. See https://express-rate-limit.github.io/ERR_ERL_KEY_GEN_IPV6/ for more information.
+[1]     at Object.keyGeneratorIpFallback (file:///Users/black_heart/Downloads/Jewellery-master/node_modules/express-rate-limit/dist/index.mjs:625:13)
+[1]     at wrappedValidations.<computed> [as keyGeneratorIpFallback] (file:///Users/black_heart/Downloads/Jewellery-master/node_modules/express-rate-limit/dist/index.mjs:677:22)
+[1]     at parseOptions (file:///Users/black_heart/Downloads/Jewellery-master/node_modules/express-rate-limit/dist/index.mjs:754:16)
+[1]     at rateLimit (file:///Users/black_heart/Downloads/Jewellery-master/node_modules/express-rate-limit/dist/index.mjs:836:18)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/middleware/rateLimit.js:31:27
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+[1]   code: 'ERR_ERL_KEY_GEN_IPV6',
+[1]   help: 'https://express-rate-limit.github.io/ERR_ERL_KEY_GEN_IPV6/'
+[1] }
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] 🚀 API Server running seamlessly on http://localhost:5000
+[1] ⚠️ Local MongoDB connection failed (Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/). Falling back to in-memory MongoDB...
+[1] Starting in-memory MongoDB server at: mongodb://127.0.0.1:53165/
+[1] In-Memory MongoDB Connected: 127.0.0.1
+[1] 🌱 Database is empty. Seeding initial products, categories, gold rates, and admin user...
+[1]    ✅ Admin user created: admin@buildwithus (password: Buildwith@us)
+[1]    ✅ Test user created: user@test.com (password: TestUser@123)
+[1] 🎉 Seeding complete successfully!
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ override existing { override: true }
+[1] ValidationError: Custom keyGenerator appears to use request IP without calling the ipKeyGenerator helper function for IPv6 addresses. This could allow IPv6 users to bypass limits. See https://express-rate-limit.github.io/ERR_ERL_KEY_GEN_IPV6/ for more information.
+[1]     at Object.keyGeneratorIpFallback (file:///Users/black_heart/Downloads/Jewellery-master/node_modules/express-rate-limit/dist/index.mjs:625:13)
+[1]     at wrappedValidations.<computed> [as keyGeneratorIpFallback] (file:///Users/black_heart/Downloads/Jewellery-master/node_modules/express-rate-limit/dist/index.mjs:677:22)
+[1]     at parseOptions (file:///Users/black_heart/Downloads/Jewellery-master/node_modules/express-rate-limit/dist/index.mjs:754:16)
+[1]     at rateLimit (file:///Users/black_heart/Downloads/Jewellery-master/node_modules/express-rate-limit/dist/index.mjs:836:18)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/middleware/rateLimit.js:31:27
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+[1]   code: 'ERR_ERL_KEY_GEN_IPV6',
+[1]   help: 'https://express-rate-limit.github.io/ERR_ERL_KEY_GEN_IPV6/'
+[1] }
+[1] ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] 🚀 API Server running seamlessly on http://localhost:5000
+[1] ⚠️ Local MongoDB connection failed (Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. Make sure your current IP address is on your Atlas cluster's IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/). Falling back to in-memory MongoDB...
+[1] Starting in-memory MongoDB server at: mongodb://127.0.0.1:53245/
+[1] In-Memory MongoDB Connected: 127.0.0.1
+[1] 🌱 Database is empty. Seeding initial products, categories, gold rates, and admin user...
+[1]    ✅ Admin user created: admin@buildwithus (password: Buildwith@us)
+[1]    ✅ Test user created: user@test.com (password: TestUser@123)
+[1] 🎉 Seeding complete successfully!
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[1] ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[1] ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...

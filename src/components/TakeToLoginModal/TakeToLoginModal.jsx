@@ -39,7 +39,7 @@ const TakeToLoginModal = ({ isOpen, onClose, message }) => {
               onClick={onClose}
               className="w-full bg-primary text-white py-3.5 rounded-sm font-button-text uppercase tracking-[0.2em] text-[11px] hover:bg-primary-container hover:shadow-lg transition-all duration-300 block text-center"
             >
-              Sign In
+              SIGN-IN/REGISTER
             </Link>
             <button
               onClick={onClose}

@@ -7,6 +7,7 @@ import useAuthContext from "../../hooks/useAuthContext";
 import { v4 as uuidv4 } from "uuid";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
+import toast from "react-hot-toast";
 
 // Payment Context to handle payment info
 export const PaymentContext = createContext(null);
@@ -74,11 +75,13 @@ const Checkout = () => {
           setPaymentInfo(null);
           refetch();
         } else {
+          toast.error(res.data.error || "Failed to place order.");
           setIsPlacingOrder(false);
         }
       })
       .catch((error) => {
         console.error(error);
+        toast.error(error.response?.data?.error || "Failed to place order.");
         setIsPlacingOrder(false);
       });
   };

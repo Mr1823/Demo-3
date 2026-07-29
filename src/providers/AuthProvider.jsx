@@ -88,6 +88,36 @@ const AuthProvider = ({ children }) => {
   };
 
   /**
+   * Request OTP — POST /api/auth/otp/request
+   */
+  const requestOtp = async (phone) => {
+    try {
+      const res = await axios.post(`${apiBase}/auth/otp/request`, { phone });
+      return res.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
+  };
+
+  /**
+   * Verify OTP — POST /api/auth/otp/verify
+   */
+  const verifyOtp = async (phone, otp) => {
+    setIsAuthLoading(true);
+    try {
+      const res = await axios.post(`${apiBase}/auth/otp/verify`, { phone, otp });
+      const { accessToken, refreshToken, user: userData } = res.data;
+      storeTokens(accessToken, refreshToken);
+      setUser(userData);
+      setIsAuthLoading(false);
+      return res.data;
+    } catch (error) {
+      setIsAuthLoading(false);
+      throw error.response?.data || error;
+    }
+  };
+
+  /**
    * Refresh the access token using the stored refresh token.
    * Returns the new access token, or null on failure.
    */
@@ -191,6 +221,8 @@ const AuthProvider = ({ children }) => {
     signIn,
     logOut,
     refreshAccessToken,
+    requestOtp,
+    verifyOtp,
     setIsAuthLoading,
     getAccessToken,
     getRefreshToken,

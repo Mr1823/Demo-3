@@ -23,3 +23,18 @@ export const apiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+/**
+ * Rate limiter for OTP requests.
+ * Max 3 attempts per 5 minutes, keyed by phone number.
+ */
+export const otpLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 3,
+  message: { error: "Too many OTP requests. Please wait before trying again." },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return req.body?.phone || "unknown-phone";
+  }
+});

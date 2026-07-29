@@ -5,7 +5,6 @@ import useCart from "../../hooks/useCart";
 import Swal from "sweetalert2";
 import useProducts from "../../hooks/useProducts";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 
 const Wishlist = () => {
   const [wishlistData, isWishlistLoading, refetch] = useWishlist();
@@ -17,10 +16,9 @@ const Wishlist = () => {
     return cartData?.some((p) => p.productId == productId);
   };
 
-  const handleAddToCart = (productId) => {
-    const foundProduct = products?.find((p) => p._id === productId);
-    if (foundProduct) {
-      addToCart(foundProduct);
+  const handleAddToCart = (item) => {
+    if (item) {
+      addToCart(item);
       cartRefetch();
     }
   };
@@ -59,111 +57,107 @@ const Wishlist = () => {
   };
 
   return (
-    <main className="min-h-screen bg-surface font-body-base pt-12 text-on-surface">
-      <CustomHelmet title="Wishlist" />
+    <div className="w-full">
+      <header className="mb-12">
+        <span className="font-label-caps text-label-caps text-secondary tracking-[0.2em] uppercase block mb-2">
+          YOUR FAVORITES
+        </span>
+        <h1 className="font-display-lg text-display-lg text-primary">Wishlist</h1>
+      </header>
 
-      <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap-lg min-h-[614px]">
-        {/* Header Group */}
-        <div className="text-center mb-16 space-y-2">
-          <span className="font-label-caps text-label-caps text-tertiary tracking-[0.2em]">YOUR FAVORITES</span>
-          <h1 className="font-display-lg text-display-lg text-primary">Wishlist</h1>
-          <div className="w-16 h-px bg-outline-variant mx-auto mt-6"></div>
+      {isWishlistLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div key={idx} className="bg-surface-variant h-[400px] w-full rounded-sm animate-pulse"></div>
+          ))}
         </div>
+      ) : (
+        <>
+          {wishlistData?.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
+              {wishlistData.map((item) => {
+                const productDetails = getProductDetails(item.productId);
+                const isQuoteOnly = productDetails.isQuoteOnly;
+                
+                return (
+                  <div key={item._id} className="group relative flex flex-col h-full bg-surface-container border border-[#c8a684]/30 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)] hover:border-[#8b6447]/60 hover:-translate-y-1">
+                    <div className="aspect-[4/5] overflow-hidden relative">
+                      <Link to={`/products/${item.productId}/description`}>
+                        <img
+                          src={item.img}
+                          alt={item.name}
+                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                        />
+                      </Link>
+                      <button
+                        className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-primary transition-all duration-300 hover:bg-white hover:scale-110 cursor-pointer"
+                        onClick={() => handleDeleteFromWishlist(item._id)}
+                        aria-label="Remove from Wishlist"
+                      >
+                        <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                      </button>
+                    </div>
 
-        {isWishlistLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, idx) => (
-              <div key={idx} className="skeleton h-[400px] w-full rounded-sm"></div>
-            ))}
-          </div>
-        ) : (
-          <>
-            {wishlistData?.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {wishlistData.map((item) => {
-                  const productDetails = getProductDetails(item.productId);
-                  const isQuoteOnly = productDetails.isQuoteOnly;
-                  
-                  return (
-                    <div key={item._id} className="group relative flex flex-col h-full bg-surface-container border border-outline-variant overflow-hidden transition-all duration-500 hover:shadow-heritage">
-                      <div className="aspect-[4/5] overflow-hidden relative">
-                        <Link to={`/products/${item.productId}/description`}>
-                          <img
-                            src={item.img}
-                            alt={item.name}
-                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                          />
-                        </Link>
-                        <button
-                          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-primary transition-all duration-300 hover:bg-white hover:scale-110 cursor-pointer"
-                          onClick={() => handleDeleteFromWishlist(item._id)}
-                          aria-label="Remove from Wishlist"
-                        >
-                          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
-                        </button>
-                      </div>
-
-                      <div className="p-6 flex flex-col flex-grow text-center">
-                        <span className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-1">
-                          {productDetails.category || "Collection"}
-                        </span>
-                        <Link to={`/products/${item.productId}/description`}>
-                          <h3 className="font-headline-sm text-headline-sm text-primary mb-1 hover:text-secondary line-clamp-1">{item.name}</h3>
-                        </Link>
-                        
-                        <p className="font-body-base text-sm text-on-surface-variant mb-4">
-                          {productDetails.carate ? `${productDetails.carate}K Gold` : " "}
+                    <div className="p-6 flex flex-col flex-grow text-center">
+                      <span className="font-label-caps text-[10px] text-on-surface-variant uppercase mb-1">
+                        {productDetails.category || "Collection"}
+                      </span>
+                      <Link to={`/products/${item.productId}/description`}>
+                        <h3 className="font-headline-sm text-headline-sm text-primary mb-1 hover:text-secondary line-clamp-1">{item.name}</h3>
+                      </Link>
+                      
+                      <p className="font-body-base text-sm text-on-surface-variant mb-4">
+                        {productDetails.carate ? `${productDetails.carate}K Gold` : " "}
+                      </p>
+                      
+                      {!isQuoteOnly && (
+                        <p className="font-headline-sm text-primary mt-auto mb-6">
+                          ₹{item.discountPrice || item.price}
                         </p>
-                        
-                        {!isQuoteOnly && (
-                          <p className="font-headline-sm text-primary mt-auto mb-6">
-                            ₹{item.discountPrice || item.price}
-                          </p>
-                        )}
+                      )}
 
-                        <div className="space-y-3 mt-auto">
-                          {isQuoteOnly ? (
-                            <Link to={`/products/${item.productId}/description`} className="block w-full">
-                              <button className="w-full py-3 border border-outline-variant text-primary font-button-text text-button-text hover:bg-surface-variant transition-colors cursor-pointer uppercase">
-                                GET QUOTE
-                              </button>
-                            </Link>
-                          ) : handleExistInCart(item.productId) ? (
-                            <button disabled className="w-full py-3 bg-surface-variant text-on-surface-variant font-button-text text-button-text opacity-80 cursor-not-allowed uppercase">
-                              ADDED TO BAG
+                      <div className="space-y-3 mt-auto">
+                        {isQuoteOnly ? (
+                          <Link to={`/products/${item.productId}/description`} className="block w-full">
+                            <button className="w-full py-3 border border-outline-variant text-primary font-button-text text-button-text hover:bg-surface-variant transition-colors cursor-pointer uppercase">
+                              GET QUOTE
                             </button>
-                          ) : (
-                            <button
-                              onClick={() => handleAddToCart(item.productId)}
-                              className="w-full py-3 bg-primary-container text-on-primary font-button-text text-button-text hover:scale-[1.02] transition-transform flex items-center justify-center uppercase cursor-pointer"
-                            >
-                              ADD TO BAG
-                            </button>
-                          )}
-                        </div>
+                          </Link>
+                        ) : handleExistInCart(item.productId) ? (
+                          <button disabled className="w-full py-3 bg-surface-variant text-on-surface-variant font-button-text text-button-text opacity-80 cursor-not-allowed uppercase">
+                            ADDED TO BAG
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleAddToCart(item)}
+                            className="w-full py-3 bg-primary-container text-on-primary font-button-text text-button-text hover:scale-[1.02] transition-transform flex items-center justify-center uppercase cursor-pointer"
+                          >
+                            ADD TO BAG
+                          </button>
+                        )}
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in border border-[#c8a684]/30 bg-surface-container/30">
+              <div className="mb-6 opacity-60">
+                <span className="material-symbols-outlined text-[48px] text-primary" style={{ fontVariationSettings: "'wght' 200" }}>auto_awesome</span>
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in border border-outline-variant/30 bg-surface-container/30">
-                <div className="mb-6 opacity-60">
-                  <span className="material-symbols-outlined text-[48px] text-primary" style={{ fontVariationSettings: "'wght' 200" }}>auto_awesome</span>
-                </div>
-                <h3 className="font-display-lg text-headline-sm text-on-surface mb-2">Awaiting Inspiration</h3>
-                <p className="font-body-base text-on-surface-variant max-w-md mb-8">Discover our meticulously curated collections and find pieces that resonate with your unique story.</p>
-                <Link to="/shop">
-                  <button className="px-12 py-4 border border-outline-variant text-primary font-button-text text-button-text hover:bg-surface-variant transition-all duration-500 cursor-pointer uppercase tracking-widest text-[11px]">
-                    BROWSE COLLECTION
-                  </button>
-                </Link>
-              </div>
-            )}
-          </>
-        )}
-      </section>
-    </main>
+              <h3 className="font-headline-sm text-headline-sm text-on-surface mb-2">Awaiting Inspiration</h3>
+              <p className="font-body-base text-on-surface-variant max-w-md mb-8">Discover our meticulously curated collections and find pieces that resonate with your unique story.</p>
+              <Link to="/shop">
+                <button className="px-12 py-4 border border-outline-variant text-primary font-button-text text-button-text hover:bg-surface-variant transition-all duration-500 cursor-pointer uppercase tracking-widest text-[11px]">
+                  BROWSE COLLECTION
+                </button>
+              </Link>
+            </div>
+          )}
+        </>
+      )}
+    </div>
   );
 };
 

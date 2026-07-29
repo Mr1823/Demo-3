@@ -4,6 +4,7 @@ import MainLayout from "../layouts/MainLayout";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
+import AdminLogin from "../pages/AdminLogin/AdminLogin";
 import Register from "../pages/Register/Register";
 import ProductPageLayout from "../layouts/ProductPageLayout";
 import ProductDescription from "../pages/DynamicProduct/ProductDescription/ProductDescription";
@@ -16,6 +17,7 @@ import CategoryGold from "../pages/CategoryGold/CategoryGold";
 import MyDashboard from "../pages/Dashboard/MyDashboard/MyDashboard";
 import MyOrders from "../pages/Dashboard/MyOrders/MyOrders";
 import AddressBook from "../pages/Dashboard/AddressBook/AddressBook";
+import AccountDetails from "../pages/Dashboard/AccountDetails/AccountDetails";
 import Checkout from "../pages/Checkout/Checkout";
 import OrderSuccess from "../pages/OrderSuccess/OrderSuccess";
 import AddReview from "../pages/Dashboard/AddReview/AddReview";
@@ -65,6 +67,10 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "admin-login",
+        element: <AdminLogin />,
+      },
+      {
         path: "register",
         element: <Register />,
       },
@@ -79,9 +85,7 @@ const router = createBrowserRouter([
       {
         path: "wishlist",
         element: (
-          <PrivateRoute>
-            <Wishlist />
-          </PrivateRoute>
+          <Navigate to="/dashboard/wishlist" replace />
         ),
       },
       {
@@ -125,6 +129,14 @@ const router = createBrowserRouter([
           {
             path: "addReview",
             element: <AddReview />,
+          },
+          {
+            path: "accountDetails",
+            element: <AccountDetails />,
+          },
+          {
+            path: "wishlist",
+            element: <Wishlist />,
           },
           {
             path: "adminDashboard",

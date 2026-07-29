@@ -6,9 +6,12 @@ import toast from "react-hot-toast";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 
 const Login = () => {
-  const { signIn, setIsAuthLoading } = useAuthContext();
+  const { requestOtp, verifyOtp, setIsAuthLoading } = useAuthContext();
   const [loginError, setLoginError] = useState(null);
   const [loginLoading, setLoginLoading] = useState(false);
+  
+  const [step, setStep] = useState(1);
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -22,21 +25,52 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const onRequestOtp = async (data) => {
     setLoginLoading(true);
     setLoginError(null);
-    const { email, password } = data;
+    const { phone } = data;
 
     try {
-      const result = await signIn(email, password);
-      toast.success(`Welcome back, ${result.user?.name || result.user?.email}!`);
+      await requestOtp(phone);
+      setPhoneNumber(phone);
+      setStep(2);
       reset();
+      toast.success("OTP sent to your phone");
+    } catch (error) {
+      setLoginError(error?.error || error?.message || "Failed to request OTP");
+    } finally {
       setLoginLoading(false);
+    }
+  };
+
+  const onVerifyOtp = async (data) => {
+    setLoginLoading(true);
+    setLoginError(null);
+    const { otp } = data;
+
+    try {
+      const result = await verifyOtp(phoneNumber, otp);
+      toast.success(`Welcome back, ${result.user?.name || result.user?.phone}!`);
+      reset();
       navigate(from, { replace: true });
     } catch (error) {
-      setLoginError(error?.error || error?.message || "Login failed");
-      setLoginLoading(false);
+      setLoginError(error?.error || error?.message || "Invalid OTP");
       setIsAuthLoading(false);
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    setLoginLoading(true);
+    setLoginError(null);
+    try {
+      await requestOtp(phoneNumber);
+      toast.success("OTP resent successfully");
+    } catch (error) {
+      setLoginError(error?.error || error?.message || "Failed to resend OTP");
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -62,10 +96,10 @@ const Login = () => {
         {/* Heading Section */}
         <div className="w-full text-center mb-12">
           <span className="font-display-lg italic text-[14px] text-secondary block mb-2 opacity-80 lowercase tracking-widest">
-            Welcome Back
+            {step === 1 ? "Welcome Back" : "Verification"}
           </span>
           <h1 className="font-display-lg text-headline-md text-on-surface">
-            Sign In
+            {step === 1 ? "Sign In" : "Enter OTP"}
           </h1>
         </div>
 
@@ -78,60 +112,82 @@ const Login = () => {
         )}
 
         {/* Form Section */}
-        <form className="w-full space-y-10" onSubmit={handleSubmit(onSubmit)}>
-          {/* Email Field */}
-          <div className="input-focus-line">
-            <label className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-[0.2em] mb-2 block" htmlFor="login-email">
-              Email Address
-            </label>
-            <input
-              className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base"
-              id="login-email"
-              placeholder="Enter your email"
-              type="email"
-              {...register("email", { required: true })}
-            />
-            {errors.email && <span className="text-error text-xs mt-1 block font-semibold">Email is required</span>}
-          </div>
-
-          {/* Password Field */}
-          <div className="space-y-3">
+        {step === 1 ? (
+          <form className="w-full space-y-10" onSubmit={handleSubmit(onRequestOtp)}>
+            {/* Phone Field */}
             <div className="input-focus-line">
-              <label className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-[0.2em] mb-2 block" htmlFor="login-password">
-                Password
+              <label className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-[0.2em] mb-2 block" htmlFor="login-phone">
+                Mobile Number
               </label>
               <input
                 className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base tracking-widest"
-                id="login-password"
-                placeholder="••••••••"
-                type="password"
-                {...register("password", { required: true })}
+                id="login-phone"
+                placeholder="+919876543210"
+                type="tel"
+                {...register("phone", { required: true, pattern: /^\+?[0-9]{10,15}$/ })}
               />
-              {errors.password && <span className="text-error text-xs mt-1 block font-semibold">Password is required</span>}
+              {errors.phone && <span className="text-error text-xs mt-1 block font-semibold">Valid phone number is required</span>}
             </div>
-          </div>
 
-          {/* Action Button */}
-          <div className="pt-6">
-            <button
-              className="w-full bg-primary text-white py-4 md:py-5 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-primary cursor-pointer"
-              type="submit"
-              disabled={loginLoading}
-            >
-              {loginLoading ? <span className="loading loading-spinner loading-md"></span> : "Sign In"}
-            </button>
-          </div>
-        </form>
+            {/* Action Button */}
+            <div className="pt-6">
+              <button
+                className="w-full bg-primary text-white py-4 md:py-5 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-primary cursor-pointer"
+                type="submit"
+                disabled={loginLoading}
+              >
+                {loginLoading ? <span className="loading loading-spinner loading-md"></span> : "Send OTP"}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <form className="w-full space-y-10" onSubmit={handleSubmit(onVerifyOtp)}>
+            {/* OTP Field */}
+            <div className="input-focus-line text-center">
+              <label className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-[0.2em] mb-2 block" htmlFor="login-otp">
+                6-Digit OTP sent to {phoneNumber}
+              </label>
+              <input
+                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base tracking-[1em] text-center text-xl"
+                id="login-otp"
+                placeholder="------"
+                type="text"
+                maxLength={6}
+                {...register("otp", { required: true, minLength: 6, maxLength: 6 })}
+              />
+              {errors.otp && <span className="text-error text-xs mt-1 block font-semibold">Enter a valid 6-digit OTP</span>}
+            </div>
 
-        {/* Registration Link */}
-        <div className="mt-16 text-center">
-          <p className="font-body-base text-[14px] text-on-surface-variant">
-            Don't have an account?
-            <Link className="text-primary font-semibold underline underline-offset-8 hover:text-secondary transition-colors duration-300 ml-1" to="/register">
-              Create one
-            </Link>
-          </p>
-        </div>
+            {/* Action Button */}
+            <div className="pt-6 flex flex-col gap-4">
+              <button
+                className="w-full bg-primary text-white py-4 md:py-5 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-primary cursor-pointer"
+                type="submit"
+                disabled={loginLoading}
+              >
+                {loginLoading ? <span className="loading loading-spinner loading-md"></span> : "Verify & Sign In"}
+              </button>
+              
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={loginLoading}
+                className="text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest hover:text-primary transition-colors cursor-pointer"
+              >
+                Resend OTP
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => { setStep(1); reset(); }}
+                disabled={loginLoading}
+                className="text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest hover:text-primary transition-colors cursor-pointer"
+              >
+                Change Phone Number
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </main>
   );

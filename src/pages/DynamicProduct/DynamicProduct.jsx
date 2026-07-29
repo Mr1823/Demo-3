@@ -196,13 +196,15 @@ const DynamicProduct = () => {
 
               {/* Actions */}
               <div className="flex flex-col gap-4 mb-12">
-                <button 
-                  onClick={() => handleAddToCartWishlist("cart")}
-                  className="w-full bg-primary-container text-white py-5 font-button-text text-button-text tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"
-                >
-                  <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                  {presentInCart ? "ALREADY IN BAG" : "ADD TO BAG"}
-                </button>
+                {!dynamicProduct.isQuoteOnly && (
+                  <button 
+                    onClick={() => handleAddToCartWishlist("cart")}
+                    className="w-full bg-primary-container text-white py-5 font-button-text text-button-text tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"
+                  >
+                    <span className="material-symbols-outlined text-sm">shopping_bag</span>
+                    {presentInCart ? "ALREADY IN BAG" : "ADD TO BAG"}
+                  </button>
+                )}
                 <button 
                   onClick={() => setIsQuoteModalOpen(true)}
                   className="w-full bg-transparent border border-[#c8a684] text-primary py-5 font-button-text text-button-text tracking-widest hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"

@@ -12,7 +12,6 @@ const AddressBook = () => {
     handleSubmit,
     reset,
     formState: { errors },
-    setError,
   } = useForm();
   
   const [userFromDB, , refetch] = useUserInfo();
@@ -124,23 +123,23 @@ const AddressBook = () => {
   return (
     <div className="w-full">
       <header className="mb-12">
-        <span className="font-body text-[12px] font-semibold text-secondary tracking-[0.2em] uppercase block mb-2">
+        <span className="font-label-caps text-label-caps text-primary tracking-[0.2em] uppercase block mb-2">
           Your Account
         </span>
-        <h1 className="font-display text-5xl md:text-6xl text-primary">Address Book</h1>
+        <h1 className="font-display-lg text-display-lg text-on-surface">Address Book</h1>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
         {/* Add New Address Button (Only show if form is hidden and we have less than 2 addresses conceptually, but for now just toggle form) */}
         {!isFormVisible && !shippingAdd && (
           <button 
             onClick={() => setIsFormVisible(true)}
-            className="border-2 border-dashed border-primary/40 h-64 flex flex-col items-center justify-center gap-4 group cursor-pointer hover:bg-primary/5 hover:border-primary border-solid transition-all duration-300"
+            className="h-64 flex flex-col items-center justify-center gap-4 rounded-xl group cursor-pointer border-2 border-dashed border-primary hover:bg-primary/5 hover:border-solid transition-all duration-300"
           >
-            <div className="w-12 h-12 rounded-full border border-primary flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+            <div className="w-12 h-12 rounded-full border border-primary flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500">
               <span className="material-symbols-outlined">add</span>
             </div>
-            <span className="font-body text-sm font-semibold text-primary uppercase tracking-widest">
+            <span className="font-button-text text-button-text text-primary uppercase">
               Add New Address
             </span>
           </button>
@@ -148,26 +147,26 @@ const AddressBook = () => {
 
         {/* Existing Address Card */}
         {!isFormVisible && shippingAdd && (
-          <div className="bg-surface-container border border-outline-variant p-8 flex flex-col justify-between h-64 relative overflow-hidden group transition-all duration-500 hover:shadow-heritage hover:border-outline-variant/80">
+          <div className="bg-surface-container-highest p-8 rounded-xl flex flex-col justify-between h-64 relative overflow-hidden group border border-[#8b6447]/10 transition-all duration-400 hover:border-[#8b6447] hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)]">
             <div>
               <div className="flex justify-between items-start mb-6">
-                <h3 className="font-display text-2xl text-primary">
+                <h3 className="font-headline-sm text-headline-sm text-on-surface">
                   {shippingAdd.firstName} {shippingAdd.lastName}
                 </h3>
-                <span className="px-3 py-1 border border-outline-variant text-[10px] font-body font-bold text-on-surface-variant uppercase tracking-widest bg-surface-variant/30">
+                <span className="px-3 py-1 border border-primary/40 text-[10px] font-label-caps text-primary uppercase tracking-widest rounded-full">
                   Default
                 </span>
               </div>
-              <div className="font-body text-on-surface-variant text-sm space-y-1">
-                <p>{shippingAdd.streetAddress}</p>
-                <p>{shippingAdd.city}, {shippingAdd.state} - {shippingAdd.postalCode}</p>
-                <p>{shippingAdd.country}</p>
+              <div className="text-on-surface-variant space-y-1">
+                <p className="font-body-base text-body-base">{shippingAdd.streetAddress}</p>
+                <p className="font-body-base text-body-base">{shippingAdd.city}, {shippingAdd.state} - {shippingAdd.postalCode}</p>
+                <p className="font-body-base text-body-base">{shippingAdd.country}</p>
               </div>
             </div>
             <div className="flex justify-between items-center mt-6">
               <div className="flex items-center gap-2 text-on-surface-variant">
                 <span className="material-symbols-outlined text-sm">call</span>
-                <span className="font-body text-sm">{shippingAdd.number}</span>
+                <span className="font-body-base text-body-base">{shippingAdd.number}</span>
               </div>
               <div className="flex gap-4">
                 <button 
@@ -192,9 +191,9 @@ const AddressBook = () => {
 
       {/* Address Form Container */}
       {isFormVisible && (
-        <div className="mt-8 bg-surface-container-low border border-outline-variant/30 p-8 max-w-2xl animate-fade-in">
+        <div className="mt-8 bg-surface-container border border-outline-variant/30 p-8 max-w-2xl animate-in fade-in duration-500 rounded-xl">
           <div className="flex justify-between items-center mb-8 border-b border-primary/10 pb-4">
-            <h4 className="font-display text-2xl text-primary">
+            <h4 className="font-headline-sm text-headline-sm text-primary">
               {shippingAdd ? 'Edit Address' : 'New Address'}
             </h4>
             {shippingAdd && (
@@ -209,138 +208,133 @@ const AddressBook = () => {
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="input-focus-line">
-                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">First Name</label>
+              <div>
+                <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">First Name</label>
                 <input
                   type="text"
-                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
                   {...register("firstName", { required: true })}
                 />
                 {errors.firstName && <span className="text-error text-xs italic mt-1 block">Required</span>}
               </div>
 
-              <div className="input-focus-line">
-                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Last Name</label>
+              <div>
+                <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">Last Name</label>
                 <input
                   type="text"
-                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
                   {...register("lastName", { required: true })}
                 />
                 {errors.lastName && <span className="text-error text-xs italic mt-1 block">Required</span>}
               </div>
             </div>
 
-            <div className="input-focus-line">
-              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Email</label>
+            <div>
+              <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">Email</label>
               <input
                 type="email"
-                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
                 {...register("email", { required: true })}
                 defaultValue={userFromDB?.email}
               />
               {errors.email && <span className="text-error text-xs italic mt-1 block">Required</span>}
             </div>
 
-            <div className="input-focus-line">
-              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Street Address</label>
+            <div>
+              <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">Street Address</label>
               <input
                 type="text"
-                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
                 {...register("streetAddress", { required: true })}
               />
               {errors.streetAddress && <span className="text-error text-xs italic mt-1 block">Required</span>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="input-focus-line">
-                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Country</label>
+              <div>
+                <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">Country</label>
                 <select
-                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
                   {...register("country", { required: true })}
+                  value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  defaultValue={countryCode}
                 >
                   {countryData?.map((country) => (
-                    <option key={country.isoCode} value={country.isoCode}>{country.name}</option>
+                    <option key={country.isoCode} value={country.isoCode}>
+                      {country.name}
+                    </option>
                   ))}
                 </select>
               </div>
-
-              <div className="input-focus-line">
-                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">State / Province</label>
+              
+              <div>
+                <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">State</label>
                 <select
-                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
                   {...register("state", { required: true })}
+                  value={stateCode}
                   onChange={(e) => setStateCode(e.target.value)}
-                  defaultValue={stateCode}
                 >
                   {stateData?.map((state) => (
-                    <option key={state.isoCode} value={state.isoCode}>{state.name}</option>
+                    <option key={state.isoCode} value={state.isoCode}>
+                      {state.name}
+                    </option>
                   ))}
                 </select>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="input-focus-line">
-                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">City / Town</label>
-                {cityData?.length ? (
-                  <select
-                    className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body appearance-none cursor-pointer"
-                    {...register("city", { required: true })}
-                    defaultValue={cityData[0].name}
-                  >
-                    {cityData.map((city) => (
-                      <option key={city.name} value={city.name}>{city.name}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
-                    {...register("city", { required: true })}
-                  />
-                )}
+              <div>
+                <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">City</label>
+                <select
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
+                  {...register("city", { required: true })}
+                >
+                  {cityData?.map((city) => (
+                    <option key={city.name} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              <div className="input-focus-line">
-                <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Zip / Postal Code</label>
+              <div>
+                <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">Zip/Postal Code</label>
                 <input
                   type="text"
-                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
                   {...register("postalCode", { required: true })}
                 />
+                {errors.postalCode && <span className="text-error text-xs italic mt-1 block">Required</span>}
               </div>
             </div>
 
-            <div className="input-focus-line relative">
-              <label className="font-body text-[11px] font-semibold text-on-surface-variant uppercase tracking-[0.2em] mb-2 block">Mobile Number</label>
-              <div className="flex items-center gap-2">
-                <span className="text-on-surface bg-surface-variant px-3 py-2 border-b border-outline-variant">
-                  +{Country?.getCountryByCode(countryCode)?.phonecode || ''}
-                </span>
+            <div>
+              <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">Mobile Number</label>
+              <div className="flex border-b border-outline-variant focus-within:border-primary transition-colors">
+                <span className="py-3 pr-2 text-on-surface-variant font-body-base">+{phoneNumInfo.phoneCode}</span>
                 <input
                   type="number"
-                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary font-body"
-                  {...register("mobileNumber", { required: "Required" })}
-                  onInput={(e) => {
-                    if (e.target.value.length > e.target.maxLength)
-                      setError("mobileNumber", {
-                        type: "maxLength",
-                        message: `Max ${phoneNumInfo?.numberLength} digits`,
-                      });
-                    e.target.value = e.target.value.slice(0, e.target.maxLength);
-                  }}
-                  maxLength={phoneNumInfo?.numberLength || 15}
+                  className="w-full bg-transparent border-0 py-3 px-0 focus:ring-0 text-on-surface outline-none font-body-base"
+                  {...register("mobileNumber", {
+                    required: true,
+                    maxLength: phoneNumInfo.numberLength,
+                    minLength: phoneNumInfo.numberLength,
+                  })}
                 />
               </div>
-              {errors?.mobileNumber && <span className="text-error text-xs italic mt-1 block">{errors.mobileNumber.message}</span>}
+              {errors.mobileNumber && (
+                <span className="text-error text-xs italic mt-1 block">
+                  Required length: {phoneNumInfo.numberLength} digits
+                </span>
+              )}
             </div>
 
             <div className="pt-6">
-              <button 
-                type="submit" 
-                className="px-10 py-4 bg-primary text-white font-body text-xs font-bold uppercase tracking-[0.2em] hover:bg-primary/90 transition-all duration-300 cursor-pointer"
+              <button
+                type="submit"
+                className="w-full md:w-auto font-button-text text-button-text bg-primary text-white px-10 py-4 hover:bg-primary/90 transition-all uppercase tracking-[0.2em]"
               >
                 Save Address
               </button>

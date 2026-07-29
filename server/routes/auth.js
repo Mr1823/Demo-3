@@ -5,6 +5,8 @@ import crypto from "crypto";
 import { User } from "../models/User.js";
 import { RefreshToken } from "../models/RefreshToken.js";
 import { verifyJWT } from "../middleware/auth.js";
+import { otpLimiter } from "../middleware/rateLimit.js";
+import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -51,6 +53,96 @@ const generateRefreshToken = async (userId) => {
 
   return rawToken;
 };
+
+// ─── POST /api/auth/otp/request ──────────────────────────────────────────────
+router.post("/otp/request", otpLimiter, async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) {
+      return res.status(400).json({ error: "Phone number is required" });
+    }
+
+    // Generate a 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpHash = await bcrypt.hash(otp, BCRYPT_SALT_ROUNDS);
+    const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
+
+    // Upsert user by phone
+    let user = await User.findOne({ phone });
+    if (!user) {
+      user = new User({ phone, role: "USER" });
+    }
+    user.otpHash = otpHash;
+    user.otpExpiresAt = otpExpiresAt;
+    await user.save();
+
+    // Send via MSG91 (if keys configured)
+    const authKey = process.env.MSG91_AUTH_KEY;
+    const templateId = process.env.MSG91_TEMPLATE_ID;
+    
+    if (authKey && templateId) {
+      await axios.post(
+        `https://control.msg91.com/api/v5/otp?template_id=${templateId}&mobile=${phone}&authkey=${authKey}&otp=${otp}`,
+        {}
+      );
+    } else {
+      console.log(`[DEV MODE] MSG91 keys missing. OTP for ${phone} is: ${otp}`);
+    }
+
+    res.json({ success: true, message: "OTP sent successfully" });
+  } catch (error) {
+    console.error("OTP Request error:", error);
+    res.status(500).json({ error: "Failed to send OTP" });
+  }
+});
+
+// ─── POST /api/auth/otp/verify ───────────────────────────────────────────────
+router.post("/otp/verify", async (req, res) => {
+  try {
+    const { phone, otp } = req.body;
+    if (!phone || !otp) {
+      return res.status(400).json({ error: "Phone number and OTP are required" });
+    }
+
+    const user = await User.findOne({ phone });
+    if (!user || !user.otpHash || !user.otpExpiresAt) {
+      return res.status(401).json({ error: "Invalid OTP or phone number" });
+    }
+
+    if (Date.now() > user.otpExpiresAt.getTime()) {
+      return res.status(401).json({ error: "OTP has expired" });
+    }
+
+    const isMatch = await bcrypt.compare(otp, user.otpHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Invalid OTP" });
+    }
+
+    // Success - clear OTP fields
+    user.otpHash = undefined;
+    user.otpExpiresAt = undefined;
+    await user.save();
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = await generateRefreshToken(user._id);
+
+    res.json({
+      success: true,
+      accessToken,
+      refreshToken,
+      user: {
+        _id: user._id,
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("OTP Verify error:", error);
+    res.status(500).json({ error: "Failed to verify OTP" });
+  }
+});
 
 // ─── POST /api/auth/register ──────────────────────────────────────────────────
 router.post("/register", async (req, res) => {
