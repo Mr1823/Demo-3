@@ -1,70 +1,46 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import useRates from '../../../hooks/useRates';
 
 const Hero = () => {
-  const { rates, isRatesLoading, isError } = useRates();
-  
   return (
-    <>
-      <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
-        {/* Background Image */}
-        <div className="absolute inset-0 w-full h-full">
-          <img 
-            alt="Heritage Jewellery Hero" 
-            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 animate-[ken-burns_20s_ease-in-out_infinite]" 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbJD8jbHEXKW_CeHrSquL3wApc6fEBLGkoHuGc-iL6bpRKiSOw_pAPeHGq-3kZ0iySMjLlV1_84YnXrWYOVqiObTcDGKqTW90hxfvNY0YQrkj1_yvphLtY42lvOHHUJ2DSNG0eiym-nPpxJGj7FjH3ypoi_1shYCcEx7Dr3yga3QFIA0ck0Wg7KdnD9HZDIQXBjDZzkbjryw0CFDf4aQ6yFrD3bfaP4LxaQj1PSzWX48UFlhWg_aG0wcn_NBoIZ3YANFKL4gCYMzY"
-          />
-          <div className="absolute inset-0 bg-black/40 z-10"></div>
+    <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
+      {/* Editorial Image */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="w-full h-full bg-cover bg-center ken-burns" 
+          style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPsFrWztD4iPFFVXzCkBPEfyBStgI3PNvxZHYaG2xk_d1nosHS5vyaq9K_uwZdvntEmcJtGPU1Q9IA6MPJTJaKdJ7LkmxSMEQrro0eYkE0QP6KpW6K7_x_F3poPHVg_ZM6jrDlVagpaUF05lVzfr2CGrOvwLpgVfi2zeH7r94YoPzdWIuVUMZ79DrWDv5Z6ZJDZvBFhl3pZh_ucp_8E0fVJ3FrcM7qv-4etClKOvw7wgmsTNnARVdj6aoukBw790ysmQkfJORH8YM')" }}
+        ></div>
+        <div className="absolute inset-0 hero-gradient"></div>
+      </div>
+      
+      {/* Content Overlay */}
+      <div className="relative z-10 text-center px-margin-mobile md:px-margin-desktop fade-in-up">
+        <div className="mb-8 tracking-[0.4em] text-white/90">
+          <span className="font-label-caps text-label-caps block mb-2">SINCE 1924</span>
+          <div className="w-16 h-[1px] bg-white/50 mx-auto"></div>
         </div>
-        
-        <div className="relative z-20 text-center px-margin-mobile md:px-margin-desktop max-w-4xl mx-auto flex flex-col items-center gap-6 mt-16">
-          <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-white">
-            Sri Ram Bespoke
-          </h1>
-          <p className="font-body-lg text-body-lg text-surface-container-low max-w-xl opacity-90">
-            Exquisite tailoring and heritage craftsmanship. A legacy of sartorial excellence woven into every stitch.
-          </p>
+        <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-6 leading-tight max-w-4xl mx-auto italic">
+          The Art of Eternal Heritage
+        </h1>
+        <p className="font-body-lg text-body-lg text-white/80 max-w-xl mx-auto mb-12 tracking-wide font-light">
+          Discover a legacy carved in gold and adorned with history’s finest treasures.
+        </p>
+        <div className="flex flex-col items-center">
           <Link 
-            className="mt-8 px-10 py-4 border border-primary-fixed text-primary-fixed hover:bg-primary-fixed hover:text-primary transition-all duration-300 font-button-text text-button-text uppercase tracking-[0.2em] bg-transparent backdrop-blur-sm" 
             to="/shop"
+            className="font-button-text text-button-text uppercase tracking-widest px-10 py-4 bg-white text-primary hover:bg-surface-container transition-colors duration-500 scale-100 hover:scale-105 active:scale-95 inline-block"
           >
-            Explore the Collection
+            Explore Collection
           </Link>
         </div>
-      </section>
+      </div>
       
-      {/* Live Rate Strip */}
-      <section className="w-full bg-surface-container-low border-b border-primary/10 py-5">
-        <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-16 font-display-lg text-lg text-primary">
-          <div className="flex items-center gap-3">
-            <span className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-widest">22K Gold (1g):</span>
-            <span className="font-semibold">
-              {isRatesLoading ? (
-                <span className="animate-pulse bg-primary/20 h-4 w-16 inline-block rounded"></span>
-              ) : isError || !rates?.gold?.ratePerGram ? (
-                "—"
-              ) : (
-                `₹ ${rates.gold.ratePerGram.toLocaleString("en-IN")}`
-              )}
-            </span>
-          </div>
-          <div className="hidden sm:block w-px h-6 bg-primary/20"></div>
-          <div className="flex items-center gap-3">
-            <span className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-widest">Silver (1g):</span>
-            <span className="font-semibold">
-              {isRatesLoading ? (
-                <span className="animate-pulse bg-primary/20 h-4 w-16 inline-block rounded"></span>
-              ) : isError || !rates?.silver?.ratePerGram ? (
-                "—"
-              ) : (
-                `₹ ${rates.silver.ratePerGram.toLocaleString("en-IN")}`
-              )}
-            </span>
-          </div>
-        </div>
-      </section>
-    </>
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 text-white flex flex-col items-center gap-4 bounce-slow pointer-events-none">
+        <span className="font-label-caps text-label-caps opacity-60">SCROLL</span>
+        <span className="material-symbols-outlined text-3xl font-thin">expand_more</span>
+      </div>
+    </section>
   );
 };
 

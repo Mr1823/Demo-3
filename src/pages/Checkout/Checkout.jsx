@@ -23,47 +23,64 @@ const Checkout = () => {
   const location = useLocation();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
-  // POST ORDER DATA TO DB
   const handlePlaceOrder = () => {
     setIsPlacingOrder(true);
+    
+    // For card payments, the order is already created and verified in Payment.jsx.
+    // If we reach here, it means they clicked Complete Order after Razorpay success,
+    // or they are using COD/UPI.
+    if (paymentMethod === "card" && paymentInfo?.status === "success") {
+      // In a fully integrated flow, Payment.jsx should redirect.
+      // But if they click here, just redirect them and clear cart.
+      axiosSecure.delete("/orders/delete-cart-items").then(() => {
+        navigate("/order-success", {
+          state: {
+            orderStatus: "success",
+            from: location,
+            orderId: paymentInfo.id,
+          },
+        });
+        setPaymentInfo(null);
+        refetch();
+      });
+      return;
+    }
+
     const orderId = uuidv4();
 
-    if (orderId) {
-      axiosSecure
-        .post("/orders", {
-          orderId: orderId,
-          name: user?.displayName,
-          email: user?.email,
-          total: parseFloat(cartSubtotal?.subtotal),
-          paymentMethod,
-          paymentStatus: paymentInfo ? "paid" : "unpaid",
-          transactionId: paymentInfo ? paymentInfo.id : null,
-          orderDetails: cartData,
-          shippingAddress: userFromDB?.shippingAddress,
-          orderStatus: "processing",
-          date: new Date(),
-        })
-        .then((res) => {
-          if (res.data.insertedId) {
-            axiosSecure
-              .delete(`/delete-cart-items?email=${user?.email}`)
-              .then((res) => {
-                if (res.data.deletedCount > 0) {
-                  navigate("/order-success", {
-                    state: {
-                      orderStatus: "success",
-                      from: location,
-                      orderId: orderId,
-                    },
-                  });
-                  setPaymentInfo(null);
-                  refetch();
-                }
-              });
-          }
-        })
-        .catch(() => setIsPlacingOrder(false));
-    }
+    axiosSecure
+      .post("/orders", {
+        orderId: orderId,
+        name: user?.displayName,
+        email: user?.email,
+        total: parseFloat(cartSubtotal?.subtotal),
+        paymentMethod,
+        paymentStatus: "unpaid",
+        transactionId: null,
+        items: cartData, // Backend expects `items`
+        shippingAddress: userFromDB?.shippingAddress,
+        orderStatus: "processing",
+        date: new Date(),
+      })
+      .then((res) => {
+        if (res.data.success) {
+          navigate("/order-success", {
+            state: {
+              orderStatus: "success",
+              from: location,
+              orderId: res.data.data.orderId,
+            },
+          });
+          setPaymentInfo(null);
+          refetch();
+        } else {
+          setIsPlacingOrder(false);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsPlacingOrder(false);
+      });
   };
 
   return (

@@ -251,3 +251,237 @@
 [1] Failed running 'server/index.js'. Waiting for file changes before restarting...
 [0] 3:15:35 PM [vite] .env changed, restarting server...
 [0] 3:15:35 PM [vite] server restarted.
+[0] 4:52:06 PM [vite] .env changed, restarting server...
+[0] 4:52:06 PM [vite] server restarted.
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] 🚀 API Server running seamlessly on http://localhost:5000
+[1] MongoDB Connected: ac-t00vfwk-shard-00-01.q12uggh.mongodb.net
+[1] Create order error: ValidationError: Order validation failed: items.0.unitPrice: Cast to Number failed for value "{
+[1]   finalPrice: 104545,
+[1]   priceBreakdown: {
+[1]     metalValue: 90625,
+[1]     wastageValue: 10875,
+[1]     gst: 3045,
+[1]     ratePerGram: 7250
+[1]   }
+[1] }" (type Object) at path "unitPrice", totalAmount: Cast to Number failed for value "NaN" (type number) at path "totalAmount", gstAmount: Cast to Number failed for value "NaN" (type number) at path "gstAmount"
+[1]     at Document.invalidate (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:3471:32)
+[1]     at Subdocument.invalidate (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/types/subdocument.js:231:12)
+[1]     at EmbeddedDocument.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1540:12)
+[1]     at EmbeddedDocument.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1189:16)
+[1]     at EmbeddedDocument.Document (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:181:12)
+[1]     at EmbeddedDocument.Subdocument (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/types/subdocument.js:29:12)
+[1]     at EmbeddedDocument.ArraySubdocument [as constructor] (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/types/arraySubdocument.js:44:15)
+[1]     at new EmbeddedDocument (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/documentArray.js:142:17)
+[1]     at SchemaDocumentArray.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/documentArray.js:486:22)
+[1]     at SchemaType.applySetters (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schemaType.js:1373:12) {
+[1]   errors: {
+[1]     'items.0.unitPrice': CastError: Cast to Number failed for value "{
+[1]       finalPrice: 104545,
+[1]       priceBreakdown: {
+[1]         metalValue: 90625,
+[1]         wastageValue: 10875,
+[1]         gst: 3045,
+[1]         ratePerGram: 7250
+[1]       }
+[1]     }" (type Object) at path "unitPrice"
+[1]         at SchemaNumber.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/number.js:412:11)
+[1]         at SchemaType.applySetters (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schemaType.js:1373:12)
+[1]         at EmbeddedDocument.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1500:22)
+[1]         at EmbeddedDocument.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1189:16)
+[1]         at EmbeddedDocument.Document (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:181:12)
+[1]         at EmbeddedDocument.Subdocument (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/types/subdocument.js:29:12)
+[1]         at EmbeddedDocument.ArraySubdocument [as constructor] (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/types/arraySubdocument.js:44:15)
+[1]         at new EmbeddedDocument (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/documentArray.js:142:17)
+[1]         at SchemaDocumentArray.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/documentArray.js:486:22)
+[1]         at SchemaType.applySetters (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schemaType.js:1373:12) {
+[1]       stringValue: '"{\n' +
+[1]         '  finalPrice: 104545,\n' +
+[1]         '  priceBreakdown: {\n' +
+[1]         '    metalValue: 90625,\n' +
+[1]         '    wastageValue: 10875,\n' +
+[1]         '    gst: 3045,\n' +
+[1]         '    ratePerGram: 7250\n' +
+[1]         '  }\n' +
+[1]         '}"',
+[1]       messageFormat: undefined,
+[1]       kind: 'Number',
+[1]       value: [Object],
+[1]       path: 'unitPrice',
+[1]       reason: Error: Cast to Number failed: value is not a valid number
+[1]           at castNumber (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/cast/number.js:26:11)
+[1]           at SchemaNumber.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/number.js:410:12)
+[1]           at SchemaType.applySetters (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schemaType.js:1373:12)
+[1]           at EmbeddedDocument.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1500:22)
+[1]           at EmbeddedDocument.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1189:16)
+[1]           at EmbeddedDocument.Document (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:181:12)
+[1]           at EmbeddedDocument.Subdocument (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/types/subdocument.js:29:12)
+[1]           at EmbeddedDocument.ArraySubdocument [as constructor] (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/types/arraySubdocument.js:44:15)
+[1]           at new EmbeddedDocument (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/documentArray.js:142:17)
+[1]           at SchemaDocumentArray.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/documentArray.js:486:22),
+[1]       valueType: 'Object'
+[1]     },
+[1]     totalAmount: CastError: Cast to Number failed for value "NaN" (type number) at path "totalAmount"
+[1]         at SchemaNumber.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/number.js:412:11)
+[1]         at SchemaType.applySetters (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schemaType.js:1373:12)
+[1]         at model.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1500:22)
+[1]         at model.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1189:16)
+[1]         at model.Document (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:181:12)
+[1]         at model.Model (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/model.js:143:12)
+[1]         at new model (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/model.js:4979:15)
+[1]         at file:///Users/black_heart/Downloads/Jewellery-master/server/routes/orders.js:109:22
+[1]         at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+[1]       stringValue: '"NaN"',
+[1]       messageFormat: undefined,
+[1]       kind: 'Number',
+[1]       value: NaN,
+[1]       path: 'totalAmount',
+[1]       reason: Error: Cast to Number failed: value is not a valid number
+[1]           at castNumber (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/cast/number.js:26:11)
+[1]           at SchemaNumber.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/number.js:410:12)
+[1]           at SchemaType.applySetters (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schemaType.js:1373:12)
+[1]           at model.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1500:22)
+[1]           at model.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1189:16)
+[1]           at model.Document (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:181:12)
+[1]           at model.Model (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/model.js:143:12)
+[1]           at new model (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/model.js:4979:15)
+[1]           at file:///Users/black_heart/Downloads/Jewellery-master/server/routes/orders.js:109:22
+[1]           at process.processTicksAndRejections (node:internal/process/task_queues:104:5),
+[1]       valueType: 'number'
+[1]     },
+[1]     gstAmount: CastError: Cast to Number failed for value "NaN" (type number) at path "gstAmount"
+[1]         at SchemaNumber.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/number.js:412:11)
+[1]         at SchemaType.applySetters (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schemaType.js:1373:12)
+[1]         at model.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1500:22)
+[1]         at model.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1189:16)
+[1]         at model.Document (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:181:12)
+[1]         at model.Model (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/model.js:143:12)
+[1]         at new model (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/model.js:4979:15)
+[1]         at file:///Users/black_heart/Downloads/Jewellery-master/server/routes/orders.js:109:22
+[1]         at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+[1]       stringValue: '"NaN"',
+[1]       messageFormat: undefined,
+[1]       kind: 'Number',
+[1]       value: NaN,
+[1]       path: 'gstAmount',
+[1]       reason: Error: Cast to Number failed: value is not a valid number
+[1]           at castNumber (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/cast/number.js:26:11)
+[1]           at SchemaNumber.cast (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schema/number.js:410:12)
+[1]           at SchemaType.applySetters (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/schemaType.js:1373:12)
+[1]           at model.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1500:22)
+[1]           at model.$set (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:1189:16)
+[1]           at model.Document (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/document.js:181:12)
+[1]           at model.Model (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/model.js:143:12)
+[1]           at new model (/Users/black_heart/Downloads/Jewellery-master/node_modules/mongoose/lib/model.js:4979:15)
+[1]           at file:///Users/black_heart/Downloads/Jewellery-master/server/routes/orders.js:109:22
+[1]           at process.processTicksAndRejections (node:internal/process/task_queues:104:5),
+[1]       valueType: 'number'
+[1]     }
+[1]   },
+[1]   _message: 'Order validation failed'
+[1] }
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+[1] ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...
+[1] Restarting 'server/index.js'
+[1] ◇ injected env (7) from .env // tip: ⌘ enable debugging { debug: true }
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+[1] ◇ injected env (0) from .env // tip: ⌘ suppress logs { quiet: true }
+[1] ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+[1] Connecting to MongoDB at: mongodb+srv://sriramjewellerydpm_db_user:Admin%401234@cluster0.q12uggh.mongodb.net/jewellery_db?appName=Cluster0
+[1] node:events:487
+[1]       throw er; // Unhandled 'error' event
+[1]       ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use :::5000
+[1]     at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+[1]     at listenInCluster (node:net:2065:12)
+[1]     at Server.listen (node:net:2170:7)
+[1]     at app.listen (/Users/black_heart/Downloads/Jewellery-master/node_modules/express/lib/application.js:635:24)
+[1]     at file:///Users/black_heart/Downloads/Jewellery-master/server/index.js:82:7
+[1]     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[1]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:26)
+[1]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[1] Emitted 'error' event on Server instance at:
+[1]     at emitErrorNT (node:net:2044:8)
+[1]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -48,
+[1]   syscall: 'listen',
+[1]   address: '::',
+[1]   port: 5000
+[1] }
+[1] 
+[1] Node.js v26.3.0
+[1] Failed running 'server/index.js'. Waiting for file changes before restarting...

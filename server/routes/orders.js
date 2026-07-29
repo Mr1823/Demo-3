@@ -82,7 +82,8 @@ router.post("/", verifyJWT, async (req, res) => {
         return res.status(400).json({ error: `Quote-only products cannot be ordered directly: ${product.name}` });
       }
 
-      const serverPrice = computePrice(product, rateMap);
+      const priceData = computePrice(product, rateMap);
+      const serverPrice = priceData ? priceData.finalPrice : (product.price || 0);
       const quantity = item.quantity || 1;
       const lineTotal = serverPrice * quantity;
 

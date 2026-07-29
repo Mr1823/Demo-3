@@ -76,16 +76,16 @@ const OrderSuccess = () => {
       },
       information: {
         number:
-          orderObj?.orderDetails?.length +
+          orderObj?.items?.length +
           "" +
-          orderObj?.total +
+          orderObj?.totalAmount +
           orderDate?.year,
         date: `${orderDate?.date}-${new Date(orderDate?.date).getMonth() + 1}-${orderDate?.year}`,
       },
-      products: orderObj?.orderDetails?.map((product) => ({
+      products: orderObj?.items?.map((product) => ({
         quantity: product?.quantity,
         description: product?.name,
-        price: product?.price,
+        price: product?.unitPrice,
         "tax-rate": 0,
       })),
       "bottom-notice": "Thank you for shopping with Sri Ram Jewellery ✨",
@@ -109,7 +109,7 @@ const OrderSuccess = () => {
   };
 
   return (
-    <main className="max-w-container-max mx-auto px-5 md:px-16 py-12 md:py-24 min-h-screen bg-background font-body-base">
+    <main className="max-w-container-max mx-auto px-5 md:px-16 pt-32 pb-24 min-h-screen bg-background font-body-base">
       <CustomHelmet title={"Order Success"} />
 
       {location?.state?.orderId ? (
@@ -139,8 +139,8 @@ const OrderSuccess = () => {
               <div className="p-8 border-b md:border-b-0 md:border-r border-outline-variant/30 flex-grow">
                 <h2 className="font-label-caps text-on-surface-variant mb-6 tracking-widest">PURCHASED ITEMS</h2>
                 <div className="flex flex-col gap-6">
-                  {orderObj?.orderDetails?.map((product) => (
-                    <div key={product._id} className="flex gap-4 items-start">
+                  {orderObj?.items?.map((product, idx) => (
+                    <div key={product._id || idx} className="flex gap-4 items-start">
                       <div className="w-20 h-20 bg-surface-container rounded overflow-hidden flex-shrink-0 border border-outline-variant/30">
                         <img 
                           className="w-full h-full object-cover" 
@@ -153,7 +153,7 @@ const OrderSuccess = () => {
                         <span className="font-body-base text-on-surface-variant text-sm mb-2">{product.category || 'Jewellery'}</span>
                         <div className="flex justify-between items-center w-full">
                           <span className="font-body-base text-on-surface-variant text-sm">Qty: {product.quantity}</span>
-                          <span className="font-button-text text-primary">₹{product.price?.toLocaleString("en-IN")}</span>
+                          <span className="font-button-text text-primary">₹{product.unitPrice?.toLocaleString("en-IN")}</span>
                         </div>
                       </div>
                     </div>
@@ -184,7 +184,7 @@ const OrderSuccess = () => {
                   <div className="flex flex-col gap-3 font-body-base text-on-surface-variant text-sm">
                     <div className="flex justify-between">
                       <span>Total</span>
-                      <span>₹{orderObj?.total?.toLocaleString("en-IN")}</span>
+                      <span>₹{orderObj?.totalAmount?.toLocaleString("en-IN")}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Shipping</span>
@@ -197,7 +197,7 @@ const OrderSuccess = () => {
                     <div className="w-full h-[1px] bg-outline-variant/30 my-2"></div>
                     <div className="flex justify-between items-center font-button-text text-primary text-[16px]">
                       <span>TOTAL PAID</span>
-                      <span>₹{orderObj?.total?.toLocaleString("en-IN")}</span>
+                      <span>₹{orderObj?.totalAmount?.toLocaleString("en-IN")}</span>
                     </div>
                   </div>
                 </div>

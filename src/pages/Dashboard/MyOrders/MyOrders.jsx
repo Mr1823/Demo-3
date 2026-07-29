@@ -101,9 +101,8 @@ const MyOrders = () => {
               >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
                   <div className="flex gap-4">
-                    {/* Thumbnail Stack */}
                     <div className="flex -space-x-4">
-                      {order.orderDetails.slice(0, 3).map((item, i) => (
+                      {(order.items || order.orderDetails || []).slice(0, 3).map((item, i) => (
                         <div key={item._id || i} className="w-16 h-16 md:w-20 md:h-20 bg-surface-variant border border-outline-variant/30 flex items-center justify-center overflow-hidden rounded-sm">
                           <img 
                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" 
@@ -112,9 +111,9 @@ const MyOrders = () => {
                           />
                         </div>
                       ))}
-                      {order.orderDetails.length > 3 && (
+                      {(order.items || order.orderDetails || []).length > 3 && (
                         <div className="w-16 h-16 md:w-20 md:h-20 bg-surface-variant border border-outline-variant/30 flex items-center justify-center overflow-hidden rounded-sm bg-surface-dim z-10">
-                          <span className="font-body text-sm font-semibold text-primary">+{order.orderDetails.length - 3}</span>
+                          <span className="font-body text-sm font-semibold text-primary">+{(order.items || order.orderDetails || []).length - 3}</span>
                         </div>
                       )}
                     </div>
@@ -124,7 +123,7 @@ const MyOrders = () => {
                         Order #{order.orderId || order._id.slice(-6).toUpperCase()}
                       </span>
                       <span className="font-display text-xl md:text-2xl text-on-surface">
-                        {order.orderDetails[0]?.name || "Heritage Collection"} {order.orderDetails.length > 1 ? "& More" : ""}
+                        {(order.items || order.orderDetails || [])[0]?.name || "Heritage Collection"} {(order.items || order.orderDetails || []).length > 1 ? "& More" : ""}
                       </span>
                       <p className="font-body text-xs md:text-sm text-on-surface-variant mt-1">
                         Placed on {new Date(order.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -141,7 +140,7 @@ const MyOrders = () => {
                       {order.orderStatus.toUpperCase()}
                     </span>
                     <span className="font-display text-2xl md:text-3xl text-primary">
-                      ₹{order.total}
+                      ₹{order.totalAmount || order.total || 0}
                     </span>
                   </div>
                 </div>

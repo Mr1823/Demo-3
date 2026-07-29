@@ -14,6 +14,8 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const isHome = location.pathname === '/';
 
   // Scroll listener for header shrink/shadow
   useEffect(() => {
@@ -52,7 +54,7 @@ const Header = () => {
   return (
     <>
       <header
-        className={`fixed z-50 w-full transition-all duration-500 ease-in-out border-b border-primary/5 top-0 ${scrolled ? 'bg-surface shadow-sm py-2' : 'bg-surface/90 backdrop-blur-md py-4'}`}
+        className={`fixed z-50 w-full transition-all duration-500 ease-in-out border-b top-0 ${scrolled || !isHome ? 'bg-surface shadow-sm py-2 border-primary/5' : 'bg-transparent py-4 border-white/10'}`}
         id="main-nav"
       >
         <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto gap-4">
@@ -65,7 +67,7 @@ const Header = () => {
                 className="h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105" 
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnkKiBYrjO5ja_yOK74ECm5mdzcfxXWJFezzcd6geLOcrRGlRUhiETPqKr3Zn23LkiSeCA-2yk2yZaZTExvLRljEPg8jgwT3M7OXFjr6FiN4jdTz7JOoLaGPpyrvz-XwlSXUBgBxuAPJBocfWIt-FNsBrSwcnsluG1KWLQq0yV48ay72CCsvOdBVp_E-WSzhmxhaMrUZ77yQ0VaQ1Q-Qt9JsuKN2h92bYepfcKNheJ0kLbbJ_6dnS5lHMnVY0f3wRUW6tuOZIJ4mY"
               />
-              <span className="font-display-lg text-body-lg md:text-headline-sm text-primary tracking-tight">
+              <span className={`font-display-lg text-body-lg md:text-headline-sm tracking-tight ${isHome && !scrolled ? 'text-white' : 'text-primary'}`}>
                 Sri Ram Jewellery
               </span>
             </Link>
@@ -76,8 +78,8 @@ const Header = () => {
             {navLinks.map((link) => {
               const linkClasses = `
                   ${isActive(link.path) && link.label !== 'Categories'
-                    ? 'text-on-surface border-b-2 border-primary pb-1'
-                    : 'text-on-surface-variant hover:text-primary transition-colors'
+                    ? (isHome && !scrolled ? 'text-white border-b-2 border-white pb-1' : 'text-on-surface border-b-2 border-primary pb-1')
+                    : (isHome && !scrolled ? 'text-white/80 hover:text-white transition-colors' : 'text-on-surface-variant hover:text-primary transition-colors')
                   } font-button-text text-button-text uppercase tracking-[0.2em]
                 `;
                 
@@ -105,10 +107,10 @@ const Header = () => {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-8">
               <div className="hidden md:block relative group">
-                <div className="w-64 flex items-center bg-surface-container-low border border-primary/10 rounded-full px-5 py-2 gap-3">
-                  <span className="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+                <div className={`w-64 flex items-center border rounded-full px-5 py-2 gap-3 ${isHome && !scrolled ? 'bg-white/10 backdrop-blur-md border-white/20' : 'bg-surface-container-low border-primary/10'}`}>
+                  <span className={`material-symbols-outlined text-[20px] ${isHome && !scrolled ? 'text-white/70' : 'text-on-surface-variant'}`}>search</span>
                   <input 
-                    className="bg-transparent border-none focus:ring-0 p-0 w-full text-body-base text-on-surface text-sm placeholder:text-on-surface-variant/40 outline-none" 
+                    className={`bg-transparent border-none focus:ring-0 p-0 w-full text-body-base text-sm outline-none ${isHome && !scrolled ? 'text-white placeholder:text-white/40' : 'text-on-surface placeholder:text-on-surface-variant/40'}`} 
                     placeholder="Search jewelry..." 
                     type="text"
                     value={searchQuery}
@@ -118,29 +120,29 @@ const Header = () => {
               </div>
               
               <div className="flex items-center gap-6">
-                <Link className="text-on-surface hover:text-primary transition-colors" to="/wishlist">
+                <Link className={`${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all`} to="/wishlist">
                   <span className="material-symbols-outlined font-light">favorite</span>
                 </Link>
                 
                 <button 
-                  className="text-on-surface hover:text-primary transition-colors relative" 
+                  className={`${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all relative`} 
                   onClick={() => setShowCartDrawer(true)}
                 >
                   <span className="material-symbols-outlined font-light">shopping_bag</span>
                   {cartCount > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                    <span className={`absolute -top-1.5 -right-1.5 text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center ${isHome && !scrolled ? 'bg-white text-primary' : 'bg-primary text-white'}`}>
                       {cartCount}
                     </span>
                   )}
                 </button>
 
-                <Link className="text-on-surface hover:text-primary transition-colors" to={user ? "/dashboard" : "/login"}>
+                <Link className={`${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all`} to={user ? "/dashboard" : "/login"}>
                   <span className="material-symbols-outlined font-light">person</span>
                 </Link>
 
                 {/* Mobile menu toggle */}
                 <button 
-                  className="lg:hidden text-on-surface hover:text-primary transition-colors"
+                  className={`lg:hidden ${isHome && !scrolled ? 'text-white' : 'text-on-surface hover:text-primary'} transition-colors`}
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 >
                   <span className="material-symbols-outlined">{mobileMenuOpen ? 'close' : 'menu'}</span>
