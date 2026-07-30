@@ -29,7 +29,7 @@ const getPriceInjectedProducts = async (query = {}) => {
 // ─── Public Reads (JWT required per PRD) ─────────────────────────────────────
 
 // GET /api/products/filter?category=...&minPrice=...&maxPrice=...
-router.get("/filter", verifyJWT, async (req, res) => {
+router.get("/filter", async (req, res) => {
   try {
     const { category, minPrice = 0, maxPrice = 1000000, priceOrder, search } = req.query;
 
@@ -68,7 +68,7 @@ router.get("/filter", verifyJWT, async (req, res) => {
 });
 
 // GET /api/products or /api/products?category=Rings&page=1
-router.get("/", verifyJWT, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { category, sort, page = 1 } = req.query;
 
@@ -97,7 +97,7 @@ router.get("/", verifyJWT, async (req, res) => {
 });
 
 // GET /api/products/search?q=diamond
-router.get("/search", verifyJWT, async (req, res) => {
+router.get("/search", async (req, res) => {
   try {
     const { q } = req.query;
     if (!q) {
@@ -120,7 +120,7 @@ router.get("/search", verifyJWT, async (req, res) => {
 });
 
 // GET /api/products/:id
-router.get("/:id", verifyJWT, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findOne({
       $or: [

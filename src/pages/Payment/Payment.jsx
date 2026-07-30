@@ -151,24 +151,12 @@ const Payment = () => {
     <div className="ml-5 mt-5">
       <div className="border md:w-[60%] p-8 pb-6 rounded-xl shadow bg-white border-gray-100">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="p-3 bg-amber-50 rounded-full border border-amber-200">
-            <svg 
-              className="w-10 h-10 text-amber-600" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="1.5" 
-                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" 
-              />
-            </svg>
+          <div className="flex flex-col items-center gap-2 text-primary mb-2">
+            <span className="material-symbols-outlined text-[48px]">verified_user</span>
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-800">Secure Payment with Razorpay</h3>
-            <p className="text-xs text-gray-500 mt-1">
+            <h3 className="font-display-lg text-headline-sm text-on-surface mb-2">Secure Payment with Razorpay</h3>
+            <p className="text-body-base text-on-surface-variant font-body-base">
               Pay securely via UPI, Cards, NetBanking, or Wallet
             </p>
           </div>
@@ -190,12 +178,12 @@ const Payment = () => {
               <button
                 onClick={handlePayment}
                 disabled={loadingPayment || !scriptLoaded}
-                className="btn btn-primary font-bold btn-block text-white transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                className="w-full bg-primary text-white py-4 font-button-text text-button-text tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"
               >
                 {loadingPayment ? (
                   <span className="loading loading-spinner text-white"></span>
                 ) : (
-                  <span className="font-bold text-base">Pay ${orderTotal} with Razorpay</span>
+                  <span className="font-button-text text-button-text">PAY ₹{orderTotal} WITH RAZORPAY</span>
                 )}
               </button>
             )}

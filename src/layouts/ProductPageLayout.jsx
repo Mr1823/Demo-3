@@ -16,7 +16,7 @@ const ProductPageLayout = () => {
         <ProductPageNavigation />
       </div>
       
-      <div className="max-w-container-max mx-auto px-margin-desktop w-full">
+      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full">
         <Outlet />
       </div>
       

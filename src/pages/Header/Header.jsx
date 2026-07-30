@@ -62,12 +62,12 @@ const Header = () => {
           {/* Logo & Brand (Left) */}
           <div className="flex-shrink-0">
             <Link className="flex items-center gap-4 group" to="/">
-              <img 
-                alt="Sri Ram Jewellery Logo" 
-                className="h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105" 
+              <img
+                alt="Sri Ram Jewellery Logo"
+                className="h-10 sm:h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnkKiBYrjO5ja_yOK74ECm5mdzcfxXWJFezzcd6geLOcrRGlRUhiETPqKr3Zn23LkiSeCA-2yk2yZaZTExvLRljEPg8jgwT3M7OXFjr6FiN4jdTz7JOoLaGPpyrvz-XwlSXUBgBxuAPJBocfWIt-FNsBrSwcnsluG1KWLQq0yV48ay72CCsvOdBVp_E-WSzhmxhaMrUZ77yQ0VaQ1Q-Qt9JsuKN2h92bYepfcKNheJ0kLbbJ_6dnS5lHMnVY0f3wRUW6tuOZIJ4mY"
               />
-              <span className={`font-display-lg text-body-lg md:text-headline-sm tracking-tight ${isHome && !scrolled ? 'text-white' : 'text-primary'}`}>
+              <span className={`hidden sm:inline-block font-display-lg text-body-lg md:text-headline-sm tracking-tight ${isHome && !scrolled ? 'text-white' : 'text-primary'}`}>
                 Sri Ram Jewellery
               </span>
             </Link>
@@ -119,7 +119,7 @@ const Header = () => {
                 </div>
               </div>
               
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4 sm:gap-6">
                 <Link className={`${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all`} to="/wishlist">
                   <span className="material-symbols-outlined font-light">favorite</span>
                 </Link>

@@ -11,7 +11,7 @@ const CentennialExcellence = () => {
   return (
     <main className="relative z-20 bg-background pt-section-gap-sm">
       {/* Subtle Transition Header */}
-      <div className="max-w-container-max mx-auto px-margin-desktop mb-section-gap-sm text-center">
+      <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-section-gap-sm text-center">
         <div className="w-16 h-1 bg-primary mx-auto mb-8"></div>
         <h2 className="font-headline-md text-headline-md text-primary mb-4">A Centennial of Excellence</h2>
         <p className="font-body-base text-body-base text-on-surface-variant max-w-2xl mx-auto italic">
@@ -20,7 +20,7 @@ const CentennialExcellence = () => {
       </div>
 
       {/* Bento Grid: Featured Heritage Items */}
-      <section className="max-w-container-max mx-auto px-margin-desktop mb-section-gap-lg">
+      <section className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mb-section-gap-lg">
         {isCategoriesLoading ? (
           <div className="grid grid-cols-12 gap-gutter items-start h-[700px] animate-pulse">
             <div className="col-span-12 md:col-span-7 bg-surface-container rounded-lg h-full"></div>
@@ -60,7 +60,7 @@ const CentennialExcellence = () => {
                   <>
                     <span className="font-label-caps text-label-caps text-primary/60 block mb-3">SIGNATURE</span>
                     <h3 className="font-headline-sm text-headline-sm text-primary mb-3">{categories[1].categoryName}</h3>
-                    <p className="font-body-base text-on-surface-variant mb-6 italic">Sacred motifs reborn in 22kt pure gold, carrying the soul of ancient architecture.</p>
+                    <p className="font-body-base text-on-surface-variant mb-6 italic">Sacred motifs reborn in precious metal, carrying the soul of ancient architecture.</p>
                     <div className="aspect-video overflow-hidden mb-6">
                       <img src={getCatImg(categories[1])} alt={categories[1].categoryName} className="w-full h-full object-cover" />
                     </div>

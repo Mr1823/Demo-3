@@ -60,9 +60,8 @@ router.patch("/me", verifyJWT, async (req, res) => {
 // PATCH /api/users/shipping-address
 router.patch("/shipping-address", verifyJWT, async (req, res) => {
   try {
-    const email = req.query.email;
-    const user = await User.findOneAndUpdate(
-      { email },
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
       { $set: { shippingAddress: req.body } },
       { new: true }
     );
@@ -76,9 +75,8 @@ router.patch("/shipping-address", verifyJWT, async (req, res) => {
 // PATCH /api/users/delete-address
 router.patch("/delete-address", verifyJWT, async (req, res) => {
   try {
-    const email = req.query.email;
-    const user = await User.findOneAndUpdate(
-      { email },
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
       { $unset: { shippingAddress: "" } },
       { new: true }
     );
@@ -191,17 +189,12 @@ router.get("/", verifyJWT, requireAdmin, async (req, res) => {
   }
 });
 
-// PATCH /api/users/:id/role — admin update user role
-router.patch("/:id/role", verifyJWT, requireAdmin, async (req, res) => {
+// PATCH /api/users/:id — admin update user
+router.patch("/:id", verifyJWT, requireAdmin, async (req, res) => {
   try {
-    const { role } = req.body;
-    if (!role || !["ADMIN", "USER"].includes(role)) {
-      return res.status(400).json({ error: "Valid role (ADMIN or USER) is required" });
-    }
-
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { role },
+      req.body,
       { new: true }
     ).select("-passwordHash");
 
@@ -211,7 +204,19 @@ router.patch("/:id/role", verifyJWT, requireAdmin, async (req, res) => {
 
     res.json({ success: true, data: user });
   } catch (error) {
-    res.status(500).json({ error: "Failed to update user role" });
+    res.status(500).json({ error: "Failed to update user" });
+  }
+});
+
+// DELETE /api/users/:id — admin delete user
+router.delete("/:id", verifyJWT, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await User.findByIdAndDelete(id);
+    if (!deleted) return res.status(404).json({ error: "User not found" });
+    res.json({ success: true, message: "User deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete user" });
   }
 });
 

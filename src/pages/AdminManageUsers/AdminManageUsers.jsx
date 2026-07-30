@@ -25,19 +25,19 @@ const AdminManageUsers = () => {
       !isAuthLoading && user !== null && user !== undefined && userFromDB?.admin === true,
     queryKey: ["all-users"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/admin/users");
+      const res = await axiosSecure.get("/users");
       return res.data;
     },
   });
 
   // Handle Make Admin User
-  const handleMakeAdmin = (email) => {
+  const handleMakeAdmin = (id) => {
     axiosSecure
-      .patch(`/admin/users/make-admin/${email}`, {
-        admin: true,
+      .patch(`/users/${id}`, {
+        role: "ADMIN",
       })
       .then((res) => {
-        if (res.data.modifiedCount > 0) {
+        if (res.data.success) {
           toast.success("The user is now an Admin");
           refetch();
         }
@@ -46,7 +46,7 @@ const AdminManageUsers = () => {
   };
 
   // Handle delete user
-  const handleDeleteUser = (email) => {
+  const handleDeleteUser = (id) => {
     Swal.fire({
       title: "BE CAREFUL!",
       text: "All information associated with this user will be removed.",
@@ -61,7 +61,7 @@ const AdminManageUsers = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axiosSecure
-          .delete(`/admin/delete-user/${email}`)
+          .delete(`/users/${id}`)
           .then((res) => {
             if (res.data.success) {
               Swal.fire({
@@ -82,144 +82,121 @@ const AdminManageUsers = () => {
   const pageProductLimit = 6;
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 md:p-margin-desktop bg-background custom-scrollbar w-full">
-      <div>
-        <div className="text-sm breadcrumbs">
-          <ul>
-            <li>
-              <Link to={"/dashboard/adminDashboard"}>Dashboard</Link>
-            </li>
-            <li>
-              <Link to="/dashboard/adminUsers">Users</Link>
-            </li>
-          </ul>
-        </div>
+    <div className="flex-1 flex flex-col overflow-hidden bg-background">
+      {/* Top Bar */}
+      <header className="h-20 flex items-center justify-between px-6 md:px-margin-desktop bg-background/80 backdrop-blur-md border-b border-outline-variant/30 z-40 shrink-0">
+        <h2 className="font-display-lg text-headline-md text-primary">Users</h2>
+      </header>
 
-        <h2
-          className="mt-1 font-extrabold text-4xl tracking-wider"
-          style={{ fontFamily: "var(--italiana)" }}
-        >
-          <AnimateText initialDelay={0.2} wordDelay={0.2} separator="">
-            <span>Users</span>
-          </AnimateText>
-        </h2>
-      </div>
-
-      <div className="overflow-x-auto mb-5 mt-10 px-4">
-        {isUsersLoading ? (
-          <div>
-            {Array.from({ length: 5 }).map((_, idx) => (
-              <div
-                className="skeleton w-full h-16 my-4 rounded-none"
-                key={idx}
-              ></div>
-            ))}
-          </div>
-        ) : (
-          <table className="table table-zebra">
-            {/* head */}
-            <thead>
-              <tr className="font-bold text-black border-b-2 border-b-black">
-                <th>Name</th>
-                <th>Registered</th>
-                <th>Country</th>
-                <th>Spent</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {allUsers
-                ?.slice(
-                  (currentPage - 1) * pageProductLimit,
-                  currentPage * pageProductLimit
-                )
-                .map((user) => (
-                  <tr key={user._id}>
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle w-12 h-12">
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto p-4 md:p-margin-desktop custom-scrollbar">
+        <div className="bg-surface-dim border border-secondary/20 rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[800px]">
+              <thead>
+                <tr className="border-b border-outline-variant/50 bg-surface-container-high/50">
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">User</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Registered</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Country</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Spent</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px] text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/20">
+                {isUsersLoading ? (
+                  <tr>
+                     <td colSpan="5" className="px-6 py-10 text-center text-outline">Loading users...</td>
+                  </tr>
+                ) : (
+                  allUsers
+                    ?.slice(
+                      (currentPage - 1) * pageProductLimit,
+                      currentPage * pageProductLimit
+                    )
+                    .map((user) => (
+                      <tr key={user._id} className="hover:bg-white/40 transition-colors group">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
                             <img
                               src={user.img}
                               alt={user.name}
                               referrerPolicy="no-referrer"
+                              className="w-10 h-10 rounded-full border border-outline-variant/30 object-cover"
                             />
-                          </div>
-                        </div>
-                        <div>
-                          {user?.admin ? (
-                            <div className="flex items-center gap-2 font-bold">
-                              <h4 className="font-bold">{user.name}</h4>
-                              <div className="badge badge-success badge-outline badge-sm">
-                                Admin
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-medium text-on-surface">{user.name}</h4>
+                                {user?.admin && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-caps text-[10px]">
+                                    Admin
+                                  </span>
+                                )}
                               </div>
+                              <div className="text-[12px] text-outline mt-0.5">{user.email}</div>
                             </div>
-                          ) : (
-                            <h4 className="font-bold">{user.name}</h4>
-                          )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-on-surface-variant">{user.createdAt.slice(0, 10)}</td>
+                        <td className="px-6 py-4 text-sm text-on-surface-variant">
+                          {user.shippingAddress
+                            ? user.shippingAddress?.country
+                            : "-Not Added-"}
+                        </td>
+                        <td className="px-6 py-4 font-medium text-on-surface">
+                          $
+                          {totalSpentArray
+                            ?.find((item) => item.email === user.email)
+                            ?.totalSpent?.toFixed(2) || 0}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {!user?.admin && user.role !== "ADMIN" && (
+                              <div className="tooltip" data-tip="Make Admin">
+                                <button
+                                  className="btn btn-square btn-sm bg-transparent border-0 text-outline hover:text-primary hover:bg-surface-container transition-colors"
+                                  onClick={() => handleMakeAdmin(user._id)}
+                                >
+                                  <GrUserAdmin className="text-lg" />
+                                </button>
+                              </div>
+                            )}
 
-                          <div className="text-sm opacity-75">{user.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{user.createdAt.slice(0, 10)}</td>
-                    <td>
-                      {user.shippingAddress
-                        ? user.shippingAddress?.country
-                        : "-Not Added-"}
-                    </td>
-                    <td>
-                      $
-                      {totalSpentArray
-                        ?.find((item) => item.email === user.email)
-                        ?.totalSpent?.toFixed(2) || 0}
-                    </td>
+                            <div className="tooltip" data-tip="Remove User">
+                              <button
+                                className="btn btn-square btn-sm bg-transparent border-0 text-error/70 hover:text-error hover:bg-error-container/50 transition-colors"
+                                onClick={() => handleDeleteUser(user._id)}
+                              >
+                                <GrTrash className="text-lg" />
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-                    <td className="flex items-center gap-3">
-                      {!user?.admin && (
-                        <div className="tooltip" data-tip="Make Admin">
-                          <button
-                            className="btn btn-square text-white btn-sm btn-success"
-                            onClick={() => handleMakeAdmin(user.email)}
-                          >
-                            <GrUserAdmin />
-                          </button>
-                        </div>
-                      )}
-
-                      <div className="tooltip" data-tip="Remove User">
-                        <button
-                          className="btn btn-square text-white btn-sm btn-error"
-                          onClick={() => handleDeleteUser(user.email)}
-                        >
-                          <GrTrash />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        )}
-
-        <div className="pb-5">
-          <p className="text-xs mt-8">
-            Showing {currentPage > 1 ? currentPage - 1 : currentPage}
-            {currentPage > 1 && allUsers?.length > 10 && "1"} to{" "}
-            {Math.ceil(allUsers?.length / 10) === currentPage
-              ? allUsers?.length % 10 !== 0
-                ? (currentPage - 1) * 10 + (allUsers?.length % 10)
-                : currentPage * 10
-              : currentPage * 10}{" "}
-            of {allUsers?.length}
-          </p>
-          <Pagination
-            currentPage={currentPage}
-            totalItems={allUsers?.length}
-            onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
-            itemsPerPage={pageProductLimit}
-            pageNeighbours={3}
-          />
+          <div className="p-4 border-t border-outline-variant/20 bg-surface-container-low/30">
+            <p className="text-[11px] text-outline mb-4">
+              Showing {currentPage > 1 ? currentPage - 1 : currentPage}
+              {currentPage > 1 && allUsers?.length > 10 && "1"} to{" "}
+              {Math.ceil(allUsers?.length / 10) === currentPage
+                ? allUsers?.length % 10 !== 0
+                  ? (currentPage - 1) * 10 + (allUsers?.length % 10)
+                  : currentPage * 10
+                : currentPage * 10}{" "}
+              of {allUsers?.length}
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              totalItems={allUsers?.length}
+              onPageChange={(pageNumber) => setCurrentPage(pageNumber)}
+              itemsPerPage={pageProductLimit}
+              pageNeighbours={3}
+            />
+          </div>
         </div>
       </div>
     </div>

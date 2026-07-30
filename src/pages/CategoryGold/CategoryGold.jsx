@@ -42,7 +42,7 @@ const CategoryGold = () => {
     <div className="font-body-base bg-background text-on-surface min-h-screen">
       <CustomHelmet title="The Gold Collection" />
       
-      <main className="pt-32 pb-section-gap-lg max-w-container-max mx-auto px-margin-desktop">
+      <main className="pt-32 pb-section-gap-lg max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
         
         {/* Header Section */}
         <section className="text-center mb-16 flex flex-col items-center gap-4">

@@ -40,27 +40,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: (
-          <PrivateRoute>
-            <Home />
-          </PrivateRoute>
-        ),
+        element: <Home />,
       },
       {
         path: "shop",
-        element: (
-          <PrivateRoute>
-            <Shop />
-          </PrivateRoute>
-        ),
+        element: <Shop />,
       },
       {
         path: "categories",
-        element: (
-          <PrivateRoute>
-            <CategoryGold />
-          </PrivateRoute>
-        ),
+        element: <CategoryGold />,
       },
       {
         path: "login",
@@ -72,15 +60,11 @@ const router = createBrowserRouter([
       },
       {
         path: "register",
-        element: <Navigate to="/login" replace />,
+        element: <Register />,
       },
       {
         path: "about",
-        element: (
-          <PrivateRoute>
-            <About />
-          </PrivateRoute>
-        ),
+        element: <About />,
       },
       {
         path: "wishlist",
@@ -220,11 +204,7 @@ const router = createBrowserRouter([
 
       {
         path: "products/:id",
-        element: (
-          <PrivateRoute>
-            <ProductPageLayout />
-          </PrivateRoute>
-        ),
+        element: <ProductPageLayout />,
         children: [
           {
             index: true,

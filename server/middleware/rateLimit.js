@@ -38,3 +38,18 @@ export const otpLimiter = rateLimit({
     return req.body?.phone || "unknown-phone";
   }
 });
+
+/**
+ * Rate limiter for OTP verification — throttles brute-force guessing of the
+ * 6-digit code, keyed by phone number.
+ */
+export const otpVerifyLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 5,
+  message: { error: "Too many OTP verification attempts. Please request a new OTP." },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    return req.body?.phone || "unknown-phone";
+  }
+});

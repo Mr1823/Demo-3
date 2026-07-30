@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import useUserInfo from "../../../hooks/useUserInfo";
 import { useForm } from "react-hook-form";
-import { City, Country, State } from "country-state-city";
+import { City, State } from "country-state-city";
 import toast from "react-hot-toast";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import axios from "axios";
+
+// This store currently ships within India only.
+const COUNTRY_CODE = "IN";
+const COUNTRY_NAME = "India";
+const PHONE_CODE = "91";
+const PHONE_NUMBER_LENGTH = 10;
 
 const AddressBook = () => {
   const {
@@ -28,16 +33,15 @@ const AddressBook = () => {
     }
   }, [userFromDB]);
 
-  const countryData = Country.getAllCountries();
   const [stateData, setStateData] = useState([]);
   const [cityData, setCityData] = useState([]);
-
-  const [countryCode, setCountryCode] = useState(countryData[0]?.isoCode);
   const [stateCode, setStateCode] = useState("");
 
+  const phoneNumInfo = { phoneCode: PHONE_CODE, numberLength: PHONE_NUMBER_LENGTH };
+
   useEffect(() => {
-    setStateData(State.getStatesOfCountry(countryCode));
-  }, [countryCode]);
+    setStateData(State.getStatesOfCountry(COUNTRY_CODE));
+  }, []);
 
   useEffect(() => {
     if (stateData.length > 0) {
@@ -46,38 +50,17 @@ const AddressBook = () => {
   }, [stateData]);
 
   useEffect(() => {
-    if (countryCode && stateCode) {
-      const cities = City.getCitiesOfState(countryCode, stateCode);
+    if (stateCode) {
+      const cities = City.getCitiesOfState(COUNTRY_CODE, stateCode);
       if (cities.length) {
         setCityData(cities);
       } else {
-        const allCities = City.getCitiesOfCountry(countryCode);
+        const allCities = City.getCitiesOfCountry(COUNTRY_CODE);
         const citiesOfState = allCities.filter((city) => city.stateCode === stateCode);
         setCityData(citiesOfState);
       }
     }
-  }, [stateCode, countryCode]);
-
-  const [phoneNumInfo, setPhoneNumInfo] = useState(0);
-  useEffect(() => {
-    axios
-      .get("https://71f90181a2134520be0e927a52b5cdc6.api.mockbin.io/")
-      .then((res) => {
-        const data = res.data;
-        const countryDetails = data.find(
-          (country) =>
-            country.code.toLowerCase() ===
-            Country.getCountryByCode(countryCode).isoCode.toLowerCase()
-        );
-        setPhoneNumInfo({
-          phoneCode: countryDetails.phone,
-          numberLength: parseInt(countryDetails.phoneLength),
-        });
-      })
-      .catch(() => {
-        setPhoneNumInfo(30);
-      });
-  }, [stateData, countryCode]);
+  }, [stateCode]);
 
   useEffect(() => {
     if (userFromDB) {
@@ -89,15 +72,14 @@ const AddressBook = () => {
   }, [userFromDB, reset]);
 
   const onSubmit = (data) => {
-    const stateName = State.getStateByCodeAndCountry(data.state, data.country)?.name || data.state;
-    const countryName = Country.getCountryByCode(data.country)?.name || data.country;
-    
+    const stateName = State.getStateByCodeAndCountry(data.state, COUNTRY_CODE)?.name || data.state;
+
     data.state = stateName;
-    data.country = countryName;
-    data.number = `+${phoneNumInfo?.phoneCode || ''} ${data.mobileNumber}`;
+    data.country = COUNTRY_NAME;
+    data.number = `+${phoneNumInfo.phoneCode} ${data.mobileNumber}`;
 
     axiosSecure
-      .patch(`/users/shipping-address?email=${userFromDB?.email}`, data)
+      .patch(`/users/shipping-address`, data)
       .then((res) => {
         if (res.data.modifiedCount > 0 || res.data.success) {
           toast.success("Shipping address saved");
@@ -110,7 +92,7 @@ const AddressBook = () => {
 
   const handleDeleteAddress = () => {
     axiosSecure
-      .patch(`/users/delete-address?email=${userFromDB?.email}`)
+      .patch(`/users/delete-address`)
       .then((res) => {
         if (res.data.modifiedCount > 0) {
           refetch();
@@ -253,18 +235,13 @@ const AddressBook = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="font-label-caps text-label-caps text-outline uppercase block mb-2">Country</label>
-                <select
-                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-colors outline-none focus:border-primary font-body-base"
-                  {...register("country", { required: true })}
-                  value={countryCode}
-                  onChange={(e) => setCountryCode(e.target.value)}
-                >
-                  {countryData?.map((country) => (
-                    <option key={country.isoCode} value={country.isoCode}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  readOnly
+                  disabled
+                  value={COUNTRY_NAME}
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 text-on-surface-variant font-body-base cursor-not-allowed"
+                />
               </div>
               
               <div>

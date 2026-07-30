@@ -23,8 +23,20 @@ const PORT = process.env.PORT || 5000;
 // Connect to MongoDB
 connectDB();
 
+const allowedOrigins = (
+  process.env.ALLOWED_ORIGINS || "http://localhost:5173,https://sriramjewellery.com"
+)
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: true,
+  origin: (origin, callback) => {
+    // Allow non-browser requests (no Origin header) and configured origins.
+    // Pass `false` (never an Error) — an Error here becomes an unhandled
+    // exception that crashes the process on every disallowed-origin request.
+    callback(null, !origin || allowedOrigins.includes(origin));
+  },
   credentials: true,
 }));
 app.use(express.json());

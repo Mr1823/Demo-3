@@ -5,16 +5,19 @@ import crypto from "crypto";
 import { User } from "../models/User.js";
 import { RefreshToken } from "../models/RefreshToken.js";
 import { verifyJWT } from "../middleware/auth.js";
-import { otpLimiter } from "../middleware/rateLimit.js";
+import { otpLimiter, otpVerifyLimiter } from "../middleware/rateLimit.js";
 import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 
 const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback-dev-secret-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === "development" ? "fallback-dev-secret-change-in-production" : null);
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required outside development");
+}
 const ACCESS_TOKEN_EXPIRY = "30m";
-const REFRESH_TOKEN_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes in ms
+const REFRESH_TOKEN_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 const BCRYPT_SALT_ROUNDS = 12;
 
 /**
@@ -107,7 +110,7 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
 });
 
 // ─── POST /api/auth/otp/verify ───────────────────────────────────────────────
-router.post("/otp/verify", async (req, res) => {
+router.post("/otp/verify", otpVerifyLimiter, async (req, res) => {
   try {
     const { phone, otp } = req.body;
     if (!phone || !otp) {

@@ -20,7 +20,7 @@ const RelatedDynamicProducts = () => {
   if (!relatedProducts || relatedProducts.length === 0) return null;
 
   return (
-    <section className="py-24 max-w-container-max mx-auto px-margin-desktop border-t border-outline-variant/30 mt-16 w-full">
+    <section className="py-24 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop border-t border-outline-variant/30 mt-16 w-full">
       <div className="flex flex-col items-center mb-16">
         <div className="w-16 h-[1px] bg-primary mb-6"></div>
         <h2 className="font-display-lg text-headline-md text-primary text-center">You May Also Like</h2>

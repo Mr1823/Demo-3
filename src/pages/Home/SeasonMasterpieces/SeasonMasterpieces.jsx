@@ -50,7 +50,9 @@ const SeasonMasterpieces = () => {
                     <h4 className="font-headline-sm text-[24px] text-primary group-hover:text-secondary transition-colors">{featuredItems[0].name}</h4>
                     <p className="font-body-base text-on-surface-variant">{featuredItems[0].category || featuredItems[0].categoryName || 'Fine Jewellery'}</p>
                   </div>
-                  <p className="font-headline-sm text-[24px] text-primary">₹{(featuredItems[0].price || featuredItems[0].computedPrice || 0).toLocaleString("en-IN")}</p>
+                  <p className="font-headline-sm text-[24px] text-primary">
+                    {featuredItems[0].isQuoteOnly ? "Quote" : `₹${(featuredItems[0].price || featuredItems[0].computedPrice || 0).toLocaleString("en-IN")}`}
+                  </p>
                 </div>
               </Link>
             )}
@@ -65,7 +67,9 @@ const SeasonMasterpieces = () => {
                   ></div>
                 </div>
                 <h4 className="font-button-text text-[14px] text-primary truncate">{featuredItems[1].name}</h4>
-                <p className="font-label-caps text-[12px] text-primary mt-1">₹{(featuredItems[1].price || featuredItems[1].computedPrice || 0).toLocaleString("en-IN")}</p>
+                <p className="font-label-caps text-[12px] text-primary mt-1">
+                  {featuredItems[1].isQuoteOnly ? "Quote" : `₹${(featuredItems[1].price || featuredItems[1].computedPrice || 0).toLocaleString("en-IN")}`}
+                </p>
               </Link>
             )}
 
@@ -80,7 +84,9 @@ const SeasonMasterpieces = () => {
                   <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 text-[10px] font-label-caps text-primary">LIMITED</div>
                 </div>
                 <h4 className="font-button-text text-[14px] text-primary truncate">{featuredItems[2].name}</h4>
-                <p className="font-label-caps text-[12px] text-primary mt-1">₹{(featuredItems[2].price || featuredItems[2].computedPrice || 0).toLocaleString("en-IN")}</p>
+                <p className="font-label-caps text-[12px] text-primary mt-1">
+                  {featuredItems[2].isQuoteOnly ? "Quote" : `₹${(featuredItems[2].price || featuredItems[2].computedPrice || 0).toLocaleString("en-IN")}`}
+                </p>
               </Link>
             )}
           </div>

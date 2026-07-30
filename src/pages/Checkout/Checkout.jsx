@@ -87,7 +87,7 @@ const Checkout = () => {
   };
 
   return (
-    <main className="pt-32 pb-section-gap-lg max-w-container-max mx-auto px-margin-desktop min-h-screen font-body-base bg-background">
+    <main className="pt-32 pb-section-gap-lg max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop min-h-screen font-body-base bg-background">
       <CustomHelmet title="Checkout" />
       <div className="flex flex-col lg:flex-row gap-gutter">
         {/* Left Side: Form (60%) */}
@@ -259,7 +259,7 @@ const Checkout = () => {
 
         {/* Right Side: Order Summary (40%) */}
         <aside className="w-full lg:w-[40%]">
-          <div className="sticky top-32 p-8 bg-surface-container border border-outline-variant/30 rounded-none fade-in">
+          <div className="lg:sticky lg:top-32 p-8 bg-surface-container border border-outline-variant/30 rounded-none fade-in">
             <h3 className="font-display-lg text-headline-sm mb-8 text-primary border-b border-outline-variant/30 pb-4">Order Summary</h3>
             
             {/* Item List */}

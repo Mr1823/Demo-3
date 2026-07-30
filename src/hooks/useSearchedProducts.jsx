@@ -5,11 +5,11 @@ import useAuthContext from "./useAuthContext";
 const useSearchedProducts = (searchText) => {
   const [searchedProducts, setSearchedProducts] = useState([]);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
-  const { user, isAuthLoading } = useAuthContext();
+  const { isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
 
   useEffect(() => {
-    if (isAuthLoading || !user) return;
+    if (isAuthLoading) return;
 
     setIsSearchLoading(true);
     axiosSecure
@@ -24,7 +24,7 @@ const useSearchedProducts = (searchText) => {
         console.error(error);
         setIsSearchLoading(false);
       });
-  }, [searchText, user, isAuthLoading]);
+  }, [searchText, isAuthLoading]);
 
   return [searchedProducts, isSearchLoading];
 };

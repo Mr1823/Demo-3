@@ -21,7 +21,7 @@ const OrderSuccess = () => {
   useEffect(() => {
     if (userFromDB?.admin) {
       axiosSecure
-        .get("/admin/orders")
+        .get("/orders/admin/all")
         .then((res) => setAllOrders(res.data))
         .catch((e) => console.error(e));
     }

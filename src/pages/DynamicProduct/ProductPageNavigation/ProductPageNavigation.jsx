@@ -9,7 +9,7 @@ const ProductPageNavigation = () => {
   const activeClass = "text-primary font-bold";
 
   return (
-    <div className="max-w-container-max mx-auto px-margin-desktop flex items-center justify-center gap-4 py-2">
+    <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-center gap-4 py-2">
       <NavLink
         to={`/products/${id}/description`}
         className={({ isActive }) => 

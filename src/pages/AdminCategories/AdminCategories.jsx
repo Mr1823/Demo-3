@@ -24,7 +24,7 @@ const AdminCategories = () => {
     enabled: !isAuthLoading && user !== null && user !== undefined,
     queryKey: ["admin-categories"],
     queryFn: async () => {
-      const result = await axiosSecure.get("/admin/categories");
+      const result = await axiosSecure.get("/categories");
       return result.data;
     },
   });
@@ -122,75 +122,59 @@ const AdminCategories = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 md:p-margin-desktop bg-background custom-scrollbar w-full">
-      <div className="text-sm breadcrumbs">
-        <ul>
-          <li>
-            <Link to={"/dashboard/adminDashboard"}>Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/dashboard/adminCategories">Categories</Link>
-          </li>
-        </ul>
-      </div>
+    <div className="flex-1 flex flex-col overflow-hidden bg-background">
+      {/* Top Bar */}
+      <header className="h-20 flex items-center justify-between px-6 md:px-margin-desktop bg-background/80 backdrop-blur-md border-b border-outline-variant/30 z-40 shrink-0">
+        <h2 className="font-display-lg text-headline-md text-primary">Categories</h2>
+      </header>
 
-      <h2
-        className="mt-1 font-bold text-3xl"
-        style={{ fontFamily: "var(--italiana)" }}
-      >
-        <AnimateText initialDelay={0.2} wordDelay={0.2} separator="">
-          <span>Categories</span>
-        </AnimateText>
-      </h2>
-
-      <div className="flex flex-col-reverse md:flex-row justify-between items-start gap-x-8 mt-10 px-4 md:px-0">
-        <div className="overflow-x-auto border rounded-lg shadow w-[78vw] md:w-[65%] relative">
-          <table className="table table-zebra">
-            {/* head */}
+      <div className="flex-1 overflow-y-auto p-4 md:p-margin-desktop custom-scrollbar flex flex-col-reverse md:flex-row gap-6 items-start">
+        {/* Table Section */}
+        <div className="flex-1 bg-surface-dim border border-secondary/20 rounded-xl overflow-x-auto w-full">
+          <table className="w-full text-left border-collapse min-w-[500px]">
             <thead>
-              <tr className="text-black font-bold border-b-2 border-black text-lg">
-                <th>Categories</th>
-                <th>Items Count</th>
-                <th>Action</th>
+              <tr className="border-b border-outline-variant/50 bg-surface-container-high/50">
+                <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Category</th>
+                <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Items Count</th>
+                <th className="px-6 py-4 font-label-caps text-outline text-[11px] text-right">Action</th>
               </tr>
             </thead>
             {isCategoryLoading ? (
-              <>
-                <td></td>
-                <div>
-                  <span className="loading loading-spinner loading-md block ml-10 my-4"></span>
-                </div>
-              </>
-            ) : (
               <tbody>
+                <tr>
+                  <td colSpan="3" className="px-6 py-10 text-center text-outline">
+                    Loading categories...
+                  </td>
+                </tr>
+              </tbody>
+            ) : (
+              <tbody className="divide-y divide-outline-variant/20">
                 {categories?.map((category) => (
-                  <tr key={category.categoryName} className="text-base">
-                    <td>
+                  <tr key={category.categoryName} className="hover:bg-white/40 transition-colors group">
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="avatar">
-                          <div className="mask mask-squircle w-12 h-12 bg-gray-200 flex items-center justify-center overflow-hidden">
-                            {category.categoryPic ? (
-                              <img src={category.categoryPic} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                              <span className="material-symbols-outlined text-gray-400">image</span>
-                            )}
-                          </div>
+                        <div className="w-12 h-12 rounded bg-surface-container flex items-center justify-center overflow-hidden shrink-0 border border-outline-variant/30">
+                          {category.categoryPic ? (
+                            <img src={category.categoryPic} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="material-symbols-outlined text-outline/40">image</span>
+                          )}
                         </div>
-                        <div>
-                          <div className="font-bold">
-                            {category.categoryName}
-                          </div>
+                        <div className="font-medium text-on-surface">
+                          {category.categoryName}
                         </div>
                       </div>
                     </td>
-                    <td>{category.itemCount || 0}</td>
-                    <td>
+                    <td className="px-6 py-4 text-on-surface-variant font-medium">
+                      {category.itemCount || 0}
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <div className="tooltip" data-tip="Edit">
                         <button
-                          className="bg-[var(--pink-gold)] text-white rounded-lg w-[32px] h-[32px]"
+                          className="btn btn-square btn-sm bg-transparent border-0 text-outline hover:text-primary hover:bg-surface-container transition-colors"
                           onClick={() => handleOpenUpdateCategory(category)}
                         >
-                          <FiEdit2 className="text-lg block mx-auto" />
+                          <FiEdit2 className="text-lg" />
                         </button>
                       </div>
                     </td>
@@ -198,54 +182,56 @@ const AdminCategories = () => {
                 ))}
               </tbody>
             )}
-
-            <tfoot className="text-black">
-              <tr>
-                <th>Categories: {totalCount?.categoryCount}</th>
-                <th>Total Items: {totalCount?.productCount}</th>
-                <th></th>
-              </tr>
-            </tfoot>
+            {!isCategoryLoading && (
+              <tfoot className="border-t border-outline-variant/50 bg-surface-container-low/50">
+                <tr>
+                  <td className="px-6 py-4 font-label-caps text-on-surface text-[11px]">Categories: {totalCount?.categoryCount}</td>
+                  <td className="px-6 py-4 font-label-caps text-on-surface text-[11px]">Total Items: {totalCount?.productCount}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            )}
           </table>
         </div>
 
-        <div className="border rounded-lg shadow w-full md:w-[35%] md:sticky md:top-20 mb-10 md:mb-0">
-          <h4 className="font-semibold text-gray-600 border-b-2 p-4">
+        {/* Add Category Section */}
+        <div className="w-full md:w-[350px] shrink-0 bg-surface-dim border border-secondary/20 rounded-xl p-6 md:sticky md:top-0">
+          <h4 className="font-display-lg text-headline-sm text-primary border-b border-outline-variant/30 pb-4 mb-6">
             Add New Category
           </h4>
 
           {categoryAddError && (
-            <p className="px-4 text-error text-sm font-semibold flex gap-2 mt-4">
-              <CgCloseO className="text-base" /> {categoryAddError}
+            <p className="text-error font-body-base text-sm mb-4 flex items-center gap-2">
+              <CgCloseO /> {categoryAddError}
             </p>
           )}
 
-          <form className="mt-8 space-y-8" onSubmit={handleAddCategory}>
-            <div className="flex flex-col px-4">
-              <label className="text-xs font-bold">Name of the Category</label>
+          <form className="space-y-6" onSubmit={handleAddCategory}>
+            <div className="flex flex-col">
+              <label className="font-label-caps text-[11px] text-outline mb-2">Name of the Category</label>
               <input
                 type="text"
                 name="categoryName"
-                placeholder="name"
-                className="border-b-2 border-gray-300 focus:border-black outline-none text-sm transition-all duration-500 ease-in-out py-3"
+                placeholder="e.g. Platinum"
+                className="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 px-0 py-2 text-body-base text-on-surface placeholder:text-outline-variant/50 transition-colors"
                 required
               />
             </div>
 
-            <div className="flex flex-col px-4">
-              <label className="text-xs font-bold">Category Photo URL</label>
+            <div className="flex flex-col">
+              <label className="font-label-caps text-[11px] text-outline mb-2">Category Photo URL</label>
               <input
                 type="text"
                 name="categoryPicLink"
-                placeholder="photo url"
-                className="border-b-2 border-gray-300 focus:border-black outline-none text-sm transition-all duration-500 ease-in-out py-3"
+                placeholder="https://..."
+                className="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 px-0 py-2 text-body-base text-on-surface placeholder:text-outline-variant/50 transition-colors"
                 required
               />
             </div>
 
             <button
               type="submit"
-              className="btn btn-neutral btn-block rounded-none text-white rounded-b-lg"
+              className="w-full flex justify-center items-center gap-2 bg-primary text-white py-3 rounded font-button-text hover:bg-primary/90 transition-colors"
             >
               <FiPlusCircle className="text-lg" /> Add Category
             </button>
@@ -254,52 +240,58 @@ const AdminCategories = () => {
       </div>
 
       <dialog id="update-category-modal" className="modal">
-        <div className="modal-box">
+        <div className="modal-box bg-surface border border-outline-variant/20 rounded-xl p-8 max-w-md">
           <form method="dialog">
             <button
-              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-outline"
               onClick={() => setSelectedCategory({})}
             >
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-lg">Update Category</h3>
+          <h3 className="font-display-lg text-headline-sm text-primary mb-6">Update Category</h3>
 
           {categoryUpdateError && (
-            <p className="text-error font-medium mt-2">
-              Can&apos;t update. Data hasn&apos;t changed!
+            <p className="text-error font-body-base text-sm mb-4">
+              Can't update. Data hasn't changed!
             </p>
           )}
-          <form className="mt-6 space-y-8" onSubmit={handleUpdateCategory}>
-            <div className="flex flex-col px-4">
-              <label className="text-xs font-bold">
+          
+          <form className="space-y-6" onSubmit={handleUpdateCategory}>
+            <div className="flex flex-col">
+              <label className="font-label-caps text-[11px] text-outline mb-2">
                 Name of the Category
               </label>
               <input
                 type="text"
                 name="categoryName"
                 defaultValue={selectedCategory?.categoryName}
-                className="border-b-2 border-gray-300 focus:border-black outline-none text-sm transition-all duration-500 ease-in-out py-3"
+                className="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 px-0 py-2 text-body-base text-on-surface transition-colors"
                 required
               />
             </div>
 
-            <div className="flex flex-col px-4">
-              <label className="text-xs font-bold">Category Photo URL</label>
+            <div className="flex flex-col">
+              <label className="font-label-caps text-[11px] text-outline mb-2">Category Photo URL</label>
               <input
                 type="text"
                 name="categoryPicLink"
                 defaultValue={selectedCategory?.categoryPic}
-                className="border-b-2 border-gray-300 focus:border-black outline-none text-sm transition-all duration-500 ease-in-out py-3"
+                className="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 px-0 py-2 text-body-base text-on-surface transition-colors"
                 required
               />
             </div>
 
-            <button type="submit" className="btn btn-neutral text-white ml-3">
-              Update
-            </button>
+            <div className="pt-4 flex justify-end">
+              <button type="submit" className="bg-primary text-white px-6 py-2.5 rounded font-button-text hover:bg-primary/90 transition-colors">
+                Update Category
+              </button>
+            </div>
           </form>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
     </div>
   );

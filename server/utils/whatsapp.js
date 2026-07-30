@@ -14,7 +14,7 @@ dotenv.config();
  * @param {string} params.customerMobile
  * @param {string} params.productName
  */
-export const sendWhatsAppAlert = async ({ customerName, customerMobile, productName }) => {
+export const sendWhatsAppAlert = async ({ customerName, customerMobile, productName, isQuoteOnly }) => {
   const token = process.env.WHATSAPP_TOKEN;
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
   const adminNumber = process.env.ADMIN_WHATSAPP_NUMBER;
@@ -26,17 +26,19 @@ export const sendWhatsAppAlert = async ({ customerName, customerMobile, productN
   }
 
   const url = `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`;
+  
+  const alertHeader = isQuoteOnly ? "🔔 New Enquiry (Quote Required)" : "🔔 New Enquiry (Priced Item)";
 
   const messageBody = {
     messaging_product: "whatsapp",
     to: adminNumber,
     type: "text",
     text: {
-      body: `🔔 New Quote Request\n\n` +
+      body: `${alertHeader}\n\n` +
         `Product: ${productName}\n` +
         `Customer: ${customerName}\n` +
         `Mobile: ${customerMobile}\n\n` +
-        `Please follow up with the customer.`,
+        `View request: https://sriramjewellery.com/dashboard/adminQuoteRequests`,
     },
   };
 

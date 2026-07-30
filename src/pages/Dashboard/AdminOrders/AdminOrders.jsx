@@ -21,7 +21,7 @@ const AdminOrders = () => {
     enabled: !isAuthLoading && user !== null && user !== undefined && userFromDB?.admin === true,
     queryKey: ["all-orders"],
     queryFn: async () => {
-      const result = await axiosSecure.get("/admin/orders");
+      const result = await axiosSecure.get("/orders/admin/all");
       return result.data;
     },
   });

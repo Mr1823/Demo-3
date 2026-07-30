@@ -15,6 +15,10 @@ const Shop = () => {
   const priceParam = searchParams.get('price');
   const sortParam = searchParams.get('sort') || 'featured';
   const [searchTerm, setSearchTerm] = useState('');
+  const [openFilter, setOpenFilter] = useState(null); // 'metal' | 'category' | 'price' | 'sort' | null
+
+  const toggleFilter = (key) => setOpenFilter((prev) => (prev === key ? null : key));
+  const closeFilter = () => setOpenFilter(null);
 
   const handleParamChange = (key, value) => {
     const newParams = new URLSearchParams(searchParams);
@@ -74,73 +78,98 @@ const Shop = () => {
         </section>
 
         {/* Filter Bar */}
-        <section className="flex flex-col md:flex-row justify-between items-center border-y border-outline-variant/30 py-6 gap-6 bg-surface-container-low/30 px-6">
+        <section className="relative flex flex-col md:flex-row justify-between items-center border-y border-outline-variant/30 py-6 gap-6 bg-surface-container-low/30 px-6">
           <div className="flex gap-8 w-full overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-            
+
             {/* Metal Filter */}
-            <div className="relative group">
-              <button className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors">
+            <div className="relative">
+              <button
+                onClick={() => toggleFilter('metal')}
+                className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
+              >
                 Metal <span className="material-symbols-outlined text-sm">expand_more</span>
               </button>
-              <div className="absolute top-full left-0 mt-2 bg-surface border border-outline-variant/30 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 whitespace-nowrap shadow-sm">
-                <button onClick={() => handleParamChange('metal', null)} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">ALL</button>
-                <button onClick={() => handleParamChange('metal', 'gold')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Gold</button>
-                <button onClick={() => handleParamChange('metal', 'silver')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Silver</button>
-              </div>
+              {openFilter === 'metal' && (
+                <div className="absolute top-full left-0 mt-2 bg-surface border border-outline-variant/30 p-2 z-30 whitespace-nowrap shadow-sm">
+                  <button onClick={() => { handleParamChange('metal', null); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">ALL</button>
+                  <button onClick={() => { handleParamChange('metal', 'gold'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Gold</button>
+                  <button onClick={() => { handleParamChange('metal', 'silver'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Silver</button>
+                </div>
+              )}
             </div>
 
             {/* Category Filter */}
-            <div className="relative group">
-              <button className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors">
+            <div className="relative">
+              <button
+                onClick={() => toggleFilter('category')}
+                className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
+              >
                 Category <span className="material-symbols-outlined text-sm">expand_more</span>
               </button>
-              <div className="absolute top-full left-0 mt-2 bg-surface border border-outline-variant/30 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 whitespace-nowrap shadow-sm">
-                <button 
-                  onClick={() => handleParamChange('category', null)} 
-                  className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface"
-                >
-                  ALL
-                </button>
-                {categories?.map(c => (
-                  <button 
-                    key={c._id}
-                    onClick={() => handleParamChange('category', c.categoryName?.toLowerCase())} 
-                    className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase"
+              {openFilter === 'category' && (
+                <div className="absolute top-full left-0 mt-2 bg-surface border border-outline-variant/30 p-2 z-30 whitespace-nowrap shadow-sm max-h-64 overflow-y-auto">
+                  <button
+                    onClick={() => { handleParamChange('category', null); closeFilter(); }}
+                    className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface"
                   >
-                    {c.categoryName}
+                    ALL
                   </button>
-                ))}
-              </div>
+                  {categories?.map(c => (
+                    <button
+                      key={c._id}
+                      onClick={() => { handleParamChange('category', c.categoryName?.toLowerCase()); closeFilter(); }}
+                      className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase"
+                    >
+                      {c.categoryName}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Price Filter */}
-            <div className="relative group">
-              <button className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors">
+            <div className="relative">
+              <button
+                onClick={() => toggleFilter('price')}
+                className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
+              >
                 Price <span className="material-symbols-outlined text-sm">expand_more</span>
               </button>
-              <div className="absolute top-full left-0 mt-2 bg-surface border border-outline-variant/30 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 whitespace-nowrap shadow-sm">
-                <button onClick={() => handleParamChange('price', null)} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">ALL</button>
-                <button onClick={() => handleParamChange('price', 'under50k')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Under ₹50k</button>
-                <button onClick={() => handleParamChange('price', '50k-1l')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">₹50k - ₹1L</button>
-                <button onClick={() => handleParamChange('price', 'over1l')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Over ₹1L</button>
-              </div>
+              {openFilter === 'price' && (
+                <div className="absolute top-full left-0 mt-2 bg-surface border border-outline-variant/30 p-2 z-30 whitespace-nowrap shadow-sm">
+                  <button onClick={() => { handleParamChange('price', null); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">ALL</button>
+                  <button onClick={() => { handleParamChange('price', 'under50k'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Under ₹50k</button>
+                  <button onClick={() => { handleParamChange('price', '50k-1l'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">₹50k - ₹1L</button>
+                  <button onClick={() => { handleParamChange('price', 'over1l'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Over ₹1L</button>
+                </div>
+              )}
             </div>
           </div>
-          
+
           {/* Sort By Dropdown */}
-          <div className="flex items-center gap-2 font-label-caps text-[11px] text-on-surface-variant whitespace-nowrap relative group z-20 cursor-pointer">
+          <div className="flex items-center gap-2 font-label-caps text-[11px] text-on-surface-variant whitespace-nowrap relative z-30 cursor-pointer">
             <span className="uppercase tracking-widest">Sort by:</span>
-            <button className="flex items-center gap-1 text-primary hover:text-primary-container transition-colors font-bold uppercase tracking-widest">
+            <button
+              onClick={() => toggleFilter('sort')}
+              className="flex items-center gap-1 text-primary hover:text-primary-container transition-colors font-bold uppercase tracking-widest"
+            >
               {sortParam === 'newest' ? 'Newest' : sortParam === 'price_low_high' ? 'Price: Low to High' : sortParam === 'price_high_low' ? 'Price: High to Low' : 'Featured'}
               <span className="material-symbols-outlined text-sm">sort</span>
             </button>
-            <div className="absolute top-full right-0 mt-2 bg-surface border border-outline-variant/30 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 whitespace-nowrap shadow-sm">
-              <button onClick={() => handleParamChange('sort', 'featured')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Featured</button>
-              <button onClick={() => handleParamChange('sort', 'newest')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Newest</button>
-              <button onClick={() => handleParamChange('sort', 'price_low_high')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Price: Low to High</button>
-              <button onClick={() => handleParamChange('sort', 'price_high_low')} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Price: High to Low</button>
-            </div>
+            {openFilter === 'sort' && (
+              <div className="absolute top-full right-0 mt-2 bg-surface border border-outline-variant/30 p-2 z-30 whitespace-nowrap shadow-sm">
+                <button onClick={() => { handleParamChange('sort', 'featured'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Featured</button>
+                <button onClick={() => { handleParamChange('sort', 'newest'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Newest</button>
+                <button onClick={() => { handleParamChange('sort', 'price_low_high'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Price: Low to High</button>
+                <button onClick={() => { handleParamChange('sort', 'price_high_low'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Price: High to Low</button>
+              </div>
+            )}
           </div>
+
+          {/* Backdrop to close an open dropdown on outside tap/click */}
+          {openFilter && (
+            <div className="fixed inset-0 z-20" onClick={closeFilter}></div>
+          )}
         </section>
 
         {/* Product Grid */}

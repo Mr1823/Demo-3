@@ -5,7 +5,7 @@ import { verifyJWT } from "../middleware/auth.js";
 const router = express.Router();
 
 // GET /api/reviews/:productId — reviews for a specific product
-router.get("/:productId", verifyJWT, async (req, res) => {
+router.get("/:productId", async (req, res) => {
   try {
     const reviews = await Review.find({ productId: req.params.productId })
       .sort({ date: -1 })
@@ -17,7 +17,7 @@ router.get("/:productId", verifyJWT, async (req, res) => {
 });
 
 // GET /api/reviews — all reviews (used by admin dashboard)
-router.get("/", verifyJWT, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const reviews = await Review.find().sort({ date: -1 }).lean();
     res.json(reviews);

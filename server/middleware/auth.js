@@ -2,7 +2,10 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback-dev-secret-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === "development" ? "fallback-dev-secret-change-in-production" : null);
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required outside development");
+}
 
 /**
  * Middleware: Verify JWT access token.

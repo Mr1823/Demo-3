@@ -27,7 +27,7 @@ const seedInitialData = async () => {
           role: "ADMIN",
           photoURL: "/placeholder-user.png",
         });
-        console.log(`   ✅ Admin user created: admin@buildwithus (password: ${adminPassword})`);
+        console.log("   ✅ Admin user created: admin@buildwithus (password set from ADMIN_PASSWORD env var)");
       }
 
       // ─── Seed test user ──────────────────────────────────────────────────
@@ -43,7 +43,7 @@ const seedInitialData = async () => {
           role: "USER",
           photoURL: "/placeholder-user.png",
         });
-        console.log(`   ✅ Test user created: user@test.com (password: ${testPassword})`);
+        console.log("   ✅ Test user created: user@test.com (password set from TEST_USER_PASSWORD env var)");
       }
 
       // ─── Insert Gold/Silver Rates (per-metal format) ─────────────────────
@@ -176,7 +176,7 @@ const connectDB = async () => {
     if (!mongoURI) {
       throw new Error("MONGODB_URI is not defined.");
     }
-    console.log("Connecting to MongoDB at:", mongoURI);
+    console.log("Connecting to MongoDB at:", mongoURI.replace(/\/\/[^@]+@/, "//<redacted>@"));
     const conn = await mongoose.connect(mongoURI, { serverSelectionTimeoutMS: 3000 });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     await seedInitialData();

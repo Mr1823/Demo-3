@@ -3,10 +3,10 @@ import useAxiosSecure from "./useAxiosSecure";
 import useAuthContext from "./useAuthContext";
 
 const useRates = () => {
-  const { user, isAuthLoading } = useAuthContext();
+  const { isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
   const queryClient = useQueryClient();
-  const hasValidUser = !isAuthLoading && !!user;
+  const hasValidUser = !isAuthLoading;
 
   const { data: rates, isLoading, refetch } = useQuery({
     enabled: hasValidUser,

@@ -8,7 +8,7 @@ const router = express.Router();
 // POST /api/quotes — submit a quote request
 router.post("/", verifyJWT, async (req, res) => {
   try {
-    const { productId, productName, productImage, customerName, customerMobile } = req.body;
+    const { productId, productName, productImage, customerName, customerMobile, isQuoteOnly } = req.body;
 
     if (!productId || !customerName || !customerMobile) {
       return res.status(400).json({
@@ -22,6 +22,7 @@ router.post("/", verifyJWT, async (req, res) => {
       productImage,
       customerName,
       customerMobile,
+      isQuoteOnly,
     });
 
     // Send WhatsApp alert to admin (non-blocking)
@@ -29,6 +30,7 @@ router.post("/", verifyJWT, async (req, res) => {
       customerName,
       customerMobile,
       productName: productName || productId,
+      isQuoteOnly,
     }).catch((err) => {
       console.warn("WhatsApp alert failed (non-critical):", err.message);
     });

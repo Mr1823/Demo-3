@@ -5,7 +5,7 @@ import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 const router = express.Router();
 
 // GET /api/rates — fetch current gold and silver rates
-router.get("/", verifyJWT, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const rates = await GoldRate.find().lean();
 

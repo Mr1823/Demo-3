@@ -33,8 +33,8 @@ const AdminProducts = () => {
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosSecure.delete(`/admin/delete-product/${_id}`).then((res) => {
-          if (res.data.deletedCount > 0) {
+        axiosSecure.delete(`/products/${_id}`).then((res) => {
+          if (res.data.success) {
             refetch();
             Swal.fire("Deleted!", "Product has been deleted.", "success");
           }

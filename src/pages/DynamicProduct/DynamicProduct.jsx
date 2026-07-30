@@ -6,6 +6,8 @@ import useAuthContext from "../../hooks/useAuthContext";
 import useWishlist from "../../hooks/useWishlist";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
+import ImageZoomLens from "../../components/ImageZoomLens/ImageZoomLens";
 
 const DynamicProduct = () => {
   const { id } = useParams();
@@ -58,17 +60,16 @@ const DynamicProduct = () => {
         }
       }
     } else {
-      document.getElementById("loginModalTextContent").innerText =
-        "to add products into Cart or Wishlist.";
-      document.getElementById("takeToLoginModal").showModal();
+      toast.error("Please login to add products into Cart or Wishlist.");
+      navigate("/login", { state: { from: location } });
     }
   };
 
   const handleQuoteRequest = async (e) => {
     e.preventDefault();
     if (!user) {
-      document.getElementById("loginModalTextContent").innerText = "to request a quote.";
-      document.getElementById("takeToLoginModal").showModal();
+      toast.error("Please login to request a quote.");
+      navigate("/login", { state: { from: location } });
       return;
     }
     setQuoteLoading(true);
@@ -79,6 +80,7 @@ const DynamicProduct = () => {
         productImage: dynamicProduct.img,
         customerName: quoteName,
         customerMobile: quoteMobile,
+        isQuoteOnly: dynamicProduct.isQuoteOnly || false,
       });
       alert("Quote requested! Our artisans will contact you via WhatsApp shortly.");
       setIsQuoteModalOpen(false);
@@ -106,7 +108,7 @@ const DynamicProduct = () => {
     <div className="font-body-base bg-background text-on-surface min-h-screen">
       <CustomHelmet title={dynamicProduct.name || "Product Details"} />
       
-      <main className="pt-32 pb-section-gap-lg max-w-container-max mx-auto px-margin-desktop">
+      <main className="pt-32 pb-section-gap-lg max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
         {/* Breadcrumb */}
         <nav className="mb-12">
           <ol className="flex items-center gap-2 text-label-caps font-label-caps text-on-surface-variant uppercase">
@@ -126,10 +128,10 @@ const DynamicProduct = () => {
           {/* Left Column: Imagery */}
           <div className="lg:col-span-7 flex flex-col gap-6">
             <div className="bg-surface-container overflow-hidden border border-[#D4AF37]/30 aspect-square group relative rounded-sm">
-              <img 
-                alt={dynamicProduct.name} 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+              <ImageZoomLens 
                 src={mainImage || "https://placehold.co/800x800"} 
+                alt={dynamicProduct.name} 
+                onClick={() => document.getElementById('imageModal').showModal()}
               />
               <button 
                 onClick={() => document.getElementById('imageModal').showModal()}
@@ -146,6 +148,7 @@ const DynamicProduct = () => {
                     alt={`${dynamicProduct.name} detail ${num}`} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                     src={dynamicProduct.images?.[num] || mainImage || "https://placehold.co/400x400"} 
+                    onError={(e) => { e.target.src = "https://placehold.co/400x400?text=Image+Not+Found"; }}
                   />
                 </div>
               ))}
@@ -154,7 +157,7 @@ const DynamicProduct = () => {
 
           {/* Right Column: Product Info */}
           <div className="lg:col-span-5">
-            <div className="sticky top-40">
+            <div className="lg:sticky lg:top-40">
               <p className="font-label-caps text-label-caps text-primary tracking-widest mb-4 uppercase">
                 {dynamicProduct.category || 'Jewellery'}
               </p>
@@ -163,36 +166,45 @@ const DynamicProduct = () => {
               </h1>
               
               {/* Price Table */}
-              <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8 rounded-sm">
-                <h3 className="font-button-text text-button-text text-primary mb-6 tracking-wider border-b border-outline-variant/20 pb-2">PRICE BREAKDOWN</h3>
-                <div className="space-y-4">
-                  {breakdown ? (
-                    <>
+              {dynamicProduct.isQuoteOnly ? (
+                <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8 rounded-sm text-center">
+                  <h3 className="font-button-text text-button-text text-primary mb-2 tracking-wider">PRICE ON REQUEST</h3>
+                  <p className="text-on-surface-variant font-body-base">
+                    Contact us for a personalized quote.
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-surface-container-lowest p-8 border border-outline-variant/30 mb-8 rounded-sm">
+                  <h3 className="font-button-text text-button-text text-primary mb-6 tracking-wider border-b border-outline-variant/20 pb-2">PRICE BREAKDOWN</h3>
+                  <div className="space-y-4">
+                    {breakdown ? (
+                      <>
+                        <div className="flex justify-between items-center">
+                          <span className="text-on-surface-variant font-body-base">Base Material</span>
+                          <span className="font-semibold">₹ {breakdown.materialCost?.toLocaleString("en-IN") || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-on-surface-variant font-body-base">Making Charges</span>
+                          <span className="font-semibold">₹ {breakdown.makingCharges?.toLocaleString("en-IN") || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-on-surface-variant font-body-base">GST (3%)</span>
+                          <span className="font-semibold">₹ {breakdown.gst?.toLocaleString("en-IN") || 0}</span>
+                        </div>
+                      </>
+                    ) : (
                       <div className="flex justify-between items-center">
-                        <span className="text-on-surface-variant font-body-base">Base Material</span>
-                        <span className="font-semibold">₹ {breakdown.materialCost?.toLocaleString("en-IN") || 0}</span>
+                        <span className="text-on-surface-variant font-body-base">Base Price</span>
+                        <span className="font-semibold">₹ {finalPrice?.toLocaleString("en-IN") || 0}</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-on-surface-variant font-body-base">Making Charges</span>
-                        <span className="font-semibold">₹ {breakdown.makingCharges?.toLocaleString("en-IN") || 0}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-on-surface-variant font-body-base">GST (3%)</span>
-                        <span className="font-semibold">₹ {breakdown.gst?.toLocaleString("en-IN") || 0}</span>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex justify-between items-center">
-                      <span className="text-on-surface-variant font-body-base">Base Price</span>
-                      <span className="font-semibold">₹ {finalPrice?.toLocaleString("en-IN") || 0}</span>
+                    )}
+                    <div className="pt-6 mt-6 border-t border-primary/20 flex justify-between items-center">
+                      <span className="font-display-lg text-headline-sm text-primary uppercase">Net Payable</span>
+                      <span className="font-display-lg text-headline-sm text-primary">₹ {finalPrice?.toLocaleString("en-IN") || 0}</span>
                     </div>
-                  )}
-                  <div className="pt-6 mt-6 border-t border-primary/20 flex justify-between items-center">
-                    <span className="font-display-lg text-headline-sm text-primary uppercase">Net Payable</span>
-                    <span className="font-display-lg text-headline-sm text-primary">₹ {finalPrice?.toLocaleString("en-IN") || 0}</span>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Actions */}
               <div className="flex flex-col gap-4 mb-12">

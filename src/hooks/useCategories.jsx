@@ -3,10 +3,10 @@ import useAuthContext from "./useAuthContext";
 import useAxiosSecure from "./useAxiosSecure";
 
 const useCategories = () => {
-  const { user, isAuthLoading } = useAuthContext();
+  const { isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
 
-  const hasValidQuery = !isAuthLoading && user !== null && user !== undefined;
+  const hasValidQuery = !isAuthLoading;
 
   const {
     data: categories = [],
