@@ -176,6 +176,14 @@ const router = createBrowserRouter([
             ),
           },
           {
+            path: "adminAddProducts/:id",
+            element: (
+              <AdminRoute>
+                <AdminAddProduct />
+              </AdminRoute>
+            ),
+          },
+          {
             path: "adminUsers",
             element: (
               <AdminRoute>

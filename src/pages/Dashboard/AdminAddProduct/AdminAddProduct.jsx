@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AdminAddProduct.css";
 import { useForm, Controller } from "react-hook-form";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import uploadIcon from "../../../assets/image-upload.png";
 import axios from "axios";
 import { getApiBaseUrl } from "../../../utils/apiConfig";
@@ -22,7 +22,8 @@ const AdminAddProduct = () => {
 
   // find product to edit the product
   const location = useLocation();
-  const productId = location.state?.id;
+  const { id: paramId } = useParams();
+  const productId = paramId || location.state?.id;
   const [dynamicProduct, setDynamicProduct] = useState(null);
   const [products] = useProducts();
 
