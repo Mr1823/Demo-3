@@ -1,0 +1,448 @@
+.
+./.DS_Store
+./.env
+./.env.example
+./.git
+./.github
+./.github/FUNDING.yml
+./.github/workflows
+./.github/workflows/ci.yml
+./.gitignore
+./.npmrc
+./.vercel
+./.vercel/README.txt
+./.vercel/project.json
+./.vscode
+./.vscode/settings.json
+./.vscode/tailwind.json
+./README.md
+./Sri_Ram_Jewellery_PRD.md
+./api
+./api/index.js
+./components.json
+./dist
+./env.example
+./index.html
+./node_modules
+./package-lock.json
+./package.json
+./postcss.config.js
+./project_tree.txt
+./public
+./public/images
+./public/images/about-artisan.jpg
+./public/images/about-store.jpg
+./public/images/cat-gems.jpg
+./public/images/cat-gold.jpg
+./public/images/cat-silver.jpg
+./public/images/hero.jpg
+./public/images/logo.png
+./public/images/p1-jhumkas.jpg
+./public/images/p2-bracelet.jpg
+./public/images/p3-necklace.jpg
+./public/images/p4-pendant.jpg
+./public/images/p5-rings.jpg
+./public/img
+./public/img/001-tools.png
+./public/img/002-cash-money.png
+./public/img/003-undo-button.png
+./public/img/004-delivery-truck.png
+./public/img/banner
+./public/img/banner/1.1.jpg
+./public/img/banner/1.2.jpg
+./public/img/banner/12.jpg
+./public/img/banner/ads-middle-grand4.jpg
+./public/img/bg
+./public/img/bg/contuct.jpg
+./public/img/bootstrap-social.png
+./public/img/categories
+./public/img/categories/1.jpg
+./public/img/categories/2.jpg
+./public/img/categories/3.jpg
+./public/img/categories/4.jpg
+./public/img/categories/5.jpg
+./public/img/categories/6.jpg
+./public/img/categories/7.jpg
+./public/img/categories/8.jpg
+./public/img/eng
+./public/img/eng/1.jpg
+./public/img/eng/2.jpg
+./public/img/eng/3.jpg
+./public/img/favicon.png
+./public/img/footer
+./public/img/footer-1.png
+./public/img/footer/1.jpg
+./public/img/footer/2.jpg
+./public/img/footer/3.jpg
+./public/img/footer/4.jpg
+./public/img/footer/5.jpg
+./public/img/footer/6.jpg
+./public/img/icon
+./public/img/icon/email.jpg
+./public/img/icon/facebook.png
+./public/img/icon/googleplus.jpg
+./public/img/icon/pinterest.jpg
+./public/img/icon/twitter.png
+./public/img/instagram
+./public/img/instagram/instagram1-1.png
+./public/img/instagram/instagram2-1.png
+./public/img/instagram/instagram3-2-194x300.png
+./public/img/instagram/instagram4-2.png
+./public/img/instagram/instagram5-2.png
+./public/img/instagram/lightbox-1-223x300.png
+./public/img/logo-4.png
+./public/img/logo-footer.png
+./public/img/payment.png
+./public/img/product
+./public/img/product/1.jpg
+./public/img/product/10.jpg
+./public/img/product/12.jpg
+./public/img/product/13.jpg
+./public/img/product/14.jpg
+./public/img/product/15.jpg
+./public/img/product/2.jpg
+./public/img/product/3.jpg
+./public/img/product/4.jpg
+./public/img/product/5.jpg
+./public/img/product/6.jpg
+./public/img/product/7.jpg
+./public/img/product/8.jpg
+./public/img/product/9.jpg
+./public/img/product/tab
+./public/img/product/tab/1.jpg
+./public/img/product/tab/2.jpg
+./public/img/product/tab/3.jpg
+./public/img/product/tab/4.jpg
+./public/img/product/tab/5.jpg
+./public/img/service
+./public/img/service/003-pijama.svg
+./public/img/service/13.svg
+./public/img/service/14.svg
+./public/img/service/15.svg
+./public/img/service/16.svg
+./public/img/service/17.svg
+./public/img/service/18.svg
+./public/img/service/19.png
+./public/img/service/20.png
+./public/img/service/21.png
+./public/img/service/22.png
+./public/img/service/23.png
+./public/img/service/24.png
+./public/img/slider
+./public/img/slider/1.jpg
+./public/img/slider/2.jpg
+./public/img/slider/3.jpg
+./public/img/slider/4.jpg
+./public/img/slider/5.jpg
+./public/img/slider/6.jpg
+./public/img/slider/7.jpg
+./public/img/static
+./public/img/static/4.jpg
+./public/img/static/5.jpg
+./public/img/static/6.jpg
+./public/img/wishlist
+./public/img/wishlist/1.jpg
+./public/img/wishlist/2.jpg
+./public/logo.png
+./seed-categories.js
+./server
+./server/db
+./server/db/connect.js
+./server/index.js
+./server/middleware
+./server/middleware/auth.js
+./server/middleware/rateLimit.js
+./server/middleware/validate.js
+./server/models
+./server/models/Cart.js
+./server/models/Category.js
+./server/models/GoldRate.js
+./server/models/Order.js
+./server/models/Product.js
+./server/models/QuoteRequest.js
+./server/models/RefreshToken.js
+./server/models/Review.js
+./server/models/User.js
+./server/models/Wishlist.js
+./server/routes
+./server/routes/admin.js
+./server/routes/adminDashboard.js
+./server/routes/auth.js
+./server/routes/cart.js
+./server/routes/categories.js
+./server/routes/orders.js
+./server/routes/payment.js
+./server/routes/products.js
+./server/routes/quotes.js
+./server/routes/rates.js
+./server/routes/reviews.js
+./server/routes/users.js
+./server/routes/wishlist.js
+./server/utils
+./server/utils/computePrice.js
+./server/utils/getRates.js
+./server/utils/whatsapp.js
+./src
+./src/.DS_Store
+./src/App.jsx
+./src/assets
+./src/assets/.DS_Store
+./src/assets/arrowRight.png
+./src/assets/carousel 1.jpg
+./src/assets/carousel 2.jpg
+./src/assets/carousel 3.jpg
+./src/assets/carousel 4.jpg
+./src/assets/carousel 5.jpg
+./src/assets/categorie02.jpg
+./src/assets/categorie03.jpg
+./src/assets/categories01.jpg
+./src/assets/categories04.jpg
+./src/assets/categories05.jpg
+./src/assets/categories06.jpg
+./src/assets/category 07.jpg
+./src/assets/category08.jpg
+./src/assets/category09.png
+./src/assets/emptybox.jpg
+./src/assets/featuredbanner.jpg
+./src/assets/flash sale products images
+./src/assets/flash sale products images/05-300x300.png
+./src/assets/flash sale products images/07-300x300.png
+./src/assets/flash sale products images/12-300x300.png
+./src/assets/flash sale products images/13-300x300.png
+./src/assets/flash sale products images/20-300x300.png
+./src/assets/flash sale products images/42-300x300.png
+./src/assets/flash sale products images/flashSale.png
+./src/assets/heading_left.png
+./src/assets/heading_right.png
+./src/assets/image-upload.png
+./src/assets/instagram
+./src/assets/instagram/instagram1-1.png
+./src/assets/instagram/instagram2-1.png
+./src/assets/instagram/instagram3-2-194x300.png
+./src/assets/instagram/instagram4-2.png
+./src/assets/instagram/instagram5-2.png
+./src/assets/instagram/lightbox-1-223x300.png
+./src/assets/page404.png
+./src/assets/placeholder-user.png
+./src/assets/products images
+./src/assets/products images/1.jpg
+./src/assets/products images/10.jpg
+./src/assets/products images/12.jpg
+./src/assets/products images/13.jpg
+./src/assets/products images/15.jpg
+./src/assets/products images/17.jpg
+./src/assets/products images/19.jpg
+./src/assets/products images/2.jpg
+./src/assets/products images/3.jpg
+./src/assets/products images/5.jpg
+./src/assets/products images/6.jpg
+./src/assets/products images/7.jpg
+./src/assets/products images/8.jpg
+./src/assets/products images/9.jpg
+./src/assets/products images/Frame-1000001387-1-scaled-1.png
+./src/assets/products images/Sparkling-Waterfall1-768x768.png
+./src/assets/products images/amethyst-refinement-main1-768x768.png
+./src/assets/products images/bracelets-category.png
+./src/assets/products images/crystal-elegance-main1-1-650x650.png
+./src/assets/products images/crystal-harmony-main1-768x768.png
+./src/assets/products images/diamond-shine-main1-768x768.png
+./src/assets/products images/earrings-category.png
+./src/assets/products images/eternal-love-main1-768x768.png
+./src/assets/products images/golden-curls1-450x450.png
+./src/assets/products images/goldplated-crystal-flower-leverback1-650x650.png
+./src/assets/products images/h1-baner-1-480x327.jpg
+./src/assets/products images/h1-baner-2-480x326.jpg
+./src/assets/products images/h1-cat-product-image-2-400x487.jpg
+./src/assets/products images/h1-shop-list-img-2-768x792.jpg
+./src/assets/products images/h1-shop-list-img-3-768x792.jpg
+./src/assets/products images/h1-shop-list-img-5-768x790.jpg
+./src/assets/products images/h1-slider-list-i-5-768x744.jpg
+./src/assets/products images/h3-shop-list-new4-291x300.jpg
+./src/assets/products images/h3-shop-list-new4-768x792.jpg
+./src/assets/products images/instagram-gallery-img-2-768x804.jpg
+./src/assets/products images/instagram-gallery-img-3-768x806.jpg
+./src/assets/products images/instagram-gallery-img-4-768x804.jpg
+./src/assets/products images/instagram-gallery-img-6-768x804.jpg
+./src/assets/products images/jewelry-scale1.png
+./src/assets/products images/luxurious-star-main1-768x768.png
+./src/assets/products images/mother-of-pearl-chara-main1-650x650.png
+./src/assets/products images/necklaces-category-1.png
+./src/assets/products images/pendants-category.png
+./src/assets/products images/rhodolite-garnet-and-diamond-earrings1-768x768.png
+./src/assets/products images/rings-standing.png
+./src/assets/products images/slider-list-img-new-10.jpg
+./src/assets/products images/slider-list-img-new-2.jpg
+./src/assets/products images/slider-list-img-new-5.jpg
+./src/assets/products images/slider-list-img-new-6.jpg
+./src/assets/products images/slider-list-img-new-7.jpg
+./src/assets/products images/slider-list-img-new-9-300x291.jpg
+./src/assets/products images/slider-list-img-new-9.jpg
+./src/components
+./src/components/AnimateText
+./src/components/AnimateText/AnimateText.jsx
+./src/components/BarChartComponent
+./src/components/BarChartComponent/BarChartComponent.jsx
+./src/components/CardSkeleton
+./src/components/CardSkeleton/CardSkeleton.jsx
+./src/components/CountDownTimer
+./src/components/CountDownTimer/CountDownTimer.jsx
+./src/components/CustomHelmet
+./src/components/CustomHelmet/CustomHelmet.jsx
+./src/components/ErrorBoundary
+./src/components/ErrorBoundary/ErrorBoundary.jsx
+./src/components/LineChartComponent
+./src/components/LineChartComponent/LineChartComponent.jsx
+./src/components/ProductCard
+./src/components/ProductCard/ProductCard.css
+./src/components/ProductCard/ProductCard.jsx
+./src/components/RadarChartComponent
+./src/components/RadarChartComponent/RadarChartComponent.css
+./src/components/RadarChartComponent/RadarChartComponent.jsx
+./src/components/RightSideDrawer
+./src/components/RightSideDrawer/RightSideDrawer.css
+./src/components/RightSideDrawer/RightSideDrawer.jsx
+./src/components/SectionTitle
+./src/components/SectionTitle/SectionTitle.css
+./src/components/SectionTitle/SectionTitle.jsx
+./src/components/TakeToLoginModal
+./src/components/TakeToLoginModal/TakeToLoginModal.jsx
+./src/components/TimeAgo
+./src/components/TimeAgo/TimeAgo.jsx
+./src/context
+./src/context/PaymentContext.jsx
+./src/hooks
+./src/hooks/useAdminStats.jsx
+./src/hooks/useAllReviews.jsx
+./src/hooks/useAuthContext.jsx
+./src/hooks/useAxiosSecure.jsx
+./src/hooks/useCart.jsx
+./src/hooks/useCategories.jsx
+./src/hooks/useCountDownTimer.jsx
+./src/hooks/useDynamicRating.jsx
+./src/hooks/useFilterProducts.jsx
+./src/hooks/useOrders.jsx
+./src/hooks/useProducts.jsx
+./src/hooks/useQuotes.jsx
+./src/hooks/useRates.jsx
+./src/hooks/useSearchedProducts.jsx
+./src/hooks/useUserInfo.jsx
+./src/hooks/useWishlist.jsx
+./src/index.css
+./src/layouts
+./src/layouts/DashboardLayout.jsx
+./src/layouts/MainLayout.jsx
+./src/layouts/ProductPageLayout.jsx
+./src/main.jsx
+./src/pages
+./src/pages/About
+./src/pages/About/About.jsx
+./src/pages/AdminCategories
+./src/pages/AdminCategories/AdminCategories.jsx
+./src/pages/AdminLogin
+./src/pages/AdminLogin/AdminLogin.jsx
+./src/pages/AdminManageUsers
+./src/pages/AdminManageUsers/AdminManageUsers.jsx
+./src/pages/CategoryGold
+./src/pages/CategoryGold/CategoryGold.jsx
+./src/pages/Checkout
+./src/pages/Checkout/Checkout.jsx
+./src/pages/Dashboard
+./src/pages/Dashboard/AccountDetails
+./src/pages/Dashboard/AccountDetails/AccountDetails.jsx
+./src/pages/Dashboard/AddReview
+./src/pages/Dashboard/AddReview/AddReview.jsx
+./src/pages/Dashboard/AddressBook
+./src/pages/Dashboard/AddressBook/AddressBook.jsx
+./src/pages/Dashboard/AdminAddProduct
+./src/pages/Dashboard/AdminAddProduct/AdminAddProduct.css
+./src/pages/Dashboard/AdminAddProduct/AdminAddProduct.jsx
+./src/pages/Dashboard/AdminDashboard
+./src/pages/Dashboard/AdminDashboard/AdminDashboard.css
+./src/pages/Dashboard/AdminDashboard/AdminDashboard.jsx
+./src/pages/Dashboard/AdminLiveRates
+./src/pages/Dashboard/AdminLiveRates/AdminLiveRates.jsx
+./src/pages/Dashboard/AdminNavigation
+./src/pages/Dashboard/AdminNavigation/AdminNavigation.css
+./src/pages/Dashboard/AdminNavigation/AdminNavigation.jsx
+./src/pages/Dashboard/AdminOrders
+./src/pages/Dashboard/AdminOrders/AdminOrders.jsx
+./src/pages/Dashboard/AdminProducts
+./src/pages/Dashboard/AdminProducts/AdminProducts.jsx
+./src/pages/Dashboard/AdminQuoteRequests
+./src/pages/Dashboard/AdminQuoteRequests/AdminQuoteRequests.jsx
+./src/pages/Dashboard/DashboardNav
+./src/pages/Dashboard/DashboardNav/DashboardNav.css
+./src/pages/Dashboard/DashboardNav/DashboardNav.jsx
+./src/pages/Dashboard/MyDashboard
+./src/pages/Dashboard/MyDashboard/MyDashboard.css
+./src/pages/Dashboard/MyDashboard/MyDashboard.jsx
+./src/pages/Dashboard/MyOrders
+./src/pages/Dashboard/MyOrders/MyOrders.jsx
+./src/pages/DynamicProduct
+./src/pages/DynamicProduct/DynamicProduct.jsx
+./src/pages/DynamicProduct/DynmicProduct.css
+./src/pages/DynamicProduct/ProductDescription
+./src/pages/DynamicProduct/ProductDescription/ProductDescription.jsx
+./src/pages/DynamicProduct/ProductPageNavigation
+./src/pages/DynamicProduct/ProductPageNavigation/ProductPageNavigation.jsx
+./src/pages/DynamicProduct/ProductReviews
+./src/pages/DynamicProduct/ProductReviews/ProductReviews.jsx
+./src/pages/ErrorPage
+./src/pages/ErrorPage/ErrorPage.jsx
+./src/pages/Footer
+./src/pages/Footer/Footer.css
+./src/pages/Footer/Footer.jsx
+./src/pages/Header
+./src/pages/Header/Header.css
+./src/pages/Header/Header.jsx
+./src/pages/Home
+./src/pages/Home/.DS_Store
+./src/pages/Home/CentennialExcellence
+./src/pages/Home/CentennialExcellence/CentennialExcellence.jsx
+./src/pages/Home/Hero
+./src/pages/Home/Hero/Hero.css
+./src/pages/Home/Hero/Hero.jsx
+./src/pages/Home/Home.css
+./src/pages/Home/Home.jsx
+./src/pages/Home/OwnPieceHistory
+./src/pages/Home/OwnPieceHistory/OwnPieceHistory.jsx
+./src/pages/Home/RateStripe
+./src/pages/Home/RateStripe/RateStripe.jsx
+./src/pages/Home/SeasonMasterpieces
+./src/pages/Home/SeasonMasterpieces/SeasonMasterpieces.jsx
+./src/pages/Login
+./src/pages/Login/Login.jsx
+./src/pages/OrderSuccess
+./src/pages/OrderSuccess/OrderSuccess.css
+./src/pages/OrderSuccess/OrderSuccess.jsx
+./src/pages/Payment
+./src/pages/Payment/Payment.jsx
+./src/pages/Register
+./src/pages/Register/Register.jsx
+./src/pages/RelatedDynamicProducts
+./src/pages/RelatedDynamicProducts/RelatedDynamicProducts.jsx
+./src/pages/Shop
+./src/pages/Shop/Shop
+./src/pages/Shop/Shop/Shop.css
+./src/pages/Shop/Shop/Shop.jsx
+./src/pages/Wishlist
+./src/pages/Wishlist/Wishlist.jsx
+./src/providers
+./src/providers/AuthProvider.jsx
+./src/routes
+./src/routes/.DS_Store
+./src/routes/AdminRoute
+./src/routes/AdminRoute/AdminRoute.jsx
+./src/routes/PrivateRoute
+./src/routes/PrivateRoute/PrivateRoute.jsx
+./src/routes/Routes.jsx
+./src/utils
+./src/utils/apiConfig.js
+./src/utils/authErrors.js
+./tailwind.config.js
+./test-nav.js
+./test-pw.js
+./test-pw2.js
+./update_styles.cjs
+./vercel.json
+./vite.config.js

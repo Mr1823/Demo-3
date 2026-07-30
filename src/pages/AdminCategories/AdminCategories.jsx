@@ -31,13 +31,13 @@ const AdminCategories = () => {
 
   useEffect(() => {
     const totalProducts = categories?.reduce(
-      (total, item) => (total += parseInt(item.itemCount)),
+      (total, item) => total + (parseInt(item.itemCount) || 0),
       0
     );
 
     setTotalCount({
-      categoryCount: categories?.length,
-      productCount: totalProducts,
+      categoryCount: categories?.length || 0,
+      productCount: totalProducts || 0,
     });
   }, [categories]);
 
@@ -168,8 +168,12 @@ const AdminCategories = () => {
                     <td>
                       <div className="flex items-center gap-3">
                         <div className="avatar">
-                          <div className="mask mask-squircle w-12 h-12">
-                            <img src={category.categoryPic} />
+                          <div className="mask mask-squircle w-12 h-12 bg-gray-200 flex items-center justify-center overflow-hidden">
+                            {category.categoryPic ? (
+                              <img src={category.categoryPic} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="material-symbols-outlined text-gray-400">image</span>
+                            )}
                           </div>
                         </div>
                         <div>
@@ -179,7 +183,7 @@ const AdminCategories = () => {
                         </div>
                       </div>
                     </td>
-                    <td>{category.itemCount}</td>
+                    <td>{category.itemCount || 0}</td>
                     <td>
                       <div className="tooltip" data-tip="Edit">
                         <button

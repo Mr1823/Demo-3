@@ -54,6 +54,13 @@ router.get("/orders", verifyJWT, requireAdmin, async (req, res) => {
 router.get("/categories", verifyJWT, requireAdmin, async (req, res) => {
   try {
     const categories = await Category.find().lean();
+    const { Product } = await import("../models/Product.js");
+    
+    // Add itemCount to each category by querying the Product collection
+    for (let cat of categories) {
+      cat.itemCount = await Product.countDocuments({ category: cat.categoryName });
+    }
+    
     res.json(categories);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch categories" });

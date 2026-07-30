@@ -349,18 +349,18 @@ const AdminAddProduct = () => {
             className="loginRegisterForm my-10 flex flex-col md:flex-row md:items-start md:justify-between gap-8 relative"
           >
             <div className="md:w-[65%]">
-              <div className="shadow rounded-lg border pb-8">
-                <h4 className="font-bold text-lg text-black border-b-2 p-4 mb-8">
+              <div className="bg-surface-container-low/50 border border-[#c8a684]/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
                   Basic Information
                 </h4>
 
                 {/* Product name input */}
                 <div className="w-full auth-input-con px-6">
-                  <p className="text-gray-600">Product Name *</p>
+                  <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Product Name *</p>
                   <input
                     type="text"
                     {...register("name", { required: true })}
-                    className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                    className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                   />
                   {errors.name && (
                     <span className="text-red-500 mt-1 block">
@@ -371,11 +371,11 @@ const AdminAddProduct = () => {
 
                 {/* description input */}
                 <div className="w-full mt-8 auth-input-con px-6">
-                  <p className="text-gray-600">Description *</p>
+                  <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Description *</p>
                   <textarea
                     name="description"
                     rows="8"
-                    className="w-full border-2 border-gray-400 mt-3 p-4"
+                    className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary resize-none"
                     {...register("description", { required: true })}
                   ></textarea>
                   {errors.description && (
@@ -387,11 +387,11 @@ const AdminAddProduct = () => {
 
                 {/* advantages input */}
                 <div className="w-full mt-8 auth-input-con px-6">
-                  <p className="text-gray-600">Advantages *</p>
+                  <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Advantages *</p>
                   <textarea
                     name="advantages"
                     rows="4"
-                    className="w-full border-2 border-gray-400 mt-3 p-4"
+                    className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary resize-none"
                     {...register("advantages", { required: true })}
                     placeholder="Separate each advantage with comma(,)"
                   ></textarea>
@@ -404,7 +404,7 @@ const AdminAddProduct = () => {
               </div>
 
               <div className="mt-10 shadow rounded-lg border pb-8">
-                <h4 className="font-bold text-lg text-black border-b-2 p-4 mb-8">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
                   Pricing & Specs
                 </h4>
 
@@ -416,7 +416,7 @@ const AdminAddProduct = () => {
                       {...register("isQuoteOnly")}
                       className="checkbox checkbox-primary"
                     />
-                    <span className="text-gray-600 font-bold">Price on Request (Quote Only)</span>
+                    <span className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase font-bold">Price on Request (Quote Only)</span>
                   </label>
                   <p className="text-xs text-gray-500 mt-1">If checked, weight and calculated price will be hidden from customers.</p>
                 </div>
@@ -424,12 +424,12 @@ const AdminAddProduct = () => {
                 {!isQuoteOnlyValue && (
                   <>
                     <div className="w-full auth-input-con px-6">
-                      <p className="text-gray-600">Weight (grams) *</p>
+                      <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Weight (grams) *</p>
                       <input
                         type="number"
                         step="0.01"
                         {...register("weight", { required: !isQuoteOnlyValue })}
-                        className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                        className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                       />
                       {errors.weight && (
                         <span className="text-red-500 mt-1 block">Weight is required</span>
@@ -437,14 +437,14 @@ const AdminAddProduct = () => {
                     </div>
                     
                     <div className="w-full auth-input-con px-6 mt-8">
-                      <p className="text-gray-600">Wastage % *</p>
+                      <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Wastage % *</p>
                       <input
                         type="number"
                         step="0.01"
                         min="0"
                         max="100"
                         {...register("wastagePercent", { required: !isQuoteOnlyValue, min: 0, max: 100 })}
-                        className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                        className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                       />
                       {errors.wastagePercent && (
                         <span className="text-red-500 mt-1 block">Valid wastage % is required (0-100)</span>
@@ -452,14 +452,14 @@ const AdminAddProduct = () => {
                     </div>
 
                     <div className="w-full auth-input-con px-6 mt-8">
-                      <p className="text-gray-600">GST % *</p>
+                      <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">GST % *</p>
                       <input
                         type="number"
                         step="0.01"
                         min="0"
                         max="100"
                         {...register("gstPercent", { required: !isQuoteOnlyValue, min: 0, max: 100 })}
-                        className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                        className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                       />
                       {errors.gstPercent && (
                         <span className="text-red-500 mt-1 block">Valid GST % is required (0-100)</span>
@@ -468,24 +468,24 @@ const AdminAddProduct = () => {
 
                     {/* Product price input */}
                     <div className="w-full auth-input-con px-6 mt-8">
-                      <p className="text-gray-600">Making Charges / Fixed Price (if any)</p>
+                      <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Making Charges / Fixed Price (if any)</p>
                       <input
                         type="number"
                         step="0.01"
                         {...register("price")}
-                        className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                        className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                       />
                     </div>
 
                     {/* Discount price input */}
                     <div className="mt-8 px-6">
                       <div className="auth-input-con">
-                        <p className="text-gray-600">Discount Price</p>
+                        <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Discount Price</p>
                         <input
                           type="number"
                           step="0.01"
                           {...register("discountPrice")}
-                          className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                          className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                           placeholder="if available"
                         />
                       </div>
@@ -496,8 +496,8 @@ const AdminAddProduct = () => {
             </div>
 
             <div className="md:w-[35%]">
-              <div className="shadow rounded-lg border pb-8">
-                <h4 className="font-bold text-lg text-black border-b-2 p-4 mb-8">
+              <div className="bg-surface-container-low/50 border border-[#c8a684]/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
                   Upload Image
                 </h4>
                 <div>
@@ -543,13 +543,13 @@ const AdminAddProduct = () => {
                 </div>
               </div>
 
-              <div className="shadow rounded-lg border pb-8 mt-8">
-                <h4 className="font-bold text-lg text-black border-b-2 p-4 mb-8">
+              <div className="bg-surface-container-low/50 border border-[#c8a684]/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl mt-8">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
                   Product Details
                 </h4>
 
                 <div className="w-full px-6">
-                  <p className="text-gray-600 mb-4">Category *</p>
+                  <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase mb-4">Category *</p>
                   <Controller
                     name="category"
                     control={control}
@@ -559,7 +559,7 @@ const AdminAddProduct = () => {
                       <>
                         <select
                           {...field}
-                          className="border border-gray-300 w-full outline-none rounded py-3 px-2 category-container"
+                          className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary"
                         >
                           <option value="" disabled>
                             Select an option
@@ -581,7 +581,7 @@ const AdminAddProduct = () => {
                 </div>
 
                 <div className="w-full auth-input-con px-6 mt-6 badge-container">
-                  <p className="text-gray-600 mb-4">Badges</p>
+                  <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase mb-4">Badges</p>
                   <Controller
                     name="selectedBadges"
                     control={control}
@@ -598,17 +598,17 @@ const AdminAddProduct = () => {
                 </div>
               </div>
 
-              <div className="shadow rounded-lg border pb-8 mt-8">
-                <h4 className="font-bold text-lg text-black border-b-2 p-4 mb-8">
+              <div className="bg-surface-container-low/50 border border-[#c8a684]/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl mt-8">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
                   Product Attributes
                 </h4>
 
                 <div className="w-full auth-input-con px-6">
-                  <p className="text-gray-600">Stock Quantity *</p>
+                  <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Stock Quantity *</p>
                   <input
                     type="number"
                     {...register("stock", { required: true })}
-                    className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                    className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                   />
                   {errors.stock && (
                     <span className="text-red-500 mt-1 block">
@@ -618,7 +618,7 @@ const AdminAddProduct = () => {
                 </div>
 
                 <div className="w-full px-6 mt-6">
-                  <p className="text-gray-600 mb-4">Size *</p>
+                  <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase mb-4">Size *</p>
                   <Controller
                     name="size"
                     control={control}
@@ -628,7 +628,7 @@ const AdminAddProduct = () => {
                       <>
                         <select
                           {...field}
-                          className="border border-gray-300 w-full outline-none rounded py-3 px-2 category-container"
+                          className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary"
                         >
                           <option value="">
                             Select the size (Optional)
@@ -650,7 +650,7 @@ const AdminAddProduct = () => {
                 </div>
 
                 <div className="w-full px-6 mt-6">
-                  <p className="text-gray-600 mb-4">Carate *</p>
+                  <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase mb-4">Carate *</p>
                   <Controller
                     name="carate"
                     control={control}
@@ -660,7 +660,7 @@ const AdminAddProduct = () => {
                       <>
                         <select
                           {...field}
-                          className="border border-gray-300 w-full outline-none rounded py-3 px-2 category-container"
+                          className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary"
                         >
                           <option value="">
                             Select the carate (Optional)
@@ -686,14 +686,14 @@ const AdminAddProduct = () => {
             {dynamicProduct ? (
               <button
                 type="submit"
-                className="btn md:absolute md:-top-20 md:right-0 bg-black text-white font-bold border-0 rounded-none w-full md:w-[180px] hover:bg-[var(--pink-gold)] transition-all duration-300 ease-in-out"
+                className="md:absolute md:-top-20 md:right-0 bg-primary text-white py-4 md:py-5 px-8 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] w-full md:w-auto"
               >
                 Publish Edit
               </button>
             ) : (
               <button
                 type="submit"
-                className="btn absolute -top-20 right-0 bg-black text-white font-bold border-0 rounded-none md:w-[180px] hover:bg-[var(--pink-gold)] transition-all duration-300 ease-in-out"
+                className="absolute -top-20 right-0 bg-primary text-white py-4 md:py-5 px-8 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] w-full md:w-auto"
               >
                 Publish
               </button>
