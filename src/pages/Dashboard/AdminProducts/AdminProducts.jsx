@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import useProducts from "../../../hooks/useProducts";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
+import { optimizeCloudinaryUrl } from "../../../utils/cloudinaryImage";
 
 const AdminProducts = () => {
   const [products, isProductsLoading, refetch] = useProducts();
@@ -101,7 +102,7 @@ const AdminProducts = () => {
                 <tr key={product._id} className="hover:bg-white/40 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="w-16 h-16 rounded bg-surface-container-highest border border-outline-variant/30 overflow-hidden">
-                      <img src={product.image || product.img || '/placeholder.jpg'} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <img src={optimizeCloudinaryUrl(product.image || product.img, { width: 150 }) || '/placeholder.jpg'} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
                   </td>
                   <td className="px-6 py-4">

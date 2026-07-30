@@ -5,6 +5,7 @@ import useCart from '../../hooks/useCart';
 import useWishlist from '../../hooks/useWishlist';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import toast from 'react-hot-toast';
+import { optimizeCloudinaryUrl } from '../../utils/cloudinaryImage';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const ProductCard = ({ product }) => {
         <img 
           alt={product.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-          src={product.images?.[0] || product.img || "https://placehold.co/400x500"}
+          src={optimizeCloudinaryUrl(product.images?.[0] || product.img, { width: 500 }) || "https://placehold.co/400x500"}
         />
         <button 
           onClick={(e) => {

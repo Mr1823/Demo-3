@@ -8,6 +8,7 @@ import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
 import ImageZoomLens from "../../components/ImageZoomLens/ImageZoomLens";
+import { optimizeCloudinaryUrl } from "../../utils/cloudinaryImage";
 
 const DynamicProduct = () => {
   const { id } = useParams();
@@ -128,8 +129,8 @@ const DynamicProduct = () => {
           {/* Left Column: Imagery */}
           <div className="lg:col-span-7 flex flex-col gap-6">
             <div className="bg-surface-container overflow-hidden border border-[#D4AF37]/30 aspect-square group relative rounded-sm">
-              <ImageZoomLens 
-                src={mainImage || "https://placehold.co/800x800"} 
+              <ImageZoomLens
+                src={optimizeCloudinaryUrl(mainImage, { width: 800 }) || "https://placehold.co/800x800"}
                 alt={dynamicProduct.name} 
                 onClick={() => document.getElementById('imageModal').showModal()}
               />
@@ -147,7 +148,7 @@ const DynamicProduct = () => {
                   <img 
                     alt={`${dynamicProduct.name} detail ${num}`} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                    src={dynamicProduct.images?.[num] || mainImage || "https://placehold.co/400x400"} 
+                    src={optimizeCloudinaryUrl(dynamicProduct.images?.[num] || mainImage, { width: 300 }) || "https://placehold.co/400x400"}
                     onError={(e) => { e.target.src = "https://placehold.co/400x400?text=Image+Not+Found"; }}
                   />
                 </div>
@@ -321,7 +322,7 @@ const DynamicProduct = () => {
           <form method="dialog">
             <button className="btn btn-sm btn-circle bg-black/50 text-white border-none absolute right-4 top-4 hover:bg-black/70 z-50">✕</button>
           </form>
-          <img src={mainImage} className="w-full h-full object-contain" alt="Zoomed Product" />
+          <img src={optimizeCloudinaryUrl(mainImage)} className="w-full h-full object-contain" alt="Zoomed Product" />
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

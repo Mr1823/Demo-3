@@ -5,6 +5,7 @@ import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 import toast from "react-hot-toast";
 import useUserInfo from "../../hooks/useUserInfo";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { optimizeCloudinaryUrl } from "../../utils/cloudinaryImage";
 
 const OrderSuccess = () => {
   const location = useLocation();
@@ -139,7 +140,7 @@ const OrderSuccess = () => {
                         <img 
                           className="w-full h-full object-cover" 
                           alt={product.name} 
-                          src={product.img || product.image} 
+                          src={optimizeCloudinaryUrl(product.img || product.image, { width: 200 })}
                         />
                       </div>
                       <div className="flex flex-col flex-grow">

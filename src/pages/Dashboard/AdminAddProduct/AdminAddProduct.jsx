@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import useProducts from "../../../hooks/useProducts";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useCategories from "../../../hooks/useCategories";
+import { optimizeCloudinaryUrl } from "../../../utils/cloudinaryImage";
 
 const AdminAddProduct = () => {
   const { user } = useAuthContext();
@@ -412,7 +413,7 @@ const AdminAddProduct = () => {
                   {dynamicProduct?.img ? (
                     <figure>
                       <img
-                        src={dynamicProduct?.img}
+                        src={optimizeCloudinaryUrl(dynamicProduct?.img, { width: 300 })}
                         alt=""
                         className="block mx-auto mb-2 w-[50%] bg-slate-100 p-3 rounded-lg"
                       />
