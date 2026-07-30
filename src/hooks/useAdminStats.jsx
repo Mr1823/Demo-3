@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useQuery } from "react-query";
 import useAuthContext from "./useAuthContext";
 import useAxiosSecure from "./useAxiosSecure";
@@ -6,11 +6,6 @@ import useAxiosSecure from "./useAxiosSecure";
 const useAdminStats = () => {
   const { user, isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
-  const [totalCategories, setTotalCategories] = useState(0);
-  const [topCategories, setTopCategories] = useState([]);
-  const [incomeStats, setIncomeStats] = useState([]);
-  const [popularProducts, setPopularProducts] = useState([]);
-  const [recentReviews, setRecentReviews] = useState([]);
 
   const hasValidUser = !isAuthLoading && user !== null && user !== undefined;
 
@@ -59,13 +54,22 @@ const useAdminStats = () => {
     },
   });
 
+  const { data: incomeStats } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-income-stats"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/income-stats");
+      return (res.data || []).map((row) => ({
+        monthName: row.month,
+        income: row.income,
+        totalOrders: row.orders,
+      }));
+    },
+  });
+
   return {
     adminStats,
-    totalCategories,
-    topCategories,
     incomeStats,
-    popularProducts,
-    recentReviews,
     revenueStats,
     salesByCategory,
     bestSelling,

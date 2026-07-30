@@ -123,13 +123,10 @@ const AdminLogin = () => {
           </div>
         </form>
 
-        {/* Registration Link */}
+        {/* Admin accounts are granted by an existing admin, not self-registered */}
         <div className="mt-16 text-center">
-          <p className="font-body-base text-[14px] text-on-surface-variant">
-            Don't have an account?
-            <Link className="text-primary font-semibold underline underline-offset-8 hover:text-secondary transition-colors duration-300 ml-1" to="/register">
-              Create one
-            </Link>
+          <p className="font-body-base text-[13px] text-on-surface-variant/70">
+            Admin access is granted by an existing administrator.
           </p>
         </div>
       </div>

@@ -1,7 +1,10 @@
 import express from "express";
+import bcrypt from "bcrypt";
 import { User } from "../models/User.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 import mongoose from "mongoose";
+
+const BCRYPT_SALT_ROUNDS = 12;
 
 const router = express.Router();
 
@@ -52,6 +55,39 @@ router.patch("/me", verifyJWT, async (req, res) => {
     res.json({ success: true, data: user });
   } catch (error) {
     res.status(500).json({ error: "Failed to update user profile" });
+  }
+});
+
+// PATCH /api/users/me/password — change authenticated user's password
+router.patch("/me/password", verifyJWT, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: "Current and new password are required" });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: "New password must be at least 6 characters" });
+    }
+
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (!user.passwordHash) {
+      return res.status(400).json({ error: "This account does not use a password. Sign in with OTP instead." });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Current password is incorrect" });
+    }
+
+    user.passwordHash = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
+    await user.save();
+
+    res.json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update password" });
   }
 });
 

@@ -4,7 +4,6 @@ import useUserInfo from "../../hooks/useUserInfo";
 import Payment from "../Payment/Payment";
 import useCart from "../../hooks/useCart";
 import useAuthContext from "../../hooks/useAuthContext";
-import { v4 as uuidv4 } from "uuid";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 import toast from "react-hot-toast";
@@ -38,7 +37,7 @@ const Checkout = () => {
           state: {
             orderStatus: "success",
             from: location,
-            orderId: paymentInfo.id,
+            orderId: paymentInfo.orderId,
           },
         });
         setPaymentInfo(null);
@@ -47,21 +46,12 @@ const Checkout = () => {
       return;
     }
 
-    const orderId = uuidv4();
-
     axiosSecure
       .post("/orders", {
-        orderId: orderId,
-        name: user?.name || userFromDB?.name || user?.displayName || "Customer",
-        email: user?.email || userFromDB?.email || undefined,
-        total: parseFloat(cartSubtotal?.subtotal),
+        name: user?.name || userFromDB?.name || "Customer",
         paymentMethod,
-        paymentStatus: "unpaid",
-        transactionId: null,
         items: cartData, // Backend expects `items`
         shippingAddress: userFromDB?.shippingAddress,
-        orderStatus: "processing",
-        date: new Date(),
       })
       .then((res) => {
         if (res.data.success) {
@@ -69,7 +59,7 @@ const Checkout = () => {
             state: {
               orderStatus: "success",
               from: location,
-              orderId: res.data.data.orderId,
+              orderId: res.data.data._id,
             },
           });
           setPaymentInfo(null);

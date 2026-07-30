@@ -27,8 +27,9 @@ const AddReview = () => {
     enabled: !isAuthLoading && user !== null && user !== undefined,
     queryFn: async () => {
       const reviews = await axiosSecure.get("/reviews");
-      const reviewByUser = reviews.data?.find((r) => r.email === user.email);
-      setUserReview(reviewByUser);
+      const reviewByUser = (reviews.data || []).find((r) => r.userId === user._id);
+      setUserReview(reviewByUser || null);
+      return reviews.data;
     },
   });
 
@@ -46,23 +47,22 @@ const AddReview = () => {
     const location = form.location.value;
 
     axiosSecure
-      .post("/add-review", {
-        img: user?.photoURL,
-        name: userFromDB?.name,
-        email: user?.email,
+      .post("/reviews", {
+        name: userFromDB?.name || "Anonymous",
         location,
         review,
         rating: parseFloat(starRating),
-        addedAt: new Date(),
       })
       .then((res) => {
-        if (res.data.insertedId) {
+        if (res.data.success) {
           refetch();
           toast.success("Feedback submitted successfully");
           form.reset();
         }
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        setProductReviewError(error?.response?.data?.error || "Failed to submit review");
+      });
   };
 
   const handleDeleteReview = () => {
@@ -77,9 +77,9 @@ const AddReview = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axiosSecure
-          .delete(`/delete-review/${user?.email}`)
+          .delete(`/reviews/${userReview._id}`)
           .then((res) => {
-            if (res.data.deletedCount > 0) {
+            if (res.data.success) {
               refetch();
               toast.success("Review removed");
               setStarRating(0);

@@ -1,0 +1,33 @@
+import express from "express";
+import { ContactMessage } from "../models/ContactMessage.js";
+import { verifyJWT, requireAdmin } from "../middleware/auth.js";
+
+const router = express.Router();
+
+// POST /api/contact — submit a contact message (public — visitors may not be logged in)
+router.post("/", async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: "Name, email, and message are required" });
+    }
+
+    const contactMessage = await ContactMessage.create({ name, email, message });
+    res.status(201).json({ success: true, data: contactMessage });
+  } catch (error) {
+    console.error("Create contact message error:", error);
+    res.status(500).json({ error: "Failed to submit message" });
+  }
+});
+
+// GET /api/contact — list all contact messages (admin only)
+router.get("/", verifyJWT, requireAdmin, async (req, res) => {
+  try {
+    const messages = await ContactMessage.find().sort({ createdAt: -1 }).lean();
+    res.json({ success: true, data: messages });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch contact messages" });
+  }
+});
+
+export default router;

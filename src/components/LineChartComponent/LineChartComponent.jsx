@@ -31,11 +31,11 @@ const LineChartComponent = ({ data }) => {
         <Legend />
         <Line
           type="monotone"
-          dataKey="totalOrders"
+          dataKey="income"
           stroke="#eebfab"
           strokeWidth={2}
           activeDot={{ r: 8 }}
-          name="Total Orders"
+          name="Revenue (₹)"
         />
       </LineChart>
     </ResponsiveContainer>

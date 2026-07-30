@@ -28,6 +28,8 @@ const ProductSchema = new mongoose.Schema({
   gstPercent: { type: Number, default: 0 },        // % — manual, per product
   metalType: { type: String, enum: ["gold", "silver"], default: "gold" },
   isQuoteOnly: { type: Boolean, default: false },  // true → "Get Quote" button, no price
+  size: { type: String },
+  carate: { type: Number },
 
   // Deprecated — kept for backward compat migration, use isQuoteOnly instead
   isFixedPrice: { type: Boolean, default: true },

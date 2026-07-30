@@ -10,6 +10,7 @@ const Payment = () => {
   const [userFromDB] = useUserInfo();
   const [axiosSecure] = useAxiosSecure();
   const { user } = useAuthContext();
+  const customerName = user?.name || userFromDB?.name || user?.displayName || "Customer";
   const { orderTotal, setPaymentInfo } = useContext(PaymentContext);
 
   const [scriptLoaded, setScriptLoaded] = useState(false);
@@ -65,14 +66,17 @@ const Payment = () => {
       let orderId = null;
       let amount = 0;
       let razorpayKey = null;
+      let dbOrderId = null;
       try {
-        const response = await axiosSecure.post("/payment/create-order", { 
+        const response = await axiosSecure.post("/payment/create-order", {
           items: cartData,
-          shippingAddress: userFromDB?.shippingAddress 
+          shippingAddress: userFromDB?.shippingAddress,
+          name: customerName,
         });
         orderId = response.data?.razorpayOrderId;
         amount = response.data?.amount;
         razorpayKey = response.data?.key;
+        dbOrderId = response.data?.orderId;
       } catch (err) {
         console.error("Backend order creation failed", err);
         setPaymentError(err.response?.data?.error || "Failed to initialize payment. Please try again.");
@@ -104,6 +108,7 @@ const Payment = () => {
               setPaymentInfo({
                 status: "success",
                 id: response.razorpay_payment_id,
+                orderId: dbOrderId,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
               });
@@ -119,7 +124,7 @@ const Payment = () => {
           }
         },
         prefill: {
-          name: user?.displayName || "",
+          name: customerName,
           email: user?.email || "",
           contact: userFromDB?.shippingAddress?.number || userFromDB?.shippingAddress?.mobileNumber || "",
         },

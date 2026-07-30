@@ -1,7 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { getApiBaseUrl } from '../../utils/apiConfig';
 
 const Footer = () => {
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    setIsSubscribing(true);
+    axios
+      .post(`${getApiBaseUrl()}/newsletter`, { email: newsletterEmail })
+      .then((res) => {
+        toast.success(res.data.message || 'Subscribed successfully');
+        setNewsletterEmail('');
+      })
+      .catch((error) => {
+        toast.error(error.response?.data?.error || 'Failed to subscribe');
+      })
+      .finally(() => setIsSubscribing(false));
+  };
+
   return (
     <footer className="w-full bg-surface-container-low border-t border-primary/10 py-section-gap-sm">
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
@@ -54,9 +75,17 @@ const Footer = () => {
             <p className="font-body-base text-on-surface-variant">
               Join our circle for early access to new collections and gold rate alerts.
             </p>
-            <form className="flex border border-primary/20 rounded-sm overflow-hidden group focus-within:ring-1 focus-within:ring-primary/40 transition-all" onSubmit={(e) => e.preventDefault()}>
-              <input className="flex-1 bg-white/50 border-none focus:ring-0 px-5 py-3 text-body-base text-on-surface placeholder:text-on-surface-variant/40" placeholder="Email Address" required type="email" />
-              <button className="bg-primary text-white px-8 flex items-center justify-center hover:bg-primary/90 transition-all" type="submit">
+            <form className="flex border border-primary/20 rounded-sm overflow-hidden group focus-within:ring-1 focus-within:ring-primary/40 transition-all" onSubmit={handleNewsletterSubmit}>
+              <input
+                className="flex-1 bg-white/50 border-none focus:ring-0 px-5 py-3 text-body-base text-on-surface placeholder:text-on-surface-variant/40"
+                placeholder="Email Address"
+                required
+                type="email"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                disabled={isSubscribing}
+              />
+              <button className="bg-primary text-white px-8 flex items-center justify-center hover:bg-primary/90 transition-all disabled:opacity-70" type="submit" disabled={isSubscribing}>
                 <span className="material-symbols-outlined">send</span>
               </button>
             </form>

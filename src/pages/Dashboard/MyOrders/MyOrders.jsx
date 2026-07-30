@@ -12,7 +12,7 @@ const MyOrders = () => {
   const handleDeleteOrder = (order, e) => {
     e.stopPropagation();
     const today = new Date();
-    const orderDate = new Date(order.date);
+    const orderDate = new Date(order.createdAt);
     const diffInDays = Math.floor((today - orderDate) / (1000 * 60 * 60 * 24));
 
     if (diffInDays > 7) {
@@ -35,9 +35,9 @@ const MyOrders = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           axiosSecure
-            .delete(`/delete-order/${order._id}`)
+            .patch(`/orders/${order._id}/cancel`)
             .then((res) => {
-              if (res.data.deletedCount > 0) {
+              if (res.data.success) {
                 Swal.fire({
                   title: "Cancelled!",
                   text: "Your order has been cancelled successfully",
@@ -47,7 +47,14 @@ const MyOrders = () => {
                 refetch();
               }
             })
-            .catch((error) => console.error(error));
+            .catch((error) => {
+              Swal.fire({
+                title: "Couldn't Cancel",
+                text: error.response?.data?.error || "Something went wrong. Please try again.",
+                icon: "error",
+                confirmButtonColor: "#8B6447",
+              });
+            });
         }
       });
     }
@@ -96,7 +103,7 @@ const MyOrders = () => {
               <div 
                 key={order._id} 
                 className="p-6 md:p-8 bg-surface-container-low/50 border border-[#c8a684]/30 group cursor-pointer relative overflow-hidden transition-all duration-500 hover:bg-white hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)]"
-                onClick={() => navigateToOrder(order.orderId)}
+                onClick={() => navigateToOrder(order._id)}
               >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
                   <div className="flex gap-4">
@@ -125,7 +132,7 @@ const MyOrders = () => {
                         {(order.items || order.orderDetails || [])[0]?.name || "Heritage Collection"} {(order.items || order.orderDetails || []).length > 1 ? "& More" : ""}
                       </span>
                       <p className="font-body-base text-sm text-on-surface-variant mt-1">
-                        Placed on {new Date(order.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        Placed on {new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </p>
                     </div>
                   </div>
@@ -144,8 +151,8 @@ const MyOrders = () => {
                   </div>
                 </div>
 
-                {/* Hover Actions */}
-                <div className="mt-6 pt-6 border-t border-outline-variant/20 flex flex-wrap gap-4 items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                {/* Actions — always visible on touch, hover-reveal on desktop */}
+                <div className="mt-6 pt-6 border-t border-outline-variant/20 flex flex-wrap gap-4 items-center justify-between opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500">
                   <p className="font-body-base text-xs text-on-surface-variant italic">
                     {isDelivered 
                       ? `Delivered on ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` 
@@ -161,7 +168,7 @@ const MyOrders = () => {
                       </button>
                     )}
                     <button 
-                      onClick={(e) => { e.stopPropagation(); navigateToOrder(order.orderId); }}
+                      onClick={(e) => { e.stopPropagation(); navigateToOrder(order._id); }}
                       className="flex-1 sm:flex-none font-button-text text-button-text bg-primary text-white px-6 py-2 hover:bg-primary/90 transition-all uppercase tracking-widest cursor-pointer"
                     >
                       {isDelivered ? 'Buy Again' : 'Track Order'}

@@ -33,7 +33,7 @@ const AdminOrders = () => {
       status: selectedOption.value,
     })
     .then((res) => {
-      if (res.data.modifiedCount > 0) {
+      if (res.data.success) {
         toast.success("Order status updated");
         refetch();
       }
@@ -107,11 +107,13 @@ const AdminOrders = () => {
                       <p className="font-button-text text-primary">#{order.orderId}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-[13px] text-on-surface-variant">{order.date?.slice(0, 10)}</p>
+                      <p className="text-[13px] text-on-surface-variant">
+                        {order.createdAt && new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </p>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-button-text text-on-surface">{order.name}</p>
-                      <p className="text-[12px] text-outline mt-1">{order.orderDetails?.length} items</p>
+                      <p className="font-button-text text-on-surface">{order.name || order.email || "—"}</p>
+                      <p className="text-[12px] text-outline mt-1">{order.items?.length || 0} items</p>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-1">
@@ -123,21 +125,22 @@ const AdminOrders = () => {
                           {order.paymentStatus}
                         </span>
                         <span className="text-[11px] text-outline">
-                          {order.paymentMethod === "cod" ? "COD" : order.transactionId}
+                          {order.paymentMethod === "cod" ? "COD" : (order.razorpayPaymentId || order.paymentMethod)}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-button-text">₹ {order.total}</p>
+                      <p className="font-button-text">₹ {(order.totalAmount || 0).toLocaleString("en-IN")}</p>
                     </td>
                     <td className="px-6 py-4">
                       <Select
                         options={[
-                          { value: "PROCESSING", label: "PROCESSING" },
-                          { value: "SHIPPED", label: "SHIPPED" },
-                          { value: "DELIVERED", label: "DELIVERED" },
+                          { value: "processing", label: "PROCESSING" },
+                          { value: "shipped", label: "SHIPPED" },
+                          { value: "delivered", label: "DELIVERED" },
+                          { value: "cancelled", label: "CANCELLED" },
                         ]}
-                        value={{ value: order.orderStatus?.toUpperCase(), label: order.orderStatus?.toUpperCase() }}
+                        value={{ value: order.orderStatus, label: order.orderStatus?.toUpperCase() }}
                         onChange={(e) => handleStatusChange(e, order._id)}
                         styles={selectStyles}
                         className="w-36"

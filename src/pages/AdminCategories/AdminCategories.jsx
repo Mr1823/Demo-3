@@ -101,12 +101,12 @@ const AdminCategories = () => {
     }
 
     axiosSecure
-      .patch(`/categories/${selectedCategory?.categoryId}`, {
+      .patch(`/categories/${selectedCategory?._id}`, {
         categoryName: categoryName || selectedCategory?.categoryName,
         categoryPic: categoryPic || selectedCategory?.categoryPic,
       })
       .then((res) => {
-        if (res.data.modifiedCount > 0) {
+        if (res.data.success) {
           refetch();
           document.getElementById("update-category-modal").close();
           toast.success("Category Updated Successfully", {

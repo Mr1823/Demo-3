@@ -43,7 +43,7 @@ router.post("/create-order", verifyJWT, async (req, res) => {
       });
     }
 
-    const { items, shippingAddress } = req.body;
+    const { items, shippingAddress, name } = req.body;
 
     if (!items || !items.length) {
       return res.status(400).json({ error: "Order must contain at least one item" });
@@ -111,11 +111,13 @@ router.post("/create-order", verifyJWT, async (req, res) => {
       orderId: razorpayOrder.receipt,
       userId: req.user.userId,
       email: req.user.email,
+      name: name || undefined,
       items: verifiedItems,
       totalAmount,
       gstAmount,
       shippingAddress,
       razorpayOrderId: razorpayOrder.id,
+      paymentMethod: "razorpay",
       orderStatus: "pending",
       paymentStatus: "pending",
     });

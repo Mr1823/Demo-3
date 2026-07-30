@@ -51,4 +51,21 @@ router.post("/", verifyJWT, async (req, res) => {
   }
 });
 
+// DELETE /api/reviews/:id — delete a review (owner or admin)
+router.delete("/:id", verifyJWT, async (req, res) => {
+  try {
+    const review = await Review.findById(req.params.id);
+    if (!review) {
+      return res.status(404).json({ error: "Review not found" });
+    }
+    if (review.userId !== req.user.userId && req.user.role !== "ADMIN") {
+      return res.status(403).json({ error: "Not authorized to delete this review" });
+    }
+    await review.deleteOne();
+    res.json({ success: true, message: "Review deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete review" });
+  }
+});
+
 export default router;

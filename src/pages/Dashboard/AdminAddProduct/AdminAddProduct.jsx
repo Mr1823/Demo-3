@@ -89,7 +89,25 @@ const AdminAddProduct = () => {
     }
   }, [reset, dynamicProduct, defaultBadges]);
 
-  const onSubmit = (data) => {
+  // Uploads directly to Cloudinary using a short-lived signature minted by our
+  // server, so the API secret never reaches the browser.
+  const uploadProductImage = async (file) => {
+    const { data: sig } = await axiosSecure.get("/admin/cloudinary-signature");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("api_key", sig.apiKey);
+    formData.append("timestamp", sig.timestamp);
+    formData.append("signature", sig.signature);
+
+    const { data: uploaded } = await axios.post(
+      `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`,
+      formData
+    );
+    return uploaded.secure_url;
+  };
+
+  const onSubmit = async (data) => {
     try {
       const badges = data?.selectedBadges?.map((b) => b?.value);
     const product = {
@@ -117,158 +135,48 @@ const AdminAddProduct = () => {
       addedAt: new Date(),
     };
 
-    // add new product
-    if (!dynamicProduct) {
+    const imgFile = data.productImg?.[0];
+    if (imgFile?.size > 2097152) {
       Swal.fire({
-        title: "Are you sure?",
-        text: "Did you make sure all data provided are correct?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#000",
-        cancelButtonColor: "#ef4c53",
-        confirmButtonText: "Yes, Publish it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const imgFile = data.productImg?.[0];
-          if (imgFile?.size > 2097152) {
-            Swal.fire({
-              title: "Image Size Exceeded!",
-              text: "Your product image size is more than 2MB.",
-              icon: "error",
-            });
-            return;
-          }
-
-          // upload product image to Cloudinary
-          const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-          const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-          
-          if (!cloudName || !uploadPreset) {
-            // Fallback if Cloudinary is not configured
-            product.img = "https://placehold.co/800x800";
-            axiosSecure
-              .post("/products", product)
-              .then((res) => {
-                if (res.data.success) {
-                  Swal.fire({
-                    title: "Success!",
-                    text: "Product added (using placeholder image)",
-                    icon: "success",
-                  });
-                }
-              })
-              .catch((error) => console.error(error));
-            return;
-          }
-
-          const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-          const formData = new FormData();
-          formData.append("file", data.productImg[0]);
-          formData.append("upload_preset", uploadPreset);
-
-          axios
-            .post(cloudinaryUrl, formData)
-            .then((res) => {
-              // add image link to product
-              product.img = res.data.secure_url;
-
-              axiosSecure
-                .post("/products", product)
-                .then((res) => {
-                  if (res.data.success) {
-                    Swal.fire({
-                      title: "Success!",
-                      text: "Product has been added successfully",
-                      icon: "success",
-                    });
-                  }
-                })
-                .catch((error) => console.error(error));
-            })
-            .catch((uploadError) => {
-              console.error(uploadError);
-              Swal.fire("Upload Failed", "Could not upload image to Cloudinary", "error");
-            });
-        }
+        title: "Image Size Exceeded!",
+        text: "Your product image size is more than 2MB.",
+        icon: "error",
       });
+      return;
     }
 
-    // edit a product
-    else {
+    const { isConfirmed } = await Swal.fire({
+      title: "Are you sure?",
+      text: "Did you make sure all data provided are correct?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#000",
+      cancelButtonColor: "#ef4c53",
+      confirmButtonText: "Yes, Publish it!",
+    });
+    if (!isConfirmed) return;
+
+    if (imgFile) {
+      try {
+        product.img = await uploadProductImage(imgFile);
+      } catch (uploadError) {
+        console.error(uploadError);
+        Swal.fire("Upload Failed", "Could not upload image to Cloudinary", "error");
+        return;
+      }
+    } else {
+      product.img = dynamicProduct.img;
+    }
+
+    const res = dynamicProduct
+      ? await axiosSecure.patch(`/products/${dynamicProduct._id}`, product)
+      : await axiosSecure.post("/products", product);
+
+    if (res.data.success) {
       Swal.fire({
-        title: "Are you sure?",
-        text: "Did you make sure all data provided are correct?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#000",
-        cancelButtonColor: "#ef4c53",
-        confirmButtonText: "Yes, Publish it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          if (data.productImg?.length > 0) {
-            // upload product image to Cloudinary
-            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-            const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-            
-            if (!cloudName || !uploadPreset) {
-              product.img = "https://placehold.co/800x800";
-              axiosSecure
-                .patch(`/products/${dynamicProduct?._id}`, product)
-                .then((res) => {
-                  if (res.data.success) {
-                    Swal.fire({
-                      title: "Success!",
-                      text: "Product updated (using placeholder image)",
-                      icon: "success",
-                    });
-                  }
-                })
-                .catch((e) => console.error(e));
-              return;
-            }
-
-            const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-            const formData = new FormData();
-            formData.append("file", data.productImg[0]);
-            formData.append("upload_preset", uploadPreset);
-
-            axios
-              .post(cloudinaryUrl, formData)
-              .then((res) => {
-                product.img = res.data.secure_url;
-                axiosSecure
-                  .patch(`/products/${dynamicProduct?._id}`, product)
-                  .then((res) => {
-                    if (res.data.success) {
-                      Swal.fire({
-                        title: "Success!",
-                        text: "Product has been updated successfully",
-                        icon: "success",
-                      });
-                    }
-                  })
-                  .catch((e) => console.error(e));
-              })
-              .catch((e) => {
-                console.error(e);
-                Swal.fire("Upload Failed", "Could not upload image to Cloudinary", "error");
-              });
-          } else {
-            product.img = dynamicProduct.img;
-            axiosSecure
-              .patch(`/products/${dynamicProduct?._id}`, product)
-              .then((res) => {
-                if (res.data.success) {
-                  Swal.fire({
-                    title: "Success!",
-                    text: "Product has been updated successfully",
-                    icon: "success",
-                  });
-                }
-              })
-              .catch((e) => console.error(e));
-          }
-        }
+        title: "Success!",
+        text: `Product has been ${dynamicProduct ? "updated" : "added"} successfully`,
+        icon: "success",
       });
     }
     } catch (err) {

@@ -27,23 +27,17 @@ const OrderSuccess = () => {
     }
   }, [userFromDB]);
 
-  // get specific order by orderId & email for orderSuccess page
+  // get specific order by _id for orderSuccess page
   useEffect(() => {
-    if (!userFromDB?.admin) {
-      const findOrderById = orders?.find(
-        (order) => order.orderId == location?.state?.orderId
-      );
-      setOrderObj(findOrderById);
-    } else {
-      const findOrderById = allOrders?.find(
-        (order) => order._id == location?.state?.orderId
-      );
-      setOrderObj(findOrderById);
-    }
+    const source = userFromDB?.admin ? allOrders : orders;
+    const findOrderById = source?.find(
+      (order) => order._id === location?.state?.orderId
+    );
+    setOrderObj(findOrderById);
   }, [location?.state, orders, allOrders, userFromDB]);
 
   useEffect(() => {
-    const today = new Date(orderObj?.date);
+    const today = new Date(orderObj?.createdAt);
     const date = today.getDate();
     const month = today.toLocaleString("en-US", { month: "long" });
     const year = today.getFullYear();

@@ -102,7 +102,6 @@ const AdminQuoteRequests = () => {
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-button-text text-on-surface">{quote.customerMobile}</p>
-                      <p className="text-[12px] text-outline mt-1 truncate max-w-[150px]">{quote.customerEmail || 'No email provided'}</p>
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-[13px] text-on-surface-variant">

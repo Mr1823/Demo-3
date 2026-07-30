@@ -14,6 +14,8 @@ import ratesRouter from "./routes/rates.js";
 import quotesRouter from "./routes/quotes.js";
 import paymentRouter from "./routes/payment.js";
 import adminDashboardRouter from "./routes/adminDashboard.js";
+import contactRouter from "./routes/contact.js";
+import newsletterRouter from "./routes/newsletter.js";
 import connectDB from "./db/connect.js";
 import { apiLimiter, authLimiter } from "./middleware/rateLimit.js";
 
@@ -72,6 +74,8 @@ app.use("/api/rates", ratesRouter);
 app.use("/api/quotes", quotesRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/admin-dashboard", adminDashboardRouter);
+app.use("/api/contact", contactRouter);
+app.use("/api/newsletter", newsletterRouter);
 
 // Legacy gold-rate route (backward compat — also served at /api/rates)
 // Removed dead /api/gold-rate mounts

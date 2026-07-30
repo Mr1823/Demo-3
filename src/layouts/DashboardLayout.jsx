@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import DashboardNav from "../pages/Dashboard/DashboardNav/DashboardNav";
 import { Outlet } from "react-router-dom";
 import CustomHelmet from "../components/CustomHelmet/CustomHelmet";
@@ -12,9 +12,6 @@ import { Toaster } from "react-hot-toast";
 const DashboardLayout = () => {
   const [userFromDB, isUserLoading] = useUserInfo();
   const { user, isAuthLoading } = useAuthContext();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  console.log("DashboardLayout rendered. Path:", window.location.pathname);
 
   return (
     <div className="font-body-base bg-surface text-on-surface min-h-screen flex flex-col overflow-x-hidden">
@@ -25,11 +22,8 @@ const DashboardLayout = () => {
           <>
             {!isUserLoading && userFromDB?.admin ? (
               <div className="flex h-screen w-full overflow-hidden">
-                <AdminNavigation
-                  sidebarCollapsed={sidebarCollapsed}
-                  setSidebarCollapsed={setSidebarCollapsed}
-                />
-                <main className="flex-1 h-full flex flex-col overflow-hidden bg-background">
+                <AdminNavigation />
+                <main className="flex-1 h-full flex flex-col overflow-hidden bg-background pt-16 lg:pt-0">
                   <Outlet />
                 </main>
               </div>

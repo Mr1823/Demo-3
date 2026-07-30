@@ -16,6 +16,7 @@ const AddressBook = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm();
   
@@ -62,14 +63,37 @@ const AddressBook = () => {
     }
   }, [stateCode]);
 
+  // Prefill the form: from the saved address when editing, or from the
+  // account name when starting a brand-new address.
   useEffect(() => {
-    if (userFromDB) {
-      let defaultValues = {};
-      defaultValues.firstName = userFromDB?.name?.split(" ")[0] || "";
-      defaultValues.lastName = userFromDB?.name?.split(" ")[userFromDB?.name?.split(" ")?.length - 1] || "";
-      reset({ ...defaultValues });
+    if (shippingAdd) {
+      const matchedState = stateData.find((s) => s.name === shippingAdd.state);
+      if (matchedState) {
+        setStateCode(matchedState.isoCode);
+      }
+      reset({
+        firstName: shippingAdd.firstName || "",
+        lastName: shippingAdd.lastName || "",
+        email: shippingAdd.email || userFromDB?.email || "",
+        streetAddress: shippingAdd.streetAddress || "",
+        postalCode: shippingAdd.postalCode || "",
+        mobileNumber: shippingAdd.mobileNumber || "",
+      });
+    } else if (userFromDB) {
+      const nameParts = userFromDB?.name?.split(" ") || [];
+      reset({
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+      });
     }
-  }, [userFromDB, reset]);
+  }, [shippingAdd, stateData, userFromDB, reset]);
+
+  // Once the city list for the saved state has loaded, select the saved city.
+  useEffect(() => {
+    if (shippingAdd?.city && cityData.some((c) => c.name === shippingAdd.city)) {
+      setValue("city", shippingAdd.city);
+    }
+  }, [cityData, shippingAdd, setValue]);
 
   const onSubmit = (data) => {
     const stateName = State.getStateByCodeAndCountry(data.state, COUNTRY_CODE)?.name || data.state;

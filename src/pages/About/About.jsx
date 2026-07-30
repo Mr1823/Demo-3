@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
+import { getApiBaseUrl } from "../../utils/apiConfig";
 
 const About = () => {
   const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
@@ -10,12 +13,16 @@ const About = () => {
   const handleContactSubmit = (e) => {
     e.preventDefault();
     setContactSubmitting(true);
-    // Simulate submission
-    setTimeout(() => {
-      setContactSubmitting(false);
-      setContactSubmitted(true);
-      setContactForm({ name: "", email: "", message: "" });
-    }, 1000);
+    axios
+      .post(`${getApiBaseUrl()}/contact`, contactForm)
+      .then(() => {
+        setContactSubmitted(true);
+        setContactForm({ name: "", email: "", message: "" });
+      })
+      .catch((error) => {
+        toast.error(error.response?.data?.error || "Failed to send message. Please try again.");
+      })
+      .finally(() => setContactSubmitting(false));
   };
 
   return (
@@ -143,17 +150,22 @@ const About = () => {
                 </a>
               </div>
               <div className="pt-8 border-t border-[#c8a684]/30">
-                <div className="relative h-48 w-full grayscale hover:grayscale-0 transition-all duration-700 overflow-hidden group border border-[#c8a684]/30">
-                  <img 
-                    className="w-full h-full object-cover" 
-                    alt="Map Location" 
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Sri+Ram+Jewellery+49+Vasantha+Road+Dharapuram"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="relative h-48 w-full grayscale hover:grayscale-0 transition-all duration-700 overflow-hidden group border border-[#c8a684]/30 block"
+                >
+                  <img
+                    className="w-full h-full object-cover"
+                    alt="Map Location"
                     src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80"
                   />
                   <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors"></div>
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                      <span className="bg-surface text-primary px-4 py-2 font-label-caps text-xs tracking-widest shadow-sm border border-[#c8a684]/30">VIEW ON MAP</span>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
           </div>

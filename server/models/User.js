@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
   photoURL: { type: String },
   addresses: { type: [AddressSchema], default: [] },
+  shippingAddress: { type: Object },
   createdAt: { type: Date, default: Date.now },
 });
 

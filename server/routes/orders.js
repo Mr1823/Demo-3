@@ -54,7 +54,7 @@ router.get("/:id", verifyJWT, async (req, res) => {
 // POST /api/orders — create order with server-side price verification
 router.post("/", verifyJWT, async (req, res) => {
   try {
-    const { items, shippingAddress } = req.body;
+    const { items, shippingAddress, name, paymentMethod } = req.body;
 
     if (!items || !items.length) {
       return res.status(400).json({ error: "Order must contain at least one item" });
@@ -111,10 +111,13 @@ router.post("/", verifyJWT, async (req, res) => {
       orderId: `ORD-${Date.now()}`,
       userId: req.user.userId,
       email: req.user.email,
+      name: name || undefined,
       items: verifiedItems,
       totalAmount: Math.round(totalAmount),
       gstAmount: Math.round(gstAmount),
       shippingAddress,
+      paymentMethod: paymentMethod || "cod",
+      paymentStatus: paymentMethod === "cod" ? "unpaid" : "pending",
       orderStatus: "processing",
     });
 
@@ -151,6 +154,34 @@ router.patch("/:id/status", verifyJWT, requireAdmin, async (req, res) => {
     res.json({ success: true, data: order });
   } catch (error) {
     res.status(500).json({ error: "Failed to update order status" });
+  }
+});
+
+// PATCH /api/orders/:id/cancel — user cancels their own order (within 7 days, while still processing)
+router.patch("/:id/cancel", verifyJWT, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+    if (order.userId !== req.user.userId) {
+      return res.status(403).json({ error: "Not authorized to cancel this order" });
+    }
+    if (order.orderStatus !== "processing") {
+      return res.status(400).json({ error: "Only processing orders can be cancelled" });
+    }
+
+    const diffInDays = (Date.now() - order.createdAt.getTime()) / (1000 * 60 * 60 * 24);
+    if (diffInDays > 7) {
+      return res.status(400).json({ error: "No orders can be cancelled after 7 days of ordering" });
+    }
+
+    order.orderStatus = "cancelled";
+    await order.save();
+
+    res.json({ success: true, data: order });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to cancel order" });
   }
 });
 

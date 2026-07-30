@@ -118,7 +118,7 @@ const AdminManageUsers = () => {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <img
-                              src={user.img}
+                              src={user.photoURL || "/placeholder-user.png"}
                               alt={user.name}
                               referrerPolicy="no-referrer"
                               className="w-10 h-10 rounded-full border border-outline-variant/30 object-cover"
@@ -126,7 +126,7 @@ const AdminManageUsers = () => {
                             <div>
                               <div className="flex items-center gap-2">
                                 <h4 className="font-medium text-on-surface">{user.name}</h4>
-                                {user?.admin && (
+                                {user?.role === "ADMIN" && (
                                   <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-caps text-[10px]">
                                     Admin
                                   </span>
@@ -150,7 +150,7 @@ const AdminManageUsers = () => {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            {!user?.admin && user.role !== "ADMIN" && (
+                            {user.role !== "ADMIN" && (
                               <div className="tooltip" data-tip="Make Admin">
                                 <button
                                   className="btn btn-square btn-sm bg-transparent border-0 text-outline hover:text-primary hover:bg-surface-container transition-colors"
