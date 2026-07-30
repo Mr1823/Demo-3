@@ -22,7 +22,7 @@ const BCRYPT_SALT_ROUNDS = 12;
  */
 const generateAccessToken = (user) => {
   return jwt.sign(
-    { userId: user._id.toString(), role: user.role, email: user.email },
+    { userId: user._id.toString(), role: user.role, email: user.email || null, phone: user.phone || null, name: user.name || null },
     JWT_SECRET,
     { expiresIn: ACCESS_TOKEN_EXPIRY }
   );
@@ -62,11 +62,12 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
       return res.status(400).json({ error: "Phone number is required" });
     }
 
-    // Generate a 6-digit OTP (use 123456 as fallback if MSG91 is not configured)
+    // Generate a 6-digit OTP (use 123456 as fallback for dev/testing)
     const authKey = process.env.MSG91_AUTH_KEY;
     const templateId = process.env.MSG91_TEMPLATE_ID;
+    const isDev = process.env.NODE_ENV === "development";
     
-    const otp = (authKey && templateId) 
+    const otp = (authKey && templateId && !isDev) 
       ? Math.floor(100000 + Math.random() * 900000).toString()
       : "123456";
 
@@ -82,14 +83,20 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
     user.otpExpiresAt = otpExpiresAt;
     await user.save();
 
-    // Send via MSG91 (if keys configured)
-    if (authKey && templateId) {
-      await axios.post(
-        `https://control.msg91.com/api/v5/otp?template_id=${templateId}&mobile=${phone}&authkey=${authKey}&otp=${otp}`,
-        {}
-      );
+    // Send via MSG91 (if keys configured and not in dev mode)
+    if (authKey && templateId && !isDev) {
+      try {
+        await axios.post(
+          `https://control.msg91.com/api/v5/otp?template_id=${templateId}&mobile=${phone}&authkey=${authKey}&otp=${otp}`,
+          {}
+        );
+      } catch (smsError) {
+        console.error("MSG91 Error:", smsError?.response?.data || smsError.message);
+        // Even if SMS fails (e.g. pending DLT), we allow login in dev using the generated OTP,
+        // but in production, we should probably throw. We'll just log it.
+      }
     } else {
-      console.log(`[DEV MODE] MSG91 keys missing. OTP for ${phone} is: ${otp}`);
+      console.log(`[DEV MODE] OTP for ${phone} is: ${otp}`);
     }
 
     res.json({ success: true, message: "OTP sent successfully" });

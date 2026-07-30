@@ -30,7 +30,8 @@ const AccountDetails = () => {
               className="border-0 border-b border-outline-variant bg-transparent w-full py-3 transition-colors outline-none focus:ring-0 focus:border-primary font-body-base text-on-surface" 
               placeholder="Your contact number" 
               type="tel" 
-              defaultValue={userFromDB?.phone || ''} 
+              defaultValue={userFromDB?.phone || ''}
+              disabled
             />
           </div>
         </div>

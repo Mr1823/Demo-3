@@ -25,7 +25,7 @@ const useWishlist = () => {
 
   const isWishlistLoading = isAuthLoading || (hasValidQuery && isQueryLoading);
 
-  const addToWishlist = (productData) => {
+  const addToWishlist = React.useCallback((productData) => {
     if (!isAuthLoading && user) {
       const { _id, productId, name, img, image, images, category, price } = productData;
       const wishlistPayload = {
@@ -51,7 +51,7 @@ const useWishlist = () => {
           console.error(error);
         });
     }
-  };
+  }, [isAuthLoading, user, axiosSecure, refetch]);
 
   return [wishlistData, isWishlistLoading, refetch, addToWishlist];
 };

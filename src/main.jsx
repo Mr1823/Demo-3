@@ -8,6 +8,7 @@ import { PaymentProvider } from "./context/PaymentContext";
 import { Toaster } from "react-hot-toast";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary.jsx";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -21,13 +22,15 @@ const queryClient = new QueryClient({
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <PaymentProvider>
-          <Toaster position="bottom-right" reverseOrder={false} />
-          <RouterProvider router={router} />
-        </PaymentProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <PaymentProvider>
+            <Toaster position="bottom-right" reverseOrder={false} />
+            <RouterProvider router={router} />
+          </PaymentProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

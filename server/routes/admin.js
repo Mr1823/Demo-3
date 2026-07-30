@@ -48,16 +48,7 @@ router.get("/orders", verifyJWT, requireAdmin, async (req, res) => {
   }
 });
 
-router.patch("/orders/:id", verifyJWT, requireAdmin, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updated = await Order.findByIdAndUpdate(id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ error: "Order not found" });
-    res.json({ success: true, data: updated });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update order" });
-  }
-});
+
 
 // ─── Categories ──────────────────────────────────────────────────────────────
 router.get("/categories", verifyJWT, requireAdmin, async (req, res) => {

@@ -29,9 +29,11 @@ const useUserInfo = () => {
   const isAdmin = userFromDB?.role === "ADMIN" || user?.role === "ADMIN";
 
   // Attach admin flag for backward compatibility
-  const enrichedUser = userFromDB
-    ? { ...userFromDB, admin: userFromDB.role === "ADMIN" }
-    : null;
+  const enrichedUser = React.useMemo(() => {
+    return userFromDB
+      ? { ...userFromDB, admin: userFromDB.role === "ADMIN" }
+      : null;
+  }, [userFromDB]);
 
   // Fetch total spent amount by users (admin only)
   useEffect(() => {

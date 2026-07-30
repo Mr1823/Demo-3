@@ -39,8 +39,11 @@ const AdminAddProduct = () => {
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors },
   } = useForm();
+
+  const isQuoteOnlyValue = watch("isQuoteOnly", false);
 
   // default tag options for badges list
   const [tagOptions] = useState([
@@ -71,6 +74,10 @@ const AdminAddProduct = () => {
       defaultValues.advantages = dynamicProduct.details?.advantages?.join(", ") || "";
       defaultValues.price = dynamicProduct.price || 0;
       defaultValues.discountPrice = dynamicProduct.discountPrice || null;
+      defaultValues.weight = dynamicProduct.weight || "";
+      defaultValues.wastagePercent = dynamicProduct.wastagePercent || "";
+      defaultValues.gstPercent = dynamicProduct.gstPercent || "";
+      defaultValues.isQuoteOnly = dynamicProduct.isQuoteOnly || false;
       defaultValues.category = dynamicProduct.category || "";
       defaultValues.selectedBadges = defaultBadges;
       defaultValues.stock = dynamicProduct.stock?.toString() || "";
@@ -91,7 +98,11 @@ const AdminAddProduct = () => {
         description: data.description,
         advantages: data.advantages.split(","),
       },
-      price: parseFloat(data.price),
+      price: parseFloat(data.price) || 0,
+      weight: parseFloat(data.weight) || 0,
+      wastagePercent: parseFloat(data.wastagePercent) || 0,
+      gstPercent: parseFloat(data.gstPercent) || 0,
+      isQuoteOnly: data.isQuoteOnly || false,
       discountPrice: parseFloat(data.discountPrice) || null,
       discountPercentage: data.discountPrice
         ? (((data.price - data.discountPrice) / data.price) * 100).toFixed(2)
@@ -127,11 +138,12 @@ const AdminAddProduct = () => {
             return;
           }
 
-          // upload product image to imgbb
-          const apiKey = import.meta.env.VITE_IMGHOSTINGKEY;
+          // upload product image to Cloudinary
+          const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+          const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
           
-          if (!apiKey) {
-            // Fallback if no ImgBB key is configured
+          if (!cloudName || !uploadPreset) {
+            // Fallback if Cloudinary is not configured
             product.img = "https://placehold.co/800x800";
             axiosSecure
               .post("/products", product)
@@ -148,34 +160,33 @@ const AdminAddProduct = () => {
             return;
           }
 
-          const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${apiKey}`;
+          const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
           const formData = new FormData();
-          formData.append("image", data.productImg[0]);
+          formData.append("file", data.productImg[0]);
+          formData.append("upload_preset", uploadPreset);
 
           axios
-            .post(imgHostingUrl, formData)
+            .post(cloudinaryUrl, formData)
             .then((res) => {
-              if (res.data.success) {
-                // add image link to product
-                product.img = res.data.data.display_url;
+              // add image link to product
+              product.img = res.data.secure_url;
 
-                axiosSecure
-                  .post("/products", product)
-                  .then((res) => {
-                    if (res.data.success) {
-                      Swal.fire({
-                        title: "Success!",
-                        text: "Product has been added successfully",
-                        icon: "success",
-                      });
-                    }
-                  })
-                  .catch((error) => console.error(error));
-              }
+              axiosSecure
+                .post("/products", product)
+                .then((res) => {
+                  if (res.data.success) {
+                    Swal.fire({
+                      title: "Success!",
+                      text: "Product has been added successfully",
+                      icon: "success",
+                    });
+                  }
+                })
+                .catch((error) => console.error(error));
             })
-            .catch((imgHostingError) => {
-              console.error(imgHostingError);
-              Swal.fire("Upload Failed", "Could not upload image to ImgBB", "error");
+            .catch((uploadError) => {
+              console.error(uploadError);
+              Swal.fire("Upload Failed", "Could not upload image to Cloudinary", "error");
             });
         }
       });
@@ -194,10 +205,11 @@ const AdminAddProduct = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           if (data.productImg?.length > 0) {
-            // upload product image to imgbb
-            const apiKey = import.meta.env.VITE_IMGHOSTINGKEY;
+            // upload product image to Cloudinary
+            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+            const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
             
-            if (!apiKey) {
+            if (!cloudName || !uploadPreset) {
               product.img = "https://placehold.co/800x800";
               axiosSecure
                 .patch(`/products/${dynamicProduct?._id}`, product)
@@ -214,32 +226,31 @@ const AdminAddProduct = () => {
               return;
             }
 
-            const imgHostingUrl = `https://api.imgbb.com/1/upload?key=${apiKey}`;
+            const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
             const formData = new FormData();
-            formData.append("image", data.productImg[0]);
+            formData.append("file", data.productImg[0]);
+            formData.append("upload_preset", uploadPreset);
 
             axios
-              .post(imgHostingUrl, formData)
+              .post(cloudinaryUrl, formData)
               .then((res) => {
-                if (res.data.success) {
-                  product.img = res.data.data.display_url;
-                  axiosSecure
-                    .patch(`/products/${dynamicProduct?._id}`, product)
-                    .then((res) => {
-                      if (res.data.success) {
-                        Swal.fire({
-                          title: "Success!",
-                          text: "Product has been updated successfully",
-                          icon: "success",
-                        });
-                      }
-                    })
-                    .catch((e) => console.error(e));
-                }
+                product.img = res.data.secure_url;
+                axiosSecure
+                  .patch(`/products/${dynamicProduct?._id}`, product)
+                  .then((res) => {
+                    if (res.data.success) {
+                      Swal.fire({
+                        title: "Success!",
+                        text: "Product has been updated successfully",
+                        icon: "success",
+                      });
+                    }
+                  })
+                  .catch((e) => console.error(e));
               })
               .catch((e) => {
                 console.error(e);
-                Swal.fire("Upload Failed", "Could not upload image to ImgBB", "error");
+                Swal.fire("Upload Failed", "Could not upload image to Cloudinary", "error");
               });
           } else {
             product.img = dynamicProduct.img;
@@ -393,38 +404,93 @@ const AdminAddProduct = () => {
 
               <div className="mt-10 shadow rounded-lg border pb-8">
                 <h4 className="font-bold text-lg text-black border-b-2 p-4 mb-8">
-                  Pricing
+                  Pricing & Specs
                 </h4>
 
-                {/* Product price input */}
-                <div className="w-full auth-input-con px-6">
-                  <p className="text-gray-600">Price *</p>
-                  <input
-                    type="number"
-                    step="0.01"
-                    {...register("price", { required: true })}
-                    className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
-                  />
-                  {errors.price && (
-                    <span className="text-red-500 mt-1 block">
-                      Product price is required
-                    </span>
-                  )}
+                {/* isQuoteOnly Checkbox */}
+                <div className="w-full auth-input-con px-6 mb-6">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      {...register("isQuoteOnly")}
+                      className="checkbox checkbox-primary"
+                    />
+                    <span className="text-gray-600 font-bold">Price on Request (Quote Only)</span>
+                  </label>
+                  <p className="text-xs text-gray-500 mt-1">If checked, weight and calculated price will be hidden from customers.</p>
                 </div>
 
-                {/* Product price input */}
-                <div className="mt-8 px-6">
-                  <div className="auth-input-con">
-                    <p className="text-gray-600">Discount Price</p>
-                    <input
-                      type="number"
-                      step="0.01"
-                      {...register("discountPrice")}
-                      className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
-                      placeholder="if available"
-                    />
-                  </div>
-                </div>
+                {!isQuoteOnlyValue && (
+                  <>
+                    <div className="w-full auth-input-con px-6">
+                      <p className="text-gray-600">Weight (grams) *</p>
+                      <input
+                        type="number"
+                        step="0.01"
+                        {...register("weight", { required: !isQuoteOnlyValue })}
+                        className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                      />
+                      {errors.weight && (
+                        <span className="text-red-500 mt-1 block">Weight is required</span>
+                      )}
+                    </div>
+                    
+                    <div className="w-full auth-input-con px-6 mt-8">
+                      <p className="text-gray-600">Wastage % *</p>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        {...register("wastagePercent", { required: !isQuoteOnlyValue, min: 0, max: 100 })}
+                        className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                      />
+                      {errors.wastagePercent && (
+                        <span className="text-red-500 mt-1 block">Valid wastage % is required (0-100)</span>
+                      )}
+                    </div>
+
+                    <div className="w-full auth-input-con px-6 mt-8">
+                      <p className="text-gray-600">GST % *</p>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        {...register("gstPercent", { required: !isQuoteOnlyValue, min: 0, max: 100 })}
+                        className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                      />
+                      {errors.gstPercent && (
+                        <span className="text-red-500 mt-1 block">Valid GST % is required (0-100)</span>
+                      )}
+                    </div>
+
+                    {/* Product price input */}
+                    <div className="w-full auth-input-con px-6 mt-8">
+                      <p className="text-gray-600">Making Charges / Fixed Price (if any)</p>
+                      <input
+                        type="number"
+                        step="0.01"
+                        {...register("price")}
+                        className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                      />
+                    </div>
+
+                    {/* Discount price input */}
+                    <div className="mt-8 px-6">
+                      <div className="auth-input-con">
+                        <p className="text-gray-600">Discount Price</p>
+                        <input
+                          type="number"
+                          step="0.01"
+                          {...register("discountPrice")}
+                          className="text-xl border-0 outline-none border-b-2 border-gray-400 w-full mt-3 pb-2"
+                          placeholder="if available"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 

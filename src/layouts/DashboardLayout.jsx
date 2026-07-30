@@ -14,6 +14,8 @@ const DashboardLayout = () => {
   const { user, isAuthLoading } = useAuthContext();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  console.log("DashboardLayout rendered. Path:", window.location.pathname);
+
   return (
     <div className="font-body-base bg-surface text-on-surface min-h-screen flex flex-col overflow-x-hidden">
       <CustomHelmet title={"My Account | Sri Ram Jewellery"} />

@@ -1,20 +1,24 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import useAuthContext from "../../../hooks/useAuthContext";
 
 const DashboardNav = () => {
   const { user, logOut } = useAuthContext();
 
+  const navigate = useNavigate();
+
   const handleLogOut = () => {
     logOut()
       .then(() => {
-        // logout successful
+        navigate("/login");
       })
       .catch((err) => console.error(err));
   };
 
   const activeClassName = "text-primary font-bold bg-surface-container-highest/50 border-r-2 border-primary font-label-caps text-label-caps flex items-center gap-3 py-4 px-8 transition-all";
   const inactiveClassName = "text-on-surface-variant font-label-caps text-label-caps flex items-center gap-3 py-4 px-8 hover:bg-surface-container-high transition-all";
+
+  console.log("DashboardNav rendered. Path:", window.location.pathname);
 
   return (
     <aside className="w-full md:w-64 flex-shrink-0">

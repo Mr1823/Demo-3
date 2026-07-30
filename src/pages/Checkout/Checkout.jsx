@@ -52,8 +52,8 @@ const Checkout = () => {
     axiosSecure
       .post("/orders", {
         orderId: orderId,
-        name: user?.displayName,
-        email: user?.email,
+        name: user?.name || userFromDB?.name || user?.displayName || "Customer",
+        email: user?.email || userFromDB?.email || undefined,
         total: parseFloat(cartSubtotal?.subtotal),
         paymentMethod,
         paymentStatus: "unpaid",

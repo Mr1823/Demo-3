@@ -23,8 +23,6 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
   photoURL: { type: String },
   addresses: { type: [AddressSchema], default: [] },
-  // Legacy field kept for backward compat
-  shippingAddress: { type: Object, default: {} },
   createdAt: { type: Date, default: Date.now },
 });
 

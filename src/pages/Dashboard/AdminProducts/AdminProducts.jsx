@@ -9,8 +9,17 @@ const AdminProducts = () => {
   const [axiosSecure] = useAxiosSecure();
   const [searchText, setSearchText] = useState("");
   
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const displayedProducts = (products || []).filter(p => 
     p.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(displayedProducts.length / itemsPerPage);
+  const paginatedProducts = displayedProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   const handleDeleteProduct = (_id) => {
@@ -61,7 +70,7 @@ const AdminProducts = () => {
               placeholder="Search products..." 
               type="text" 
               value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+              onChange={(e) => { setSearchText(e.target.value); setCurrentPage(1); }}
             />
           </div>
           <Link to="/dashboard/adminAddProducts">
@@ -75,7 +84,7 @@ const AdminProducts = () => {
 
       {/* Table Section */}
       <section className="flex-1 overflow-y-auto p-4 md:p-margin-desktop custom-scrollbar">
-        <div className="bg-surface-dim border border-secondary/20 overflow-x-auto">
+        <div className="bg-surface-dim border border-secondary/20 overflow-x-auto mb-4">
           <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="border-b border-outline-variant/50 bg-surface-container-high/50">
@@ -88,7 +97,7 @@ const AdminProducts = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/20">
-              {displayedProducts.map(product => (
+              {paginatedProducts.map(product => (
                 <tr key={product._id} className="hover:bg-white/40 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="w-16 h-16 rounded bg-surface-container-highest border border-outline-variant/30 overflow-hidden">
@@ -139,7 +148,7 @@ const AdminProducts = () => {
                   </td>
                 </tr>
               ))}
-              {displayedProducts.length === 0 && !isProductsLoading && (
+              {paginatedProducts.length === 0 && !isProductsLoading && (
                   <tr>
                       <td colSpan="6" className="text-center py-10 text-outline font-body-base">No products found.</td>
                   </tr>
@@ -147,6 +156,40 @@ const AdminProducts = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 bg-surface-dim border border-secondary/20 rounded-lg">
+            <span className="text-sm text-outline font-body-base">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, displayedProducts.length)} of {displayedProducts.length} entries
+            </span>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-outline-variant rounded hover:bg-surface disabled:opacity-50 transition-colors"
+              >
+                Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-1 border rounded transition-colors ${currentPage === page ? 'bg-primary text-white border-primary' : 'border-outline-variant hover:bg-surface'}`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border border-outline-variant rounded hover:bg-surface disabled:opacity-50 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

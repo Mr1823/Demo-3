@@ -72,7 +72,7 @@ const router = createBrowserRouter([
       },
       {
         path: "register",
-        element: <Register />,
+        element: <Navigate to="/login" replace />,
       },
       {
         path: "about",
@@ -113,11 +113,15 @@ const router = createBrowserRouter([
         <DashboardLayout />
       </PrivateRoute>
     ),
-        children: [
-          {
-            path: "myDashboard",
-            element: <MyDashboard />,
-          },
+    children: [
+      {
+        index: true,
+        element: <Navigate to="myDashboard" replace />,
+      },
+      {
+        path: "myDashboard",
+        element: <MyDashboard />,
+      },
           {
             path: "myOrders",
             element: <MyOrders />,

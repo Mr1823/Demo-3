@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const OrderSchema = new mongoose.Schema({
   orderId: { type: String, required: true, unique: true },
   userId: { type: String },          // Firebase UID
-  email: { type: String, required: true },
+  email: { type: String },  // Optional — OTP customers may not have email
   name: { type: String },
 
   // Structured line items (PRD §5)
@@ -31,9 +31,6 @@ const OrderSchema = new mongoose.Schema({
   shippingAddress: { type: Object },
   createdAt: { type: Date, default: Date.now },
 
-  // Legacy field — kept for backward compat
-  products: { type: Array, default: [] },
-  date: { type: Date, default: Date.now },
 });
 
 export const Order = mongoose.model("Order", OrderSchema);

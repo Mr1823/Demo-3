@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit";
  */
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000,
+  max: 10,
   message: { error: "Too many attempts. Please try again in 15 minutes." },
   standardHeaders: true,
   legacyHeaders: false,
@@ -30,7 +30,7 @@ export const apiLimiter = rateLimit({
  */
 export const otpLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 3,
+  max: 10,
   message: { error: "Too many OTP requests. Please wait before trying again." },
   standardHeaders: true,
   legacyHeaders: false,

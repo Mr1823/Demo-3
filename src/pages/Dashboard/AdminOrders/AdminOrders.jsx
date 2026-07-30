@@ -29,8 +29,8 @@ const AdminOrders = () => {
   const { incomeStats } = useAdminStats();
 
   const handleStatusChange = (selectedOption, orderId) => {
-    axiosSecure.patch(`/admin/update-order/${orderId}`, {
-      orderStatus: selectedOption.value,
+    axiosSecure.patch(`/orders/${orderId}/status`, {
+      status: selectedOption.value,
     })
     .then((res) => {
       if (res.data.modifiedCount > 0) {

@@ -3,15 +3,19 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { getApiBaseUrl } from "../../utils/apiConfig";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
 
 const Login = () => {
-  const { requestOtp, verifyOtp, setIsAuthLoading } = useAuthContext();
+  const { requestOtp, verifyOtp, setIsAuthLoading, getAccessToken } = useAuthContext();
   const [loginError, setLoginError] = useState(null);
   const [loginLoading, setLoginLoading] = useState(false);
   
+  // step 1 = phone entry, step 2 = OTP entry, step 3 = name collection (first-time users)
   const [step, setStep] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [verifiedUser, setVerifiedUser] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,10 +29,22 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  // Normalize phone: auto-prepend +91 if user types 10 digits without prefix
+  const normalizePhone = (phone) => {
+    const cleaned = phone.replace(/\s+/g, "");
+    if (/^\d{10}$/.test(cleaned)) {
+      return "+91" + cleaned;
+    }
+    if (/^91\d{10}$/.test(cleaned)) {
+      return "+" + cleaned;
+    }
+    return cleaned;
+  };
+
   const onRequestOtp = async (data) => {
     setLoginLoading(true);
     setLoginError(null);
-    const { phone } = data;
+    const phone = normalizePhone(data.phone);
 
     try {
       await requestOtp(phone);
@@ -50,12 +66,38 @@ const Login = () => {
 
     try {
       const result = await verifyOtp(phoneNumber, otp);
-      toast.success(`Welcome back, ${result.user?.name || result.user?.phone}!`);
       reset();
-      navigate(from, { replace: true });
+
+      // If user has no name, prompt for it (first-time user)
+      if (!result.user?.name) {
+        setVerifiedUser(result.user);
+        setStep(3);
+      } else {
+        toast.success(`Welcome, ${result.user.name}!`);
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       setLoginError(error?.error || error?.message || "Invalid OTP");
       setIsAuthLoading(false);
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const onSaveName = async (data) => {
+    setLoginLoading(true);
+    setLoginError(null);
+    try {
+      const token = getAccessToken();
+      await axios.patch(
+        `${getApiBaseUrl()}/users/me`,
+        { name: data.name },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success(`Welcome, ${data.name}!`);
+      navigate(from, { replace: true });
+    } catch (error) {
+      setLoginError(error?.response?.data?.error || "Failed to save name");
     } finally {
       setLoginLoading(false);
     }
@@ -72,6 +114,12 @@ const Login = () => {
     } finally {
       setLoginLoading(false);
     }
+  };
+
+  const stepHeadings = {
+    1: { eyebrow: "Welcome", title: "Sign In" },
+    2: { eyebrow: "Verification", title: "Enter OTP" },
+    3: { eyebrow: "Almost There", title: "What's Your Name?" },
   };
 
   return (
@@ -96,10 +144,10 @@ const Login = () => {
         {/* Heading Section */}
         <div className="w-full text-center mb-12">
           <span className="font-display-lg italic text-[14px] text-secondary block mb-2 opacity-80 lowercase tracking-widest">
-            {step === 1 ? "Welcome Back" : "Verification"}
+            {stepHeadings[step].eyebrow}
           </span>
           <h1 className="font-display-lg text-headline-md text-on-surface">
-            {step === 1 ? "Sign In" : "Enter OTP"}
+            {stepHeadings[step].title}
           </h1>
         </div>
 
@@ -111,25 +159,30 @@ const Login = () => {
           </div>
         )}
 
-        {/* Form Section */}
-        {step === 1 ? (
+        {/* ─── Step 1: Phone Number ─── */}
+        {step === 1 && (
           <form className="w-full space-y-10" onSubmit={handleSubmit(onRequestOtp)}>
-            {/* Phone Field */}
             <div className="input-focus-line">
               <label className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-[0.2em] mb-2 block" htmlFor="login-phone">
                 Mobile Number
               </label>
-              <input
-                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base tracking-widest"
-                id="login-phone"
-                placeholder="+919876543210"
-                type="tel"
-                {...register("phone", { required: true, pattern: /^\+?[0-9]{10,15}$/ })}
-              />
-              {errors.phone && <span className="text-error text-xs mt-1 block font-semibold">Valid phone number is required</span>}
+              <div className="flex items-center gap-3">
+                <span className="text-on-surface-variant font-body-base text-base border-b border-outline-variant py-3 select-none">+91</span>
+                <input
+                  className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base tracking-widest"
+                  id="login-phone"
+                  placeholder="98765 43210"
+                  type="tel"
+                  maxLength={10}
+                  {...register("phone", {
+                    required: true,
+                    pattern: /^[\+]?[0-9]{10,15}$/,
+                  })}
+                />
+              </div>
+              {errors.phone && <span className="text-error text-xs mt-1 block font-semibold">Enter a valid 10-digit mobile number</span>}
             </div>
 
-            {/* Action Button */}
             <div className="pt-6">
               <button
                 className="w-full bg-primary text-white py-4 md:py-5 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-primary cursor-pointer"
@@ -140,9 +193,11 @@ const Login = () => {
               </button>
             </div>
           </form>
-        ) : (
+        )}
+
+        {/* ─── Step 2: OTP Verification ─── */}
+        {step === 2 && (
           <form className="w-full space-y-10" onSubmit={handleSubmit(onVerifyOtp)}>
-            {/* OTP Field */}
             <div className="input-focus-line text-center">
               <label className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-[0.2em] mb-2 block" htmlFor="login-otp">
                 6-Digit OTP sent to {phoneNumber}
@@ -158,7 +213,6 @@ const Login = () => {
               {errors.otp && <span className="text-error text-xs mt-1 block font-semibold">Enter a valid 6-digit OTP</span>}
             </div>
 
-            {/* Action Button */}
             <div className="pt-6 flex flex-col gap-4">
               <button
                 className="w-full bg-primary text-white py-4 md:py-5 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-primary cursor-pointer"
@@ -179,11 +233,48 @@ const Login = () => {
               
               <button
                 type="button"
-                onClick={() => { setStep(1); reset(); }}
+                onClick={() => { setStep(1); reset(); setLoginError(null); }}
                 disabled={loginLoading}
                 className="text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest hover:text-primary transition-colors cursor-pointer"
               >
                 Change Phone Number
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* ─── Step 3: Name Collection (first-time users) ─── */}
+        {step === 3 && (
+          <form className="w-full space-y-10" onSubmit={handleSubmit(onSaveName)}>
+            <div className="input-focus-line">
+              <label className="font-label-caps text-[11px] text-on-surface-variant uppercase tracking-[0.2em] mb-2 block" htmlFor="login-name">
+                Your Name
+              </label>
+              <input
+                className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary font-body-base"
+                id="login-name"
+                placeholder="Enter your full name"
+                type="text"
+                {...register("name", { required: true, minLength: 2 })}
+              />
+              {errors.name && <span className="text-error text-xs mt-1 block font-semibold">Name is required (min 2 characters)</span>}
+            </div>
+
+            <div className="pt-6 flex flex-col gap-4">
+              <button
+                className="w-full bg-primary text-white py-4 md:py-5 font-button-text uppercase tracking-[0.2em] text-[12px] hover:bg-primary-container transition-all duration-500 transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100 disabled:hover:bg-primary cursor-pointer"
+                type="submit"
+                disabled={loginLoading}
+              >
+                {loginLoading ? <span className="loading loading-spinner loading-md"></span> : "Continue"}
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => { navigate(from, { replace: true }); }}
+                className="text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest hover:text-primary transition-colors cursor-pointer"
+              >
+                Skip for Now
               </button>
             </div>
           </form>
