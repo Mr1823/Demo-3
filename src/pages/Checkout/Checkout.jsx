@@ -264,8 +264,10 @@ const Checkout = () => {
             
             {/* Item List */}
             <div className="space-y-6 mb-8 max-h-[400px] overflow-y-auto pr-2">
-              {checkoutItems?.map((item) => (
-                <div key={item._id} className="flex items-center gap-4 group">
+              {checkoutItems?.map((item, idx) => (
+                // A "Buy Now" item is constructed client-side and has no _id,
+                // so fall back to the product id (then index) for a stable key.
+                <div key={item._id || item.productId || `item-${idx}`} className="flex items-center gap-4 group">
                   <div className="w-20 h-20 bg-white border border-outline-variant/20 overflow-hidden flex-shrink-0">
                     <img 
                       src={item.img || item.image} 
