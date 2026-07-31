@@ -301,8 +301,8 @@ const Checkout = () => {
               {paymentInfo && (
                 <div className="flex justify-between items-center text-on-surface-variant font-label-caps text-[12px]">
                   <span>PAYMENT STATUS</span>
-                  <span className="text-green-600 font-bold flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                  <span className="text-success font-bold flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-success animate-pulse"></span>
                     PAID
                   </span>
                 </div>

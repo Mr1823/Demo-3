@@ -250,7 +250,7 @@ const AdminDashboard = () => {
               <div className="bg-surface p-4 rounded border border-outline-variant/10 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#FFD700]"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-outline-gold"></span>
                     <span className="font-medium text-on-surface text-sm">Gold (22K)</span>
                   </div>
                   <span className="text-[10px] uppercase tracking-tighter text-on-surface-variant">per gram</span>
@@ -282,7 +282,7 @@ const AdminDashboard = () => {
               <div className="bg-surface p-4 rounded border border-outline-variant/10 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#C0C0C0]"></span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-outline"></span>
                     <span className="font-medium text-on-surface text-sm">Silver (999)</span>
                   </div>
                   <span className="text-[10px] uppercase tracking-tighter text-on-surface-variant">per gram</span>

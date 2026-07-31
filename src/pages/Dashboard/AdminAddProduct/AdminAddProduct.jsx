@@ -274,7 +274,7 @@ const AdminAddProduct = () => {
                     className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                   />
                   {errors.name && (
-                    <span className="text-red-500 mt-1 block">
+                    <span className="text-error mt-1 block">
                       Product name is required
                     </span>
                   )}
@@ -290,7 +290,7 @@ const AdminAddProduct = () => {
                     {...register("description", { required: true })}
                   ></textarea>
                   {errors.description && (
-                    <span className="text-red-500 mt-1 block">
+                    <span className="text-error mt-1 block">
                       Product Description is required
                     </span>
                   )}
@@ -307,7 +307,7 @@ const AdminAddProduct = () => {
                     placeholder="Separate each advantage with comma(,)"
                   ></textarea>
                   {errors.advantages && (
-                    <span className="text-red-500 mt-1 block">
+                    <span className="text-error mt-1 block">
                       Product Advantages is required
                     </span>
                   )}
@@ -329,7 +329,7 @@ const AdminAddProduct = () => {
                     />
                     <span className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase font-bold">Price on Request (Quote Only)</span>
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">If checked, weight and calculated price will be hidden from customers.</p>
+                  <p className="text-xs text-on-surface-variant mt-1">If checked, weight and calculated price will be hidden from customers.</p>
                 </div>
 
                 {!isQuoteOnlyValue && (
@@ -343,7 +343,7 @@ const AdminAddProduct = () => {
                         className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                       />
                       {errors.weight && (
-                        <span className="text-red-500 mt-1 block">Weight is required</span>
+                        <span className="text-error mt-1 block">Weight is required</span>
                       )}
                     </div>
                     
@@ -358,7 +358,7 @@ const AdminAddProduct = () => {
                         className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                       />
                       {errors.wastagePercent && (
-                        <span className="text-red-500 mt-1 block">Valid wastage % is required (0-100)</span>
+                        <span className="text-error mt-1 block">Valid wastage % is required (0-100)</span>
                       )}
                     </div>
 
@@ -373,7 +373,7 @@ const AdminAddProduct = () => {
                         className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                       />
                       {errors.gstPercent && (
-                        <span className="text-red-500 mt-1 block">Valid GST % is required (0-100)</span>
+                        <span className="text-error mt-1 block">Valid GST % is required (0-100)</span>
                       )}
                     </div>
 
@@ -417,7 +417,7 @@ const AdminAddProduct = () => {
                       <img
                         src={optimizeCloudinaryUrl(dynamicProduct?.img, { width: 300 })}
                         alt=""
-                        className="block mx-auto mb-2 w-[50%] bg-slate-100 p-3 rounded-lg"
+                        className="block mx-auto mb-2 w-[50%] bg-surface-container p-3 rounded-lg"
                       />
                       <figcaption className="text-center text-sm">
                         Current Image
@@ -447,7 +447,7 @@ const AdminAddProduct = () => {
                   />
 
                   {errors.productImg && (
-                    <span className="text-red-500 mt-1 text-center block">
+                    <span className="text-error mt-1 text-center block">
                       Product image is required
                     </span>
                   )}
@@ -482,7 +482,7 @@ const AdminAddProduct = () => {
                           ))}
                         </select>
                         {fieldState.error && (
-                          <p className="text-red-500">
+                          <p className="text-error">
                             {fieldState.error.message}
                           </p>
                         )}
@@ -522,7 +522,7 @@ const AdminAddProduct = () => {
                     className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary"
                   />
                   {errors.stock && (
-                    <span className="text-red-500 mt-1 block">
+                    <span className="text-error mt-1 block">
                       Product stock is required
                     </span>
                   )}
@@ -551,7 +551,7 @@ const AdminAddProduct = () => {
                           <option value="Extra Large">Extra Large</option>
                         </select>
                         {fieldState.error && (
-                          <p className="text-red-500">
+                          <p className="text-error">
                             {fieldState.error.message}
                           </p>
                         )}
@@ -583,7 +583,7 @@ const AdminAddProduct = () => {
                           <option value="22">22K</option>
                         </select>
                         {fieldState.error && (
-                          <p className="text-red-500">
+                          <p className="text-error">
                             {fieldState.error.message}
                           </p>
                         )}

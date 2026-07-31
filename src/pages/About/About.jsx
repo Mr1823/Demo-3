@@ -59,7 +59,7 @@ const About = () => {
       </section>
 
       {/* Section 2: Contact (Get in Touch) */}
-      <section className="mt-32 border-t border-outline-variant/30 pt-24 bg-[#fcf8f2]" id="contact">
+      <section className="mt-32 border-t border-outline-variant/30 pt-24 bg-surface" id="contact">
         <div className="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop grid md:grid-cols-2 gap-16 lg:gap-24 items-start pb-section-gap-lg">
           
           {/* Contact Form */}
@@ -72,7 +72,7 @@ const About = () => {
             </h2>
             <form className="space-y-12" onSubmit={handleContactSubmit}>
               {contactSubmitted && (
-                <div className="p-4 bg-success-sage/10 border border-success-sage/30 text-[#4CAF50] text-sm font-semibold flex items-center gap-2 animate-fade-in">
+                <div className="p-4 bg-success-sage/10 border border-success-sage/30 text-success text-sm font-semibold flex items-center gap-2 animate-fade-in">
                   <span className="material-symbols-outlined text-[20px]">check_circle</span>
                   Thank you! We'll get back to you shortly.
                 </div>

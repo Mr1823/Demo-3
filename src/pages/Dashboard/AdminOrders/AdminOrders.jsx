@@ -119,8 +119,8 @@ const AdminOrders = () => {
                       <div className="flex flex-col gap-1">
                         <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-medium uppercase tracking-wider w-fit border ${
                           order.paymentStatus?.toLowerCase() === "paid" 
-                            ? "bg-[#4e6e58]/10 text-[#4e6e58] border-[#4e6e58]/20" 
-                            : "bg-[#ba1a1a]/10 text-[#ba1a1a] border-[#ba1a1a]/20"
+                            ? "bg-success/10 text-success border-success/20" 
+                            : "bg-error/10 text-error border-error/20"
                         }`}>
                           {order.paymentStatus}
                         </span>
