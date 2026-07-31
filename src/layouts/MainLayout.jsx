@@ -5,9 +5,12 @@ import Footer from "../pages/Footer/Footer";
 import { Toaster, toast } from "react-hot-toast";
 import useAuthContext from "../hooks/useAuthContext";
 import AOS from "aos";
+import { LoginGateProvider } from "../context/LoginGateContext";
+import useResumePendingAction from "../hooks/useResumePendingAction";
 import "aos/dist/aos.css";
 
-const MainLayout = () => {
+const MainLayoutInner = () => {
+  useResumePendingAction();
   const location = useLocation();
   const { user, isAuthLoading } = useAuthContext();
 
@@ -116,5 +119,11 @@ const MainLayout = () => {
     </div>
   );
 };
+
+const MainLayout = () => (
+  <LoginGateProvider>
+    <MainLayoutInner />
+  </LoginGateProvider>
+);
 
 export default MainLayout;

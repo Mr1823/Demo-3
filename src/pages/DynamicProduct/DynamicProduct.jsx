@@ -9,6 +9,7 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
 import ImageZoomLens from "../../components/ImageZoomLens/ImageZoomLens";
 import { optimizeCloudinaryUrl } from "../../utils/cloudinaryImage";
+import { useLoginGate } from "../../context/LoginGateContext";
 
 const DynamicProduct = () => {
   const { id } = useParams();
@@ -21,6 +22,7 @@ const DynamicProduct = () => {
   const [wishlistData, , refetchWishlist, addToWishlist] = useWishlist();
   const navigate = useNavigate();
   const [axiosSecure] = useAxiosSecure();
+  const { requireLogin } = useLoginGate();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
@@ -66,8 +68,13 @@ const DynamicProduct = () => {
         }
       }
     } else {
-      toast.error("Please login to add products into Cart or Wishlist.");
-      navigate("/login", { state: { from: location } });
+      requireLogin({
+        message:
+          where === "cart"
+            ? "Sign in to add this piece to your bag \u2014 we'll add it for you right after."
+            : "Sign in to save this piece to your wishlist \u2014 we'll save it for you right after.",
+        intent: { type: where, productId: dynamicProduct._id, quantity },
+      });
     }
   };
 
@@ -75,8 +82,10 @@ const DynamicProduct = () => {
   // straight to checkout via router state (the server re-verifies pricing).
   const handleBuyNow = () => {
     if (!user) {
-      toast.error("Please login to continue with your purchase.");
-      navigate("/login", { state: { from: location } });
+      requireLogin({
+        message: "Sign in to complete your purchase \u2014 we'll take you straight to checkout.",
+        intent: { type: "buyNow", productId: dynamicProduct._id, quantity },
+      });
       return;
     }
     navigate("/checkout", {

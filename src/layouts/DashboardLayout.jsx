@@ -1,4 +1,6 @@
 import React from "react";
+import { LoginGateProvider } from "../context/LoginGateContext";
+import useResumePendingAction from "../hooks/useResumePendingAction";
 import DashboardNav from "../pages/Dashboard/DashboardNav/DashboardNav";
 import { Outlet } from "react-router-dom";
 import CustomHelmet from "../components/CustomHelmet/CustomHelmet";
@@ -9,7 +11,9 @@ import Header from "../pages/Header/Header";
 import Footer from "../pages/Footer/Footer";
 import { Toaster } from "react-hot-toast";
 
-const DashboardLayout = () => {
+const DashboardLayoutInner = () => {
+  useResumePendingAction();
+
   const [userFromDB, isUserLoading] = useUserInfo();
   const { user, isAuthLoading } = useAuthContext();
 
@@ -57,5 +61,11 @@ const DashboardLayout = () => {
     </div>
   );
 };
+
+const DashboardLayout = () => (
+  <LoginGateProvider>
+    <DashboardLayoutInner />
+  </LoginGateProvider>
+);
 
 export default DashboardLayout;

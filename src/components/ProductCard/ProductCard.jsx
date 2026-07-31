@@ -6,6 +6,7 @@ import useWishlist from '../../hooks/useWishlist';
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import toast from 'react-hot-toast';
 import { optimizeCloudinaryUrl } from '../../utils/cloudinaryImage';
+import { useLoginGate } from '../../context/LoginGateContext';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const ProductCard = ({ product }) => {
   const { refetch } = useCart();
   const [wishlistData, , refetchWishlist, addToWishlist] = useWishlist();
   const [axiosSecure] = useAxiosSecure();
+  const { requireLogin } = useLoginGate();
   
   const presentInWishlist = wishlistData?.some((item) => item.productId === product._id);
 
@@ -32,9 +34,12 @@ const ProductCard = ({ product }) => {
           onClick={(e) => {
             e.stopPropagation();
             if (!user) {
-              const loginText = document.getElementById("loginModalTextContent");
-              if (loginText) loginText.innerText = "to add products into your Wishlist.";
-              document.getElementById("takeToLoginModal")?.showModal();
+              // The old getElementById("takeToLoginModal") call only worked on
+              // the product detail page, so this silently did nothing here.
+              requireLogin({
+                message: "Sign in to save this piece to your wishlist \u2014 we'll save it for you right after.",
+                intent: { type: "wishlist", productId: product._id },
+              });
               return;
             }
             if (presentInWishlist) {
