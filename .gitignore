@@ -21,6 +21,9 @@
 *.pem
 
 # debug
+# NOTE: server.log was previously committed and leaked the MongoDB URI.
+# Never commit log files — they routinely capture connection strings.
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
