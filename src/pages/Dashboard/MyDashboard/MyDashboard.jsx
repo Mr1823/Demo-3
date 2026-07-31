@@ -87,14 +87,40 @@ const MyDashboard = () => {
             <Link to="/dashboard/myAddress" className="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors">Manage</Link>
           </div>
           <div className="p-6 bg-background/50 border border-[#c8a684]/20 flex-grow">
-            <div className="flex justify-between items-start mb-4">
-              <span className="px-2 py-0.5 bg-secondary/10 text-secondary text-[10px] font-label-caps border border-secondary/20">Default</span>
-              <span className="material-symbols-outlined text-[#c8a684] text-sm">home</span>
-            </div>
-            <p className="font-body-base text-body-base font-semibold mb-2">{userFromDB?.name || user?.displayName}</p>
-            <p className="font-body-base text-body-base text-on-surface-variant leading-relaxed">
-              {userFromDB?.location || "No address provided yet."}
-            </p>
+            {userFromDB?.shippingAddress ? (
+              <>
+                <div className="flex justify-between items-start mb-4">
+                  <span className="px-2 py-0.5 bg-secondary/10 text-secondary text-[10px] font-label-caps border border-secondary/20">Default</span>
+                  <span className="material-symbols-outlined text-[#c8a684] text-sm">home</span>
+                </div>
+                <p className="font-body-base text-body-base font-semibold mb-2">
+                  {[userFromDB.shippingAddress.firstName, userFromDB.shippingAddress.lastName]
+                    .filter(Boolean)
+                    .join(" ") || userFromDB?.name}
+                </p>
+                <p className="font-body-base text-body-base text-on-surface-variant leading-relaxed">
+                  {userFromDB.shippingAddress.streetAddress}
+                  <br />
+                  {userFromDB.shippingAddress.city}, {userFromDB.shippingAddress.state} -{" "}
+                  {userFromDB.shippingAddress.postalCode}
+                  <br />
+                  {userFromDB.shippingAddress.country}
+                </p>
+              </>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center text-center gap-3 py-4">
+                <span className="material-symbols-outlined text-[#c8a684] text-3xl">location_off</span>
+                <p className="font-body-base text-body-base text-on-surface-variant">
+                  No address saved yet.
+                </p>
+                <Link
+                  to="/dashboard/myAddress"
+                  className="font-label-caps text-label-caps text-secondary hover:text-primary transition-colors border-b border-secondary/40"
+                >
+                  Add an address
+                </Link>
+              </div>
+            )}
           </div>
         </section>
 
