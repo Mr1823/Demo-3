@@ -63,14 +63,14 @@ const Header = () => {
         <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto gap-4">
           
           {/* Logo & Brand (Left) */}
-          <div className="min-w-0 shrink">
+          <div className="shrink-0">
             <Link className="flex items-center gap-2 sm:gap-4 group min-w-0" to="/">
               <img
                 alt="Sri Ram Jewellery Logo"
                 className="h-9 sm:h-14 w-auto object-contain shrink-0 transition-transform duration-500 group-hover:scale-105"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnkKiBYrjO5ja_yOK74ECm5mdzcfxXWJFezzcd6geLOcrRGlRUhiETPqKr3Zn23LkiSeCA-2yk2yZaZTExvLRljEPg8jgwT3M7OXFjr6FiN4jdTz7JOoLaGPpyrvz-XwlSXUBgBxuAPJBocfWIt-FNsBrSwcnsluG1KWLQq0yV48ay72CCsvOdBVp_E-WSzhmxhaMrUZ77yQ0VaQ1Q-Qt9JsuKN2h92bYepfcKNheJ0kLbbJ_6dnS5lHMnVY0f3wRUW6tuOZIJ4mY"
               />
-              <span className={`truncate min-w-0 font-display-lg text-[13px] sm:text-body-lg md:text-headline-sm tracking-tight ${isHome && !scrolled ? 'text-white' : 'text-primary'}`}>
+              <span className={`hidden min-[360px]:inline-block whitespace-nowrap font-display-lg text-[15px] sm:text-body-lg lg:text-headline-sm tracking-tight ${isHome && !scrolled ? 'text-white' : 'text-primary'}`}>
                 Sri Ram Jewellery
               </span>
             </Link>
@@ -109,7 +109,7 @@ const Header = () => {
           {/* Search & Icons (Right) */}
           <div className="flex items-center gap-6 shrink-0">
             <div className="flex items-center gap-8">
-              <div className="hidden md:block relative group">
+              <div className="hidden lg:block relative group">
                 <div className={`w-64 flex items-center border rounded-full px-5 py-2 gap-3 ${isHome && !scrolled ? 'bg-white/10 backdrop-blur-md border-white/20' : 'bg-surface-container-low border-primary/10'}`}>
                   <span className={`material-symbols-outlined text-[20px] ${isHome && !scrolled ? 'text-white/70' : 'text-on-surface-variant'}`}>search</span>
                   <input 
