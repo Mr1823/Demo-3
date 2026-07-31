@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { User } from "../models/User.js";
 import { RefreshToken } from "../models/RefreshToken.js";
-import { verifyJWT } from "../middleware/auth.js";
+import { verifyJWT, JWT_SECRET } from "../middleware/auth.js";
 import { otpLimiter, otpVerifyLimiter } from "../middleware/rateLimit.js";
 import axios from "axios";
 import dotenv from "dotenv";
@@ -12,10 +12,15 @@ dotenv.config();
 
 const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === "development" ? "fallback-dev-secret-change-in-production" : null);
-if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET environment variable is required outside development");
-}
+// Fail closed on every auth route if the signing secret is missing, rather than
+// throwing at import time and crashing the entire API.
+router.use((req, res, next) => {
+  if (!JWT_SECRET) {
+    return res.status(503).json({ error: "Authentication is not configured on this server" });
+  }
+  next();
+});
+
 const ACCESS_TOKEN_EXPIRY = "30m";
 const REFRESH_TOKEN_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 const BCRYPT_SALT_ROUNDS = 12;

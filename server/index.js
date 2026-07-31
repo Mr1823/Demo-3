@@ -26,7 +26,8 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 const allowedOrigins = (
-  process.env.ALLOWED_ORIGINS || "http://localhost:5173,https://sriramjewellery.com"
+  process.env.ALLOWED_ORIGINS ||
+  "http://localhost:5173,https://sriramjewellery.in,https://www.sriramjewellery.in,https://jewellery-store-self.vercel.app"
 )
   .split(",")
   .map((o) => o.trim())

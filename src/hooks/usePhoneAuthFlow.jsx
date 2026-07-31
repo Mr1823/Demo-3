@@ -5,6 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import useAuthContext from "./useAuthContext";
 import { getApiBaseUrl } from "../utils/apiConfig";
+import { getErrorMessage } from "../utils/errorMessage";
 
 // Shared phone + OTP state machine used by both the Login and Register pages
 // (OTP verification transparently creates the account on first use, so both
@@ -47,7 +48,7 @@ const usePhoneAuthFlow = () => {
       reset();
       toast.success("OTP sent to your phone");
     } catch (error) {
-      setAuthError(error?.error || error?.message || "Failed to request OTP");
+      setAuthError(getErrorMessage(error, "Failed to request OTP"));
     } finally {
       setAuthLoading(false);
     }
@@ -68,7 +69,7 @@ const usePhoneAuthFlow = () => {
         navigate(from, { replace: true });
       }
     } catch (error) {
-      setAuthError(error?.error || error?.message || "Invalid OTP");
+      setAuthError(getErrorMessage(error, "Invalid OTP"));
       setIsAuthLoading(false);
     } finally {
       setAuthLoading(false);
@@ -101,7 +102,7 @@ const usePhoneAuthFlow = () => {
       await requestOtp(phoneNumber);
       toast.success("OTP resent successfully");
     } catch (error) {
-      setAuthError(error?.error || error?.message || "Failed to resend OTP");
+      setAuthError(getErrorMessage(error, "Failed to resend OTP"));
     } finally {
       setAuthLoading(false);
     }

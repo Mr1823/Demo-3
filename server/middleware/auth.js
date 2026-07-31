@@ -2,9 +2,16 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === "development" ? "fallback-dev-secret-change-in-production" : null);
+export const JWT_SECRET =
+  process.env.JWT_SECRET ||
+  (process.env.NODE_ENV === "development" ? "fallback-dev-secret-change-in-production" : null);
+
+// Fail closed on auth, but never at module load — throwing here would crash the
+// whole serverless function and take every route (including public ones) with it.
 if (!JWT_SECRET) {
-  throw new Error("JWT_SECRET environment variable is required outside development");
+  console.error(
+    "FATAL: JWT_SECRET is not set. All authentication endpoints will refuse requests until it is configured."
+  );
 }
 
 /**
@@ -12,6 +19,10 @@ if (!JWT_SECRET) {
  * Attaches req.user = { userId, role } on success.
  */
 export const verifyJWT = (req, res, next) => {
+  if (!JWT_SECRET) {
+    return res.status(503).json({ error: "Authentication is not configured on this server" });
+  }
+
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {

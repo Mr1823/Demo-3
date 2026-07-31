@@ -181,6 +181,16 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     await seedInitialData();
   } catch (error) {
+    // The in-memory fallback is a local-development convenience only. It downloads
+    // a mongod binary at runtime, which cannot work on a read-only serverless
+    // filesystem — so never attempt it (or exit the process) outside development.
+    if (process.env.NODE_ENV !== "development") {
+      console.error(
+        `❌ MongoDB connection failed: ${error.message}. Set MONGODB_URI. Database-backed routes will return errors until this is configured.`
+      );
+      return;
+    }
+
     console.warn(`⚠️ Local MongoDB connection failed (${error.message}). Falling back to in-memory MongoDB...`);
     try {
       const { MongoMemoryServer } = await import("mongodb-memory-server");
@@ -192,7 +202,6 @@ const connectDB = async () => {
       await seedInitialData();
     } catch (fallbackError) {
       console.error(`❌ In-memory MongoDB fallback failed: ${fallbackError.message}`);
-      process.exit(1);
     }
   }
 };

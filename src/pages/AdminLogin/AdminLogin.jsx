@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
 import toast from "react-hot-toast";
 import CustomHelmet from "../../components/CustomHelmet/CustomHelmet";
+import { getErrorMessage } from "../../utils/errorMessage";
 
 const AdminLogin = () => {
   const { signIn, setIsAuthLoading } = useAuthContext();
@@ -34,7 +35,7 @@ const AdminLogin = () => {
       setLoginLoading(false);
       navigate(from, { replace: true });
     } catch (error) {
-      setLoginError(error?.error || error?.message || "Login failed");
+      setLoginError(getErrorMessage(error, "Login failed"));
       setLoginLoading(false);
       setIsAuthLoading(false);
     }
