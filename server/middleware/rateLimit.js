@@ -1,6 +1,14 @@
 import rateLimit from "express-rate-limit";
 
 /**
+ * Locally every request arrives from the same loopback IP, so ordinary testing
+ * (or an automated script) burns through the auth allowance and locks the
+ * developer out of their own admin panel for 15 minutes. Production keeps full
+ * brute-force protection.
+ */
+const skipInDevelopment = () => process.env.NODE_ENV === "development";
+
+/**
  * Rate limiter for auth endpoints — prevent brute force attacks.
  * 10 attempts per 15 minutes per IP.
  */
@@ -10,6 +18,7 @@ export const authLimiter = rateLimit({
   message: { error: "Too many attempts. Please try again in 15 minutes." },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: skipInDevelopment,
 });
 
 /**
@@ -36,7 +45,8 @@ export const otpLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => {
     return req.body?.phone || "unknown-phone";
-  }
+  },
+  skip: skipInDevelopment,
 });
 
 /**
@@ -51,5 +61,6 @@ export const otpVerifyLimiter = rateLimit({
   legacyHeaders: false,
   keyGenerator: (req) => {
     return req.body?.phone || "unknown-phone";
-  }
+  },
+  skip: skipInDevelopment,
 });
