@@ -169,7 +169,13 @@ const seedInitialData = async () => {
   }
 };
 
-const connectDB = async () => {
+// Serverless invocations reuse a warm container but each cold start re-runs this
+// module. Cache the connection promise on globalThis so concurrent requests share
+// one connection attempt instead of each opening their own (or racing an
+// in-flight one and querying before mongoose is ready).
+const globalCache = globalThis.__mongooseCache || (globalThis.__mongooseCache = { conn: null, promise: null });
+
+const establishConnection = async () => {
   let mongoURI = process.env.MONGODB_URI;
 
   try {
@@ -177,9 +183,12 @@ const connectDB = async () => {
       throw new Error("MONGODB_URI is not defined.");
     }
     console.log("Connecting to MongoDB at:", mongoURI.replace(/\/\/[^@]+@/, "//<redacted>@"));
-    const conn = await mongoose.connect(mongoURI, { serverSelectionTimeoutMS: 3000 });
+    const conn = await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 10000,
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     await seedInitialData();
+    return conn;
   } catch (error) {
     // The in-memory fallback is a local-development convenience only. It downloads
     // a mongod binary at runtime, which cannot work on a read-only serverless
@@ -204,6 +213,29 @@ const connectDB = async () => {
       console.error(`❌ In-memory MongoDB fallback failed: ${fallbackError.message}`);
     }
   }
+};
+
+/**
+ * Returns a live mongoose connection, reusing the cached one when the container
+ * is warm. Safe to await on every request — concurrent callers share a single
+ * in-flight connection attempt rather than each starting their own.
+ */
+const connectDB = async () => {
+  // readyState 1 === connected. Anything else means we need to (re)connect.
+  if (globalCache.conn && mongoose.connection.readyState === 1) {
+    return globalCache.conn;
+  }
+
+  if (!globalCache.promise) {
+    globalCache.promise = establishConnection().finally(() => {
+      // Clear the in-flight marker so a failed attempt can be retried on the
+      // next request instead of permanently caching the failure.
+      globalCache.promise = null;
+    });
+  }
+
+  globalCache.conn = await globalCache.promise;
+  return globalCache.conn;
 };
 
 export default connectDB;

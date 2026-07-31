@@ -22,8 +22,14 @@ import { apiLimiter, authLimiter } from "./middleware/rateLimit.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
+// Vercel terminates TLS at its edge and forwards X-Forwarded-For. Without this,
+// express-rate-limit throws a ValidationError because it cannot derive a
+// trustworthy client IP.
+app.set("trust proxy", 1);
+
+// Warm the connection at module load, but don't rely on it having finished —
+// the middleware below awaits it per-request.
+connectDB().catch(() => {});
 
 const allowedOrigins = (
   process.env.ALLOWED_ORIGINS ||
@@ -43,6 +49,20 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+
+// Ensure MongoDB is connected before any route handler runs. On a serverless
+// cold start the module-level connectDB() is still in flight, so without this
+// early requests query an unconnected mongoose and fail intermittently.
+app.use(async (req, res, next) => {
+  if (req.path === "/api/health" || req.path === "/health") return next();
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("Database unavailable:", error.message);
+    res.status(503).json({ error: "Database temporarily unavailable. Please try again." });
+  }
+});
 
 // Normalize URL prefix for Vercel Serverless (if Vercel stripped /api)
 app.use((req, res, next) => {
