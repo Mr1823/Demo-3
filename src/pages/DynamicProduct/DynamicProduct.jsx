@@ -21,6 +21,7 @@ const DynamicProduct = () => {
   const [wishlistData, , refetchWishlist, addToWishlist] = useWishlist();
   const navigate = useNavigate();
   const [axiosSecure] = useAxiosSecure();
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [quoteName, setQuoteName] = useState("");
   const [quoteMobile, setQuoteMobile] = useState("");
@@ -29,6 +30,8 @@ const DynamicProduct = () => {
   useEffect(() => {
     const filteredProduct = products?.find((data) => data._id === id);
     setDynamicProduct(filteredProduct);
+    // Navigating to a different product must not keep the previous selection.
+    setActiveImageIndex(0);
   }, [products, id]);
 
   useEffect(() => {
@@ -103,7 +106,15 @@ const DynamicProduct = () => {
 
   const finalPrice = dynamicProduct.discountPrice || dynamicProduct.price;
   const breakdown = dynamicProduct.priceBreakdown;
-  const mainImage = dynamicProduct.images?.[0] || dynamicProduct.img;
+
+  // Gallery sources: every distinct image this product has, primary first.
+  const galleryImages = [
+    ...(dynamicProduct.images?.length ? dynamicProduct.images : []),
+    dynamicProduct.img,
+    dynamicProduct.image,
+  ].filter((src, i, arr) => src && arr.indexOf(src) === i);
+
+  const mainImage = galleryImages[activeImageIndex] || galleryImages[0];
 
   return (
     <div className="font-body-base bg-background text-on-surface min-h-screen">
@@ -142,18 +153,31 @@ const DynamicProduct = () => {
               </button>
             </div>
             
-            <div className="grid grid-cols-3 gap-6">
-              {[1, 2, 3].map((num, idx) => (
-                <div key={idx} className="bg-surface-container border border-[#D4AF37]/30 aspect-square overflow-hidden cursor-pointer group rounded-sm">
-                  <img 
-                    alt={`${dynamicProduct.name} detail ${num}`} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                    src={optimizeCloudinaryUrl(dynamicProduct.images?.[num] || mainImage, { width: 300 }) || "https://placehold.co/400x400"}
-                    onError={(e) => { e.target.src = "https://placehold.co/400x400?text=Image+Not+Found"; }}
-                  />
-                </div>
-              ))}
-            </div>
+            {galleryImages.length > 1 && (
+              <div className="grid grid-cols-3 gap-6">
+                {galleryImages.map((imgSrc, idx) => (
+                  <button
+                    key={imgSrc}
+                    type="button"
+                    onClick={() => setActiveImageIndex(idx)}
+                    aria-label={`View image ${idx + 1} of ${galleryImages.length}`}
+                    aria-current={idx === activeImageIndex}
+                    className={`bg-surface-container border aspect-square overflow-hidden cursor-pointer group rounded-sm transition-colors ${
+                      idx === activeImageIndex
+                        ? "border-primary border-2"
+                        : "border-[#D4AF37]/30 hover:border-[#D4AF37]"
+                    }`}
+                  >
+                    <img
+                      alt={`${dynamicProduct.name} view ${idx + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      src={optimizeCloudinaryUrl(imgSrc, { width: 300 })}
+                      onError={(e) => { e.target.src = "https://placehold.co/400x400?text=Image+Not+Found"; }}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right Column: Product Info */}
