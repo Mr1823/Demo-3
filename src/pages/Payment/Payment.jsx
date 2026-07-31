@@ -5,6 +5,8 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuthContext from "../../hooks/useAuthContext";
 import { PaymentContext } from "../Checkout/Checkout";
 
+const RAZORPAY_SRC = "https://checkout.razorpay.com/v1/checkout.js";
+
 const Payment = () => {
   const { cartData, cartSubtotal } = useCart();
   const [userFromDB] = useUserInfo();
@@ -26,8 +28,19 @@ const Payment = () => {
           resolve(true);
           return;
         }
+        // window.Razorpay only exists once the script has finished loading, so
+        // that check alone lets a second tag be appended while the first is
+        // still in flight — which StrictMode's double-invoked effect does every
+        // time in development. Reuse any tag that is already loading instead;
+        // otherwise the SDK boots twice and duplicates all of its telemetry.
+        const existing = document.querySelector(`script[src="${RAZORPAY_SRC}"]`);
+        if (existing) {
+          existing.addEventListener("load", () => resolve(true), { once: true });
+          existing.addEventListener("error", () => resolve(false), { once: true });
+          return;
+        }
         const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.src = RAZORPAY_SRC;
         script.async = true;
         script.onload = () => resolve(true);
         script.onerror = () => resolve(false);
