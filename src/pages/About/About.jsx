@@ -43,7 +43,7 @@ const About = () => {
             <p>Every piece we create is a narrative of tradition meeting modernity. We do not simply design jewellery; we forge heirlooms that carry the weight of memory and the sparkle of future legacies.</p>
           </div>
           <div className="mt-12">
-            <div className="w-16 h-[1px] bg-[#c8a684]/50 mx-auto"></div>
+            <div className="w-16 h-[1px] bg-sand/50 mx-auto"></div>
           </div>
         </div>
         
@@ -81,7 +81,7 @@ const About = () => {
               <div className="relative group">
                 <label className="font-label-caps text-[10px] text-primary block mb-2 opacity-0 group-focus-within:opacity-100 transition-opacity">NAME</label>
                 <input 
-                  className="w-full bg-transparent border-t-0 border-x-0 border-b border-[#c8a684]/50 focus:border-primary focus:ring-0 py-4 px-0 font-body-base text-on-surface placeholder:text-on-surface-variant/50 transition-all duration-300 outline-none" 
+                  className="w-full bg-transparent border-t-0 border-x-0 border-b border-sand/50 focus:border-primary focus:ring-0 py-4 px-0 font-body-base text-on-surface placeholder:text-on-surface-variant/50 transition-all duration-300 outline-none" 
                   placeholder="Name" 
                   type="text" 
                   value={contactForm.name}
@@ -92,7 +92,7 @@ const About = () => {
               <div className="relative group">
                 <label className="font-label-caps text-[10px] text-primary block mb-2 opacity-0 group-focus-within:opacity-100 transition-opacity">EMAIL</label>
                 <input 
-                  className="w-full bg-transparent border-t-0 border-x-0 border-b border-[#c8a684]/50 focus:border-primary focus:ring-0 py-4 px-0 font-body-base text-on-surface placeholder:text-on-surface-variant/50 transition-all duration-300 outline-none" 
+                  className="w-full bg-transparent border-t-0 border-x-0 border-b border-sand/50 focus:border-primary focus:ring-0 py-4 px-0 font-body-base text-on-surface placeholder:text-on-surface-variant/50 transition-all duration-300 outline-none" 
                   placeholder="Email" 
                   type="email"
                   value={contactForm.email}
@@ -103,7 +103,7 @@ const About = () => {
               <div className="relative group">
                 <label className="font-label-caps text-[10px] text-primary block mb-2 opacity-0 group-focus-within:opacity-100 transition-opacity">MESSAGE</label>
                 <textarea 
-                  className="w-full bg-transparent border-t-0 border-x-0 border-b border-[#c8a684]/50 focus:border-primary focus:ring-0 py-4 px-0 font-body-base text-on-surface placeholder:text-on-surface-variant/50 resize-none transition-all duration-300 outline-none" 
+                  className="w-full bg-transparent border-t-0 border-x-0 border-b border-sand/50 focus:border-primary focus:ring-0 py-4 px-0 font-body-base text-on-surface placeholder:text-on-surface-variant/50 resize-none transition-all duration-300 outline-none" 
                   placeholder="How can we assist you?" 
                   rows={4}
                   value={contactForm.message}
@@ -124,7 +124,7 @@ const About = () => {
           
           {/* Store Details Card */}
           <div className="animate-fade-in-up" style={{ transitionDelay: "300ms" }}>
-            <div className="bg-[#e2d9ca] p-12 lg:p-16 border border-[#c8a684]/30 space-y-12">
+            <div className="bg-surface-dim p-12 lg:p-16 border border-sand/30 space-y-12">
               <div>
                 <h3 className="font-display-lg text-[28px] text-primary mb-6">Flagship Boutique</h3>
                 <p className="font-body-base text-on-surface-variant leading-relaxed">
@@ -149,12 +149,12 @@ const About = () => {
                   @sri_ram_jewellery
                 </a>
               </div>
-              <div className="pt-8 border-t border-[#c8a684]/30">
+              <div className="pt-8 border-t border-sand/30">
                 <a
                   href="https://www.google.com/maps/search/?api=1&query=Sri+Ram+Jewellery+49+Vasantha+Road+Dharapuram"
                   target="_blank"
                   rel="noreferrer"
-                  className="relative h-48 w-full grayscale hover:grayscale-0 transition-all duration-700 overflow-hidden group border border-[#c8a684]/30 block"
+                  className="relative h-48 w-full grayscale hover:grayscale-0 transition-all duration-700 overflow-hidden group border border-sand/30 block"
                 >
                   <img
                     className="w-full h-full object-cover"
@@ -163,7 +163,7 @@ const About = () => {
                   />
                   <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors"></div>
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                     <span className="bg-surface text-primary px-4 py-2 font-label-caps text-xs tracking-widest shadow-sm border border-[#c8a684]/30">VIEW ON MAP</span>
+                     <span className="bg-surface text-primary px-4 py-2 font-label-caps text-xs tracking-widest shadow-sm border border-sand/30">VIEW ON MAP</span>
                   </div>
                 </a>
               </div>

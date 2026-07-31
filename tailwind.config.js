@@ -68,6 +68,12 @@ export default {
         
         // --- Legacy fallback aliases to prevent build errors in un-synced components ---
         'outline-gold': '#d4c3b9',
+        // Brand tones used throughout the UI. These were previously hardcoded
+        // as arbitrary hex values in ~62 places, so a palette change silently
+        // missed them.
+        sand: "#c8a684",
+        "sand-light": "#e6d2ba",
+        gold: "#d4af37",
         'heading-espresso': '#1f1b12',
         'success-sage': '#4e6e58',
         'error-crimson': '#9e3f3f',

@@ -153,7 +153,7 @@ const AddressBook = () => {
 
         {/* Existing Address Card */}
         {!isFormVisible && shippingAdd && (
-          <div className="bg-surface-container-highest p-8 rounded-xl flex flex-col justify-between h-64 relative overflow-hidden group border border-[#8b6447]/10 transition-all duration-400 hover:border-[#8b6447] hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)]">
+          <div className="bg-surface-container-highest p-8 rounded-xl flex flex-col justify-between h-64 relative overflow-hidden group border border-primary-container/10 transition-all duration-400 hover:border-primary-container hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)]">
             <div>
               <div className="flex justify-between items-start mb-6">
                 <h3 className="font-headline-sm text-headline-sm text-on-surface">

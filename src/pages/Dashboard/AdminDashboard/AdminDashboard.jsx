@@ -7,7 +7,7 @@ import useRates from "../../../hooks/useRates";
 
 const StatCard = ({ title, value, icon, subtitle }) => {
   return (
-    <div className="bg-[#E6D2BA] p-6 rounded-lg border border-outline-variant/20 flex flex-col justify-between hover:shadow-sm transition-shadow group">
+    <div className="bg-sand-light p-6 rounded-lg border border-outline-variant/20 flex flex-col justify-between hover:shadow-sm transition-shadow group">
       <div className="flex items-start justify-between mb-4">
         <span className="text-on-surface-variant font-medium text-xs uppercase tracking-wider">{title}</span>
         <span className="material-symbols-outlined text-primary/60">{icon}</span>
@@ -126,14 +126,14 @@ const AdminDashboard = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#E6D2BA]/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
+                  <tr className="bg-sand-light/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
                     <th className="p-4 border-b border-outline-variant/10 font-semibold">Product</th>
                     <th className="p-4 border-b border-outline-variant/10 font-semibold text-right">Sold</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline-variant/10">
                   {bestSelling?.slice(0, 5).map((p) => (
-                    <tr key={p.productId} className="hover:bg-[#E6D2BA]/10 transition-colors">
+                    <tr key={p.productId} className="hover:bg-sand-light/10 transition-colors">
                       <td className="p-4 flex items-center gap-3">
                         <div className="w-10 h-10 rounded border border-outline-variant/30 overflow-hidden shrink-0">
                           <img src={p.productImage} className="w-full h-full object-cover" alt={p.productName} />
@@ -156,14 +156,14 @@ const AdminDashboard = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#E6D2BA]/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
+                  <tr className="bg-sand-light/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
                     <th className="p-4 border-b border-outline-variant/10 font-semibold">Product</th>
                     <th className="p-4 border-b border-outline-variant/10 font-semibold text-right">Adds</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline-variant/10">
                   {mostWishlisted?.slice(0, 5).map((p) => (
-                    <tr key={p.productId} className="hover:bg-[#E6D2BA]/10 transition-colors">
+                    <tr key={p.productId} className="hover:bg-sand-light/10 transition-colors">
                       <td className="p-4 flex items-center gap-3">
                         <div className="w-10 h-10 rounded border border-outline-variant/30 overflow-hidden shrink-0">
                           <img src={p.productImage} className="w-full h-full object-cover" alt={p.productName} />
@@ -189,7 +189,7 @@ const AdminDashboard = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-[#E6D2BA]/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
+                  <tr className="bg-sand-light/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
                     <th className="p-4 border-b border-outline-variant/10 font-semibold">Customer</th>
                     <th className="p-4 border-b border-outline-variant/10 font-semibold">Interested In</th>
                     <th className="p-4 border-b border-outline-variant/10 font-semibold">Contact</th>
@@ -199,7 +199,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody className="divide-y divide-outline-variant/10">
                   {quotes?.map((quote) => (
-                    <tr key={quote._id} className="hover:bg-[#E6D2BA]/10 transition-colors group">
+                    <tr key={quote._id} className="hover:bg-sand-light/10 transition-colors group">
                       <td className="p-4 font-medium text-on-surface">{quote.customerName}</td>
                       <td className="p-4 text-on-surface-variant text-sm">{quote.productName}</td>
                       <td className="p-4 text-on-surface-variant text-sm">{quote.customerMobile}</td>
@@ -240,7 +240,7 @@ const AdminDashboard = () => {
           </section>
 
           {/* Live Rates Panel */}
-          <section className="lg:col-span-1 bg-[#E6D2BA]/40 rounded shadow-sm p-6 flex flex-col border border-outline-variant/10">
+          <section className="lg:col-span-1 bg-sand-light/40 rounded shadow-sm p-6 flex flex-col border border-outline-variant/10">
             <div className="flex justify-between items-center mb-6">
               <h2 className="font-headline-sm text-headline-sm text-on-surface">Daily Rates</h2>
               <span className="text-[10px] uppercase tracking-wider text-on-surface-variant/70 bg-white/50 px-2 py-1 rounded">Live</span>
@@ -262,7 +262,7 @@ const AdminDashboard = () => {
                 </div>
                 <div className="mt-4 flex gap-2">
                   <input
-                    className="w-full bg-[#E6D2BA]/20 border border-outline-variant/20 rounded px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:ring-0 transition-colors font-body-base"
+                    className="w-full bg-sand-light/20 border border-outline-variant/20 rounded px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:ring-0 transition-colors font-body-base"
                     placeholder="Update Rate"
                     type="number"
                     value={goldInput}
@@ -294,7 +294,7 @@ const AdminDashboard = () => {
                 </div>
                 <div className="mt-4 flex gap-2">
                   <input
-                    className="w-full bg-[#E6D2BA]/20 border border-outline-variant/20 rounded px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:ring-0 transition-colors font-body-base"
+                    className="w-full bg-sand-light/20 border border-outline-variant/20 rounded px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:ring-0 transition-colors font-body-base"
                     placeholder="Update Rate"
                     type="number"
                     value={silverInput}

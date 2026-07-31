@@ -63,7 +63,7 @@ const AdminLiveRates = () => {
             <div className="bg-surface-dim border border-secondary/20 rounded-xl p-6 flex flex-col justify-between hover:shadow-sm transition-shadow">
               <div className="flex items-start justify-between mb-4">
                 <span className="font-label-caps text-outline text-[12px]">Gold Rate (22K)</span>
-                <span className="material-symbols-outlined text-[#d4af37]">workspace_premium</span>
+                <span className="material-symbols-outlined text-gold">workspace_premium</span>
               </div>
               <div>
                 {isRatesLoading ? (

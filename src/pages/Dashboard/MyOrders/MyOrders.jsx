@@ -102,14 +102,14 @@ const MyOrders = () => {
             return (
               <div 
                 key={order._id} 
-                className="p-6 md:p-8 bg-surface-container-low/50 border border-[#c8a684]/30 group cursor-pointer relative overflow-hidden transition-all duration-500 hover:bg-white hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)]"
+                className="p-6 md:p-8 bg-surface-container-low/50 border border-sand/30 group cursor-pointer relative overflow-hidden transition-all duration-500 hover:bg-white hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)]"
                 onClick={() => navigateToOrder(order._id)}
               >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
                   <div className="flex gap-4">
                     <div className="flex -space-x-4">
                       {(order.items || order.orderDetails || []).slice(0, 3).map((item, i) => (
-                        <div key={item._id || i} className="w-16 h-16 md:w-20 md:h-20 bg-surface-variant border border-[#c8a684]/30 flex items-center justify-center overflow-hidden rounded-sm">
+                        <div key={item._id || i} className="w-16 h-16 md:w-20 md:h-20 bg-surface-variant border border-sand/30 flex items-center justify-center overflow-hidden rounded-sm">
                           <img 
                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" 
                             src={item.img || item.image || "https://images.unsplash.com/photo-1599643478524-fb524b0d0f72?q=80&w=2835&auto=format&fit=crop"} 
@@ -118,7 +118,7 @@ const MyOrders = () => {
                         </div>
                       ))}
                       {(order.items || order.orderDetails || []).length > 3 && (
-                        <div className="w-16 h-16 md:w-20 md:h-20 border border-[#c8a684]/30 flex items-center justify-center overflow-hidden rounded-sm bg-surface-dim z-10">
+                        <div className="w-16 h-16 md:w-20 md:h-20 border border-sand/30 flex items-center justify-center overflow-hidden rounded-sm bg-surface-dim z-10">
                           <span className="font-body-base text-sm font-semibold text-primary">+{(order.items || order.orderDetails || []).length - 3}</span>
                         </div>
                       )}

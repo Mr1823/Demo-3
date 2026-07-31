@@ -260,8 +260,8 @@ const AdminAddProduct = () => {
             className="loginRegisterForm my-10 flex flex-col md:flex-row md:items-start md:justify-between gap-8 relative"
           >
             <div className="md:w-[65%]">
-              <div className="bg-surface-container-low/50 border border-[#c8a684]/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl">
-                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
+              <div className="bg-surface-container-low/50 border border-sand/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-sand/30 pb-4 mb-8">
                   Basic Information
                 </h4>
 
@@ -315,7 +315,7 @@ const AdminAddProduct = () => {
               </div>
 
               <div className="mt-10 shadow rounded-lg border pb-8">
-                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-sand/30 pb-4 mb-8">
                   Pricing & Specs
                 </h4>
 
@@ -407,8 +407,8 @@ const AdminAddProduct = () => {
             </div>
 
             <div className="md:w-[35%]">
-              <div className="bg-surface-container-low/50 border border-[#c8a684]/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl">
-                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
+              <div className="bg-surface-container-low/50 border border-sand/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-sand/30 pb-4 mb-8">
                   Upload Image
                 </h4>
                 <div>
@@ -454,8 +454,8 @@ const AdminAddProduct = () => {
                 </div>
               </div>
 
-              <div className="bg-surface-container-low/50 border border-[#c8a684]/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl mt-8">
-                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
+              <div className="bg-surface-container-low/50 border border-sand/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl mt-8">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-sand/30 pb-4 mb-8">
                   Product Details
                 </h4>
 
@@ -509,8 +509,8 @@ const AdminAddProduct = () => {
                 </div>
               </div>
 
-              <div className="bg-surface-container-low/50 border border-[#c8a684]/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl mt-8">
-                <h4 className="font-display-md text-headline-sm text-primary border-b border-[#c8a684]/30 pb-4 mb-8">
+              <div className="bg-surface-container-low/50 border border-sand/30 p-6 md:p-8 hover:bg-white transition-all rounded-xl mt-8">
+                <h4 className="font-display-md text-headline-sm text-primary border-b border-sand/30 pb-4 mb-8">
                   Product Attributes
                 </h4>
 

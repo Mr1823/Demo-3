@@ -8,10 +8,10 @@ const TakeToLoginModal = ({ isOpen, onClose, message }) => {
 
   return (
     <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in font-body-base">
-      <div className="bg-[#F4EADB] rounded-sm shadow-2xl max-w-[400px] w-full p-10 relative animate-fade-in-up text-center border border-[#e2d9ca]">
+      <div className="bg-[#F4EADB] rounded-sm shadow-2xl max-w-[400px] w-full p-10 relative animate-fade-in-up text-center border border-surface-dim">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-[#704c31]/70 hover:text-[#704c31] transition-colors material-symbols-outlined text-[20px]"
+          className="absolute top-5 right-5 text-primary/70 hover:text-primary transition-colors material-symbols-outlined text-[20px]"
         >
           close
         </button>

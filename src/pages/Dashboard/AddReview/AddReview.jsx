@@ -166,7 +166,7 @@ const AddReview = () => {
           </form>
         </div>
       ) : (
-        <div className="bg-[#E6D2BA] border border-primary/10 p-8 max-w-2xl flex flex-col gap-6 relative overflow-hidden">
+        <div className="bg-sand-light border border-primary/10 p-8 max-w-2xl flex flex-col gap-6 relative overflow-hidden">
           <div className="flex justify-between items-start border-b border-primary/10 pb-6">
             <div>
               <h3 className="font-display text-2xl text-on-surface mb-2">Your Review</h3>

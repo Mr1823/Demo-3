@@ -24,7 +24,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <article className="group flex flex-col gap-5 cursor-pointer" onClick={handleCardClick}>
-      <div className="relative aspect-[4/5] bg-surface-container-low overflow-hidden border border-[#D4AF37]/30 group-hover:border-[#D4AF37]/60 transition-colors duration-500 rounded-sm">
+      <div className="relative aspect-[4/5] bg-surface-container-low overflow-hidden border border-gold/30 group-hover:border-gold/60 transition-colors duration-500 rounded-sm">
         <img 
           alt={product.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 

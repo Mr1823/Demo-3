@@ -179,7 +179,7 @@ const DynamicProduct = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           {/* Left Column: Imagery */}
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <div className="bg-surface-container overflow-hidden border border-[#D4AF37]/30 aspect-square group relative rounded-sm">
+            <div className="bg-surface-container overflow-hidden border border-gold/30 aspect-square group relative rounded-sm">
               <ImageZoomLens
                 src={optimizeCloudinaryUrl(mainImage, { width: 800 }) || "https://placehold.co/800x800"}
                 alt={dynamicProduct.name} 
@@ -205,7 +205,7 @@ const DynamicProduct = () => {
                     className={`bg-surface-container border aspect-square overflow-hidden cursor-pointer group rounded-sm transition-colors ${
                       idx === activeImageIndex
                         ? "border-primary border-2"
-                        : "border-[#D4AF37]/30 hover:border-[#D4AF37]"
+                        : "border-gold/30 hover:border-gold"
                     }`}
                   >
                     <img
@@ -280,7 +280,7 @@ const DynamicProduct = () => {
                       <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
                         Quantity
                       </span>
-                      <div className="flex items-center border border-[#c8a684]/50 rounded-sm">
+                      <div className="flex items-center border border-sand/50 rounded-sm">
                         <button
                           type="button"
                           onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -302,7 +302,7 @@ const DynamicProduct = () => {
                             setQuantity(Math.min(Math.max(1, n), maxQuantity));
                           }}
                           disabled={isOutOfStock}
-                          className="w-14 h-11 text-center bg-transparent border-x border-[#c8a684]/50 font-body-base text-on-surface outline-none focus:bg-primary/5 disabled:opacity-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="w-14 h-11 text-center bg-transparent border-x border-sand/50 font-body-base text-on-surface outline-none focus:bg-primary/5 disabled:opacity-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         />
                         <button
                           type="button"
@@ -347,7 +347,7 @@ const DynamicProduct = () => {
                 )}
                 <button 
                   onClick={() => setIsQuoteModalOpen(true)}
-                  className="w-full bg-transparent border border-[#c8a684] text-primary py-5 font-button-text text-button-text tracking-widest hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"
+                  className="w-full bg-transparent border border-sand text-primary py-5 font-button-text text-button-text tracking-widest hover:bg-primary/5 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"
                 >
                   <span className="material-symbols-outlined text-sm">mail</span>
                   ENQUIRE NOW

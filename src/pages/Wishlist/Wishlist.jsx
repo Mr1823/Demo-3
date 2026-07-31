@@ -80,7 +80,7 @@ const Wishlist = () => {
                 const isQuoteOnly = productDetails.isQuoteOnly;
                 
                 return (
-                  <div key={item._id} className="group relative flex flex-col h-full bg-surface-container border border-[#c8a684]/30 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)] hover:border-[#8b6447]/60 hover:-translate-y-1">
+                  <div key={item._id} className="group relative flex flex-col h-full bg-surface-container border border-sand/30 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_40px_-10px_rgba(139,100,71,0.08)] hover:border-primary-container/60 hover:-translate-y-1">
                     <div className="aspect-[4/5] overflow-hidden relative">
                       <Link to={`/products/${item.productId}/description`}>
                         <img
@@ -142,7 +142,7 @@ const Wishlist = () => {
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in border border-[#c8a684]/30 bg-surface-container/30">
+            <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in border border-sand/30 bg-surface-container/30">
               <div className="mb-6 opacity-60">
                 <span className="material-symbols-outlined text-[48px] text-primary" style={{ fontVariationSettings: "'wght' 200" }}>auto_awesome</span>
               </div>

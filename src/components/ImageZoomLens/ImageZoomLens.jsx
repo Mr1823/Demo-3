@@ -45,7 +45,7 @@ const ImageZoomLens = ({ src, alt, zoomLevel = 2.5, onClick }) => {
 
       {lens.show && !isTouchDevice && (
         <div
-          className="absolute pointer-events-none rounded-full border border-[#D4AF37] shadow-lg bg-no-repeat bg-white z-20"
+          className="absolute pointer-events-none rounded-full border border-gold shadow-lg bg-no-repeat bg-white z-20"
           style={{
             width: `${LENS_SIZE}px`,
             height: `${LENS_SIZE}px`,
