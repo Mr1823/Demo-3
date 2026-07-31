@@ -23,6 +23,15 @@ const Checkout = () => {
   const location = useLocation();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
+  // "Buy Now" hands a single product straight to checkout without touching the
+  // cart. When present it replaces the cart for this session only; the cart
+  // itself is left untouched (and not cleared on success).
+  const buyNowItem = location.state?.buyNow || null;
+  const checkoutItems = buyNowItem ? [buyNowItem] : cartData;
+  const checkoutSubtotal = buyNowItem
+    ? (buyNowItem.price || 0) * (buyNowItem.quantity || 1)
+    : cartSubtotal?.subtotal || 0;
+
   const handlePlaceOrder = () => {
     setIsPlacingOrder(true);
     
@@ -50,7 +59,8 @@ const Checkout = () => {
       .post("/orders", {
         name: user?.name || userFromDB?.name || "Customer",
         paymentMethod,
-        items: cartData, // Backend expects `items`
+        items: checkoutItems, // Backend expects `items`
+        buyNow: !!buyNowItem,
         shippingAddress: userFromDB?.shippingAddress,
       })
       .then((res) => {
@@ -176,7 +186,7 @@ const Checkout = () => {
                   <div className="mt-6 pt-6 border-t border-outline-variant/30 px-2" onClick={(e) => e.stopPropagation()}>
                     <PaymentContext.Provider
                       value={{
-                        orderTotal: cartSubtotal?.subtotal,
+                        orderTotal: checkoutSubtotal,
                         setPaymentInfo: setPaymentInfo,
                       }}
                     >
@@ -234,7 +244,7 @@ const Checkout = () => {
                 (!paymentInfo && paymentMethod === "card") ||
                 !userFromDB?.shippingAddress ||
                 isPlacingOrder ||
-                !cartData?.length
+                !checkoutItems?.length
               }
             >
               {isPlacingOrder ? (
@@ -254,7 +264,7 @@ const Checkout = () => {
             
             {/* Item List */}
             <div className="space-y-6 mb-8 max-h-[400px] overflow-y-auto pr-2">
-              {cartData?.map((item) => (
+              {checkoutItems?.map((item) => (
                 <div key={item._id} className="flex items-center gap-4 group">
                   <div className="w-20 h-20 bg-white border border-outline-variant/20 overflow-hidden flex-shrink-0">
                     <img 
@@ -270,7 +280,7 @@ const Checkout = () => {
                   <p className="font-label-caps text-primary">₹{(item.price || item.discountPrice)?.toLocaleString("en-IN")}</p>
                 </div>
               ))}
-              {(!cartData || cartData.length === 0) && (
+              {(!checkoutItems || checkoutItems.length === 0) && (
                 <div className="text-center py-10 flex flex-col items-center">
                   <span className="material-symbols-outlined text-4xl text-outline-variant mb-2">shopping_bag</span>
                   <p className="font-body-base text-on-surface-variant">Your cart is empty</p>
@@ -282,7 +292,7 @@ const Checkout = () => {
             <div className="space-y-4 pt-8 border-t border-outline-variant/30">
               <div className="flex justify-between items-center text-on-surface-variant font-label-caps text-[12px]">
                 <span>SUBTOTAL</span>
-                <span>₹{(cartSubtotal?.subtotal || 0).toLocaleString("en-IN")}</span>
+                <span>₹{(checkoutSubtotal || 0).toLocaleString("en-IN")}</span>
               </div>
               <div className="flex justify-between items-center text-on-surface-variant font-label-caps text-[12px]">
                 <span>ESTIMATED SHIPPING</span>
@@ -300,7 +310,7 @@ const Checkout = () => {
               <div className="flex justify-between items-center pt-6 mt-4 border-t border-primary/20">
                 <span className="font-display-lg text-headline-sm text-primary">Total</span>
                 <span className="font-display-lg text-headline-sm text-primary">
-                  ₹{(cartSubtotal?.subtotal || 0).toLocaleString("en-IN")}
+                  ₹{(checkoutSubtotal || 0).toLocaleString("en-IN")}
                 </span>
               </div>
             </div>

@@ -22,6 +22,7 @@ const DynamicProduct = () => {
   const navigate = useNavigate();
   const [axiosSecure] = useAxiosSecure();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [quoteName, setQuoteName] = useState("");
   const [quoteMobile, setQuoteMobile] = useState("");
@@ -32,6 +33,7 @@ const DynamicProduct = () => {
     setDynamicProduct(filteredProduct);
     // Navigating to a different product must not keep the previous selection.
     setActiveImageIndex(0);
+    setQuantity(1);
   }, [products, id]);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const DynamicProduct = () => {
   const handleAddToCartWishlist = (where) => {
     if (user) {
       if (where === "cart") {
-        addToCart(dynamicProduct, 1);
+        addToCart(dynamicProduct, quantity);
       } else if (where === "wishlist") {
         if (presentInWishlist) {
           const wishlistItem = wishlistData.find(item => item.productId === id);
@@ -67,6 +69,29 @@ const DynamicProduct = () => {
       toast.error("Please login to add products into Cart or Wishlist.");
       navigate("/login", { state: { from: location } });
     }
+  };
+
+  // Buy Now bypasses the cart entirely: the chosen product/quantity is handed
+  // straight to checkout via router state (the server re-verifies pricing).
+  const handleBuyNow = () => {
+    if (!user) {
+      toast.error("Please login to continue with your purchase.");
+      navigate("/login", { state: { from: location } });
+      return;
+    }
+    navigate("/checkout", {
+      state: {
+        buyNow: {
+          productId: dynamicProduct.productId || dynamicProduct._id,
+          name: dynamicProduct.name,
+          img: dynamicProduct.img || dynamicProduct.images?.[0],
+          image: dynamicProduct.image,
+          category: dynamicProduct.category,
+          price: dynamicProduct.discountPrice || dynamicProduct.price,
+          quantity,
+        },
+      },
+    });
   };
 
   const handleQuoteRequest = async (e) => {
@@ -115,6 +140,12 @@ const DynamicProduct = () => {
   ].filter((src, i, arr) => src && arr.indexOf(src) === i);
 
   const mainImage = galleryImages[activeImageIndex] || galleryImages[0];
+
+  // Stock may be absent on legacy products; treat that as "not stock-tracked"
+  // rather than out of stock, so those products stay purchasable.
+  const hasStockField = typeof dynamicProduct.stock === "number";
+  const isOutOfStock = hasStockField && dynamicProduct.stock <= 0;
+  const maxQuantity = hasStockField && dynamicProduct.stock > 0 ? dynamicProduct.stock : 99;
 
   return (
     <div className="font-body-base bg-background text-on-surface min-h-screen">
@@ -234,13 +265,76 @@ const DynamicProduct = () => {
               {/* Actions */}
               <div className="flex flex-col gap-4 mb-12">
                 {!dynamicProduct.isQuoteOnly && (
-                  <button 
-                    onClick={() => handleAddToCartWishlist("cart")}
-                    className="w-full bg-primary-container text-white py-5 font-button-text text-button-text tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm"
-                  >
-                    <span className="material-symbols-outlined text-sm">shopping_bag</span>
-                    {presentInCart ? "ALREADY IN BAG" : "ADD TO BAG"}
-                  </button>
+                  <>
+                    {/* Quantity */}
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">
+                        Quantity
+                      </span>
+                      <div className="flex items-center border border-[#c8a684]/50 rounded-sm">
+                        <button
+                          type="button"
+                          onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                          disabled={quantity <= 1 || isOutOfStock}
+                          aria-label="Decrease quantity"
+                          className="w-11 h-11 flex items-center justify-center text-primary disabled:opacity-30 disabled:cursor-not-allowed hover:bg-primary/5 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">remove</span>
+                        </button>
+                        <input
+                          type="number"
+                          value={quantity}
+                          min={1}
+                          max={maxQuantity}
+                          aria-label="Quantity"
+                          onChange={(e) => {
+                            const n = parseInt(e.target.value, 10);
+                            if (Number.isNaN(n)) return;
+                            setQuantity(Math.min(Math.max(1, n), maxQuantity));
+                          }}
+                          disabled={isOutOfStock}
+                          className="w-14 h-11 text-center bg-transparent border-x border-[#c8a684]/50 font-body-base text-on-surface outline-none focus:bg-primary/5 disabled:opacity-40 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+                          disabled={quantity >= maxQuantity || isOutOfStock}
+                          aria-label="Increase quantity"
+                          className="w-11 h-11 flex items-center justify-center text-primary disabled:opacity-30 disabled:cursor-not-allowed hover:bg-primary/5 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[18px]">add</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {typeof dynamicProduct.stock === "number" && (
+                      <p className={`font-body-base text-sm -mt-2 ${isOutOfStock ? "text-error" : "text-on-surface-variant"}`}>
+                        {isOutOfStock
+                          ? "Currently out of stock."
+                          : dynamicProduct.stock <= 5
+                            ? `Only ${dynamicProduct.stock} left in stock.`
+                            : `${dynamicProduct.stock} in stock.`}
+                      </p>
+                    )}
+
+                    <button
+                      onClick={handleBuyNow}
+                      disabled={isOutOfStock}
+                      className="w-full bg-primary text-white py-5 font-button-text text-button-text tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100"
+                    >
+                      <span className="material-symbols-outlined text-sm">bolt</span>
+                      BUY NOW
+                    </button>
+
+                    <button
+                      onClick={() => handleAddToCartWishlist("cart")}
+                      disabled={isOutOfStock}
+                      className="w-full bg-primary-container text-white py-5 font-button-text text-button-text tracking-widest hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 rounded-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:brightness-100"
+                    >
+                      <span className="material-symbols-outlined text-sm">shopping_bag</span>
+                      {presentInCart ? "ALREADY IN BAG" : "ADD TO BAG"}
+                    </button>
+                  </>
                 )}
                 <button 
                   onClick={() => setIsQuoteModalOpen(true)}

@@ -123,8 +123,11 @@ router.post("/", verifyJWT, async (req, res) => {
 
     await newOrder.save();
 
-    // Clear cart after successful order
-    await Cart.deleteMany({ userId: req.user.userId });
+    // Clear cart after successful order — but a "Buy Now" purchase bypasses the
+    // cart entirely, so it must leave whatever the user had saved intact.
+    if (!req.body.buyNow) {
+      await Cart.deleteMany({ userId: req.user.userId });
+    }
 
     res.status(201).json({ success: true, data: newOrder });
   } catch (error) {
