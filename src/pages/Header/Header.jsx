@@ -51,6 +51,9 @@ const Header = () => {
 
   const cartCount = cartData?.length || 0;
 
+  // Minimum accessible touch target: 44x44 CSS px, icon centred inside.
+  const touchTarget = "relative flex items-center justify-center w-11 h-11 shrink-0";
+
   return (
     <>
       <header
@@ -119,31 +122,44 @@ const Header = () => {
                 </div>
               </div>
               
-              <div className="flex items-center gap-4 sm:gap-6">
-                <Link className={`${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all`} to="/wishlist">
+              {/* Each control is a >=44px touch target (WCAG 2.5.5 / Apple HIG);
+                  the icon stays 24px and is centred inside it. */}
+              <div className="flex items-center gap-0.5 sm:gap-3">
+                <Link
+                  className={`${touchTarget} ${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all`}
+                  to="/wishlist"
+                  aria-label="Wishlist"
+                >
                   <span className="material-symbols-outlined font-light">favorite</span>
                 </Link>
-                
-                <button 
-                  className={`${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all relative`} 
+
+                <button
+                  className={`${touchTarget} ${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all`}
                   onClick={() => setShowCartDrawer(true)}
+                  aria-label={`Cart${cartCount > 0 ? ` (${cartCount} items)` : ''}`}
                 >
                   <span className="material-symbols-outlined font-light">shopping_bag</span>
                   {cartCount > 0 && (
-                    <span className={`absolute -top-1.5 -right-1.5 text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center ${isHome && !scrolled ? 'bg-white text-primary' : 'bg-primary text-white'}`}>
+                    <span className={`absolute top-1.5 right-1.5 text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center ${isHome && !scrolled ? 'bg-white text-primary' : 'bg-primary text-white'}`}>
                       {cartCount}
                     </span>
                   )}
                 </button>
 
-                <Link className={`${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all`} to={user ? "/dashboard" : "/login"}>
+                <Link
+                  className={`${touchTarget} ${isHome && !scrolled ? 'text-white hover:scale-110' : 'text-on-surface hover:text-primary'} transition-all`}
+                  to={user ? "/dashboard" : "/login"}
+                  aria-label={user ? "My account" : "Sign in"}
+                >
                   <span className="material-symbols-outlined font-light">person</span>
                 </Link>
 
                 {/* Mobile menu toggle */}
-                <button 
-                  className={`lg:hidden ${isHome && !scrolled ? 'text-white' : 'text-on-surface hover:text-primary'} transition-colors`}
+                <button
+                  className={`lg:hidden ${touchTarget} ${isHome && !scrolled ? 'text-white' : 'text-on-surface hover:text-primary'} transition-colors`}
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                  aria-expanded={mobileMenuOpen}
                 >
                   <span className="material-symbols-outlined">{mobileMenuOpen ? 'close' : 'menu'}</span>
                 </button>
@@ -171,7 +187,7 @@ const Header = () => {
                     ${isActive(link.path) && link.label !== 'Categories'
                       ? 'text-primary'
                       : 'text-on-surface-variant'
-                    } font-button-text text-button-text uppercase tracking-[0.2em] py-2
+                    } font-button-text text-button-text uppercase tracking-[0.2em] flex items-center min-h-11
                   `;
                   
                 if (link.path.includes('#')) {

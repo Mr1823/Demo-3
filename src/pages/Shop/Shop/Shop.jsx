@@ -63,9 +63,9 @@ const Shop = () => {
         {/* Header Area: Breadcrumbs & Title */}
         <section className="flex flex-col items-center text-center gap-3">
           <nav className="font-body-base text-[13px] text-on-surface-variant">
-            <a className="hover:text-primary transition-colors" href="/">Home</a>
+            <a className="hover:text-primary transition-colors inline-flex items-center min-h-11" href="/">Home</a>
             <span className="mx-2 text-outline-variant">/</span>
-            <a className="hover:text-primary transition-colors" href="/shop">Collections</a>
+            <a className="hover:text-primary transition-colors inline-flex items-center min-h-11" href="/shop">Collections</a>
             <span className="mx-2 text-outline-variant">/</span>
             <span className="text-primary font-medium">All Jewellery</span>
           </nav>
@@ -85,7 +85,7 @@ const Shop = () => {
             <div className="relative">
               <button
                 onClick={() => toggleFilter('metal')}
-                className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
+                className="flex items-center gap-4 min-h-11 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
               >
                 Metal <span className="material-symbols-outlined text-sm">expand_more</span>
               </button>
@@ -102,7 +102,7 @@ const Shop = () => {
             <div className="relative">
               <button
                 onClick={() => toggleFilter('category')}
-                className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
+                className="flex items-center gap-4 min-h-11 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
               >
                 Category <span className="material-symbols-outlined text-sm">expand_more</span>
               </button>
@@ -131,7 +131,7 @@ const Shop = () => {
             <div className="relative">
               <button
                 onClick={() => toggleFilter('price')}
-                className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
+                className="flex items-center gap-4 min-h-11 font-label-caps text-label-caps text-on-surface uppercase tracking-widest hover:text-primary transition-colors"
               >
                 Price <span className="material-symbols-outlined text-sm">expand_more</span>
               </button>
@@ -151,7 +151,7 @@ const Shop = () => {
             <span className="uppercase tracking-widest">Sort by:</span>
             <button
               onClick={() => toggleFilter('sort')}
-              className="flex items-center gap-1 text-primary hover:text-primary-container transition-colors font-bold uppercase tracking-widest"
+              className="flex items-center gap-1 min-h-11 text-primary hover:text-primary-container transition-colors font-bold uppercase tracking-widest"
             >
               {sortParam === 'newest' ? 'Newest' : sortParam === 'price_low_high' ? 'Price: Low to High' : sortParam === 'price_high_low' ? 'Price: High to Low' : 'Featured'}
               <span className="material-symbols-outlined text-sm">sort</span>

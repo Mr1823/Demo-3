@@ -52,20 +52,20 @@ const Footer = () => {
           <div className="md:col-span-2 space-y-8">
             <h4 className="font-label-caps text-xs text-primary uppercase tracking-[0.2em] font-bold">Quick Links</h4>
             <nav className="flex flex-col gap-4">
-              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Home</Link>
-              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/shop">Shop</Link>
-              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/shop?category=gold">Categories</Link>
-              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/about">About</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/">Home</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/shop">Shop</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/shop?category=gold">Categories</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/about">About</Link>
             </nav>
           </div>
 
           <div className="md:col-span-2 space-y-8">
             <h4 className="font-label-caps text-xs text-primary uppercase tracking-[0.2em] font-bold">Policies</h4>
             <nav className="flex flex-col gap-4">
-              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Privacy Policy</Link>
-              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Terms of Service</Link>
-              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Shipping Info</Link>
-              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors" to="/">Returns & Exchange</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/">Privacy Policy</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/">Terms of Service</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/">Shipping Info</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/">Returns & Exchange</Link>
             </nav>
           </div>
 

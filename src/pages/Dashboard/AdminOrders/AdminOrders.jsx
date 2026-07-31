@@ -148,8 +148,8 @@ const AdminOrders = () => {
                       />
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link to="/order-success" state={{ from: location, orderId: order._id }}>
-                        <button className="px-4 py-1.5 rounded border border-outline-variant/50 text-[12px] font-medium text-outline hover:text-primary hover:border-primary transition-all">
+                      <Link className="inline-flex" to="/order-success" state={{ from: location, orderId: order._id }}>
+                        <button className="inline-flex items-center justify-center min-h-11 px-4 py-2 rounded border border-outline-variant/50 text-[12px] font-medium text-outline hover:text-primary hover:border-primary transition-all">
                           View
                         </button>
                       </Link>

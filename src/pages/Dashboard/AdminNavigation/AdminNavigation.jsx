@@ -129,9 +129,11 @@ const AdminNavigation = () => {
             </div>
             <button
               onClick={handleLogout}
-              className="material-symbols-outlined text-outline hover:text-primary shrink-0"
+              aria-label="Log out"
+              title="Log out"
+              className="flex items-center justify-center w-11 h-11 -mr-2 text-outline hover:text-primary shrink-0"
             >
-              logout
+              <span className="material-symbols-outlined">logout</span>
             </button>
           </div>
         </div>

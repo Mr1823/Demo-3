@@ -192,10 +192,12 @@ const AdminAddProduct = () => {
         <div className="text-sm breadcrumbs">
           <ul>
             <li>
-              <Link to={"/dashboard/adminDashboard"}>Dashboard</Link>
+              <Link className="inline-flex items-center min-h-11" to={"/dashboard/adminDashboard"}>
+                Dashboard
+              </Link>
             </li>
             <li>
-              <Link to="/dashboard/adminAddProducts">
+              <Link className="inline-flex items-center min-h-11" to="/dashboard/adminAddProducts">
                 {productId ? "Edit Product" : "Add Products"}
               </Link>
             </li>

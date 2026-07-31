@@ -43,7 +43,7 @@ const CentennialExcellence = () => {
                   <div className="absolute bottom-0 left-0 p-10 text-white">
                     <span className="font-label-caps text-label-caps block mb-3 tracking-widest">THE CRAFT</span>
                     <h3 className="font-headline-md text-headline-md mb-6">{categories[0].categoryName}</h3>
-                    <button className="font-button-text text-button-text border-b border-white pb-1 hover:border-primary-fixed transition-colors">Explore the Atelier</button>
+                    <button className="font-button-text text-button-text border-b border-white pb-1 hover:border-primary-fixed transition-colors inline-flex items-center min-h-11">Explore the Atelier</button>
                   </div>
                 </Link>
               ) : (
@@ -64,7 +64,7 @@ const CentennialExcellence = () => {
                     <div className="aspect-video overflow-hidden mb-6">
                       <img src={getCatImg(categories[1])} alt={categories[1].categoryName} className="w-full h-full object-cover" />
                     </div>
-                    <Link to={`/shop?category=${categories[1].categoryName.toLowerCase()}`} className="font-button-text text-button-text text-primary hover:underline">Shop the Collection</Link>
+                    <Link to={`/shop?category=${categories[1].categoryName.toLowerCase()}`} className="font-button-text text-button-text text-primary hover:underline inline-flex items-center min-h-11">Shop the Collection</Link>
                   </>
                 ) : (
                    <div className="text-on-surface-variant text-center">No category found</div>

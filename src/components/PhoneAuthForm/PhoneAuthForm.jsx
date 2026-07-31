@@ -219,7 +219,7 @@ const PhoneAuthForm = ({
               <Link
                 to={bottomLinkTo}
                 state={{ from: location }}
-                className="text-primary font-semibold hover:text-secondary transition-colors"
+                className="text-primary font-semibold hover:text-secondary transition-colors inline-flex items-center min-h-11"
               >
                 {bottomLinkLabel}
               </Link>
