@@ -13,8 +13,10 @@ const AdminLogin = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-  let from = location.state?.from?.pathname || "/";
-  from = from?.includes("dashboard") ? "/" : from;
+  // This form is the admin entry point, so a successful sign-in belongs in the
+  // admin panel. The previous logic rewrote any dashboard destination to "/",
+  // which dumped admins on the public storefront after logging in.
+  const from = location.state?.from?.pathname || "/dashboard/adminDashboard";
 
   const {
     register,
