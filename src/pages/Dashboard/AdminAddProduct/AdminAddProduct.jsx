@@ -189,20 +189,29 @@ const AdminAddProduct = () => {
   return (
     <div className="flex-1 overflow-y-auto p-6 md:p-margin-desktop bg-background custom-scrollbar w-full">
       <div>
-        <div className="text-sm breadcrumbs">
-          <ul>
+        <nav aria-label="Breadcrumb" className="text-sm">
+          <ol className="flex items-center gap-2 text-on-surface-variant">
             <li>
-              <Link className="inline-flex items-center min-h-11" to={"/dashboard/adminDashboard"}>
+              <Link
+                className="inline-flex items-center min-h-11 hover:text-primary transition-colors"
+                to={"/dashboard/adminDashboard"}
+              >
                 Dashboard
               </Link>
             </li>
+            <li aria-hidden="true" className="text-outline-variant">
+              /
+            </li>
             <li>
-              <Link className="inline-flex items-center min-h-11" to="/dashboard/adminAddProducts">
+              <Link
+                className="inline-flex items-center min-h-11 hover:text-primary transition-colors"
+                to="/dashboard/adminAddProducts"
+              >
                 {productId ? "Edit Product" : "Add Products"}
               </Link>
             </li>
-          </ul>
-        </div>
+          </ol>
+        </nav>
 
         <h2
           className="mt-1 font-bold text-3xl"
@@ -215,7 +224,7 @@ const AdminAddProduct = () => {
       <div>
         {/* Debug: Show all form errors to catch hidden validation issues */}
         {Object.keys(errors).length > 0 && (
-          <div className="alert alert-error mb-8 rounded-lg text-white">
+          <div className="bg-error-container text-on-error-container mb-8 rounded-lg p-4 text-sm">
             <span className="font-bold">Form Validation Errors:</span>
             <pre className="text-xs text-left overflow-auto mt-2 p-2 bg-black/20 rounded">
               {JSON.stringify(
@@ -234,11 +243,11 @@ const AdminAddProduct = () => {
         {productError && (
           <div
             role="alert"
-            className="alert alert-error mb-8 rounded-lg text-white "
+            className="bg-error-container text-on-error-container mb-8 rounded-lg p-4 text-sm font-semibold flex items-center gap-3"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="stroke-current shrink-0 h-6 w-6"
+              className="stroke-current shrink-0 h-6 w-6 cursor-pointer"
               fill="none"
               viewBox="0 0 24 24"
               onClick={() => setProductError(null)}
@@ -325,7 +334,7 @@ const AdminAddProduct = () => {
                     <input
                       type="checkbox"
                       {...register("isQuoteOnly")}
-                      className="checkbox checkbox-primary"
+                      className="w-5 h-5 shrink-0 rounded-sm border border-outline-variant accent-primary cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40"
                     />
                     <span className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase font-bold">Price on Request (Quote Only)</span>
                   </label>
@@ -438,7 +447,7 @@ const AdminAddProduct = () => {
 
                   <input
                     type="file"
-                    className="file-input file-input-bordered w-full max-w-xs mt-4 mx-auto block"
+                    className="w-full max-w-xs mt-4 mx-auto block text-sm text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-sm file:border-0 file:font-label-caps file:text-[11px] file:uppercase file:tracking-[0.1em] file:bg-surface-container file:text-on-surface hover:file:bg-primary hover:file:text-white file:cursor-pointer file:transition-colors"
                     accept=".jpg, .jpeg, .png"
                     name="productImg"
                     {...register("productImg", {

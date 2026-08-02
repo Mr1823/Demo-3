@@ -153,7 +153,9 @@ const AdminManageUsers = () => {
                             {user.role !== "ADMIN" && (
                               <div className="tooltip" data-tip="Make Admin">
                                 <button
-                                  className="btn btn-square btn-sm bg-transparent border-0 text-outline hover:text-primary hover:bg-surface-container transition-colors"
+                                  type="button"
+                                  aria-label={`Make ${user.name || user.email} an admin`}
+                                  className="inline-flex items-center justify-center w-11 h-11 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors"
                                   onClick={() => handleMakeAdmin(user._id)}
                                 >
                                   <GrUserAdmin className="text-lg" />
@@ -163,7 +165,9 @@ const AdminManageUsers = () => {
 
                             <div className="tooltip" data-tip="Remove User">
                               <button
-                                className="btn btn-square btn-sm bg-transparent border-0 text-error/70 hover:text-error hover:bg-error-container/50 transition-colors"
+                                type="button"
+                                aria-label={`Remove ${user.name || user.email}`}
+                                className="inline-flex items-center justify-center w-11 h-11 rounded text-error/70 hover:text-error hover:bg-error-container/50 transition-colors"
                                 onClick={() => handleDeleteUser(user._id)}
                               >
                                 <GrTrash className="text-lg" />

@@ -171,7 +171,9 @@ const AdminCategories = () => {
                     <td className="px-6 py-4 text-right">
                       <div className="tooltip" data-tip="Edit">
                         <button
-                          className="btn btn-square btn-sm bg-transparent border-0 text-outline hover:text-primary hover:bg-surface-container transition-colors"
+                          type="button"
+                          aria-label={`Edit ${category.name || "category"}`}
+                          className="inline-flex items-center justify-center w-11 h-11 rounded text-outline hover:text-primary hover:bg-surface-container transition-colors"
                           onClick={() => handleOpenUpdateCategory(category)}
                         >
                           <FiEdit2 className="text-lg" />
@@ -243,7 +245,8 @@ const AdminCategories = () => {
         <div className="modal-box bg-surface border border-outline-variant/20 rounded-xl p-8 max-w-md">
           <form method="dialog">
             <button
-              className="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-outline"
+              aria-label="Close"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-full text-outline hover:text-on-surface hover:bg-surface-container transition-colors absolute right-2 top-2"
               onClick={() => setSelectedCategory({})}
             >
               ✕
@@ -283,7 +286,7 @@ const AdminCategories = () => {
             </div>
 
             <div className="pt-4 flex justify-end">
-              <button type="submit" className="bg-primary text-white px-6 py-2.5 rounded font-button-text hover:bg-primary/90 transition-colors">
+              <button type="submit" className="bg-primary text-white px-6 py-3 min-h-11 rounded font-button-text hover:bg-primary/90 transition-colors">
                 Update Category
               </button>
             </div>

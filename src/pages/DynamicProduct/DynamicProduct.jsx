@@ -396,9 +396,10 @@ const DynamicProduct = () => {
         <dialog id="quote_modal" className="modal modal-open">
           <div className="modal-box bg-surface border border-outline-variant/30 rounded-sm">
             <form method="dialog">
-              <button 
+              <button
+                aria-label="Close quote request"
                 onClick={() => setIsQuoteModalOpen(false)}
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-on-surface"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-full text-on-surface hover:bg-surface-container transition-colors absolute right-2 top-2"
               >
                 ✕
               </button>
@@ -449,7 +450,12 @@ const DynamicProduct = () => {
       <dialog id="imageModal" className="modal">
         <div className="modal-box w-11/12 max-w-5xl bg-surface p-2 rounded-sm relative overflow-hidden h-[80vh]">
           <form method="dialog">
-            <button className="btn btn-sm btn-circle bg-black/50 text-white border-none absolute right-4 top-4 hover:bg-black/70 z-50">✕</button>
+            <button
+              aria-label="Close zoomed image"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors absolute right-4 top-4 z-50"
+            >
+              ✕
+            </button>
           </form>
           <img src={optimizeCloudinaryUrl(mainImage)} className="w-full h-full object-contain" alt="Zoomed Product" />
         </div>
