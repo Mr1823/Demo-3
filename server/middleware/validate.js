@@ -207,10 +207,17 @@ export const newsletterSchema = z.object({
 
 // ─── User profile ────────────────────────────────────────────────────────────
 
+// Not passthrough: this is a self-service endpoint, so any key it forwards is a
+// key the caller controls on their own user document. The handler allowlists
+// today, but stripping unknown keys here means a later change to
+// `findByIdAndUpdate(userId, req.body)` cannot become privilege escalation.
+// role and passwordHash are deliberately absent — role changes go through the
+// requireAdmin route.
 export const updateProfileSchema = z.object({
   name: z.string().min(1, "Name is required").max(100).optional(),
   phone: z.string().max(20).optional(),
-}).passthrough();
+  photoURL: z.string().max(500).optional(),
+});
 
 export const changePasswordSchema = z.object({
   currentPassword: requiredString("Current password is required"),
