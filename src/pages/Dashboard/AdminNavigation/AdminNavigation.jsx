@@ -114,6 +114,14 @@ const AdminNavigation = () => {
             <span className="material-symbols-outlined text-[20px]">group</span>
             <span className="font-button-text">Users</span>
           </NavLink>
+          <NavLink to="/dashboard/adminMessages" className={navLinkClass("/adminMessages")}>
+            <span className="material-symbols-outlined text-[20px]">mail</span>
+            <span className="font-button-text">Messages</span>
+          </NavLink>
+          <NavLink to="/dashboard/adminSubscribers" className={navLinkClass("/adminSubscribers")}>
+            <span className="material-symbols-outlined text-[20px]">mark_email_read</span>
+            <span className="font-button-text">Subscribers</span>
+          </NavLink>
         </nav>
 
         <div className="p-4 border-t border-outline-variant/30 mt-auto">

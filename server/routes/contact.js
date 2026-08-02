@@ -9,12 +9,10 @@ const router = express.Router();
 // POST /api/contact — submit a contact message (public — visitors may not be logged in)
 router.post("/", publicFormLimiter, validate(contactSchema), async (req, res) => {
   try {
-    const { name, email, message } = req.body;
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: "Name, email, and message are required" });
-    }
+    // Presence and shape are already guaranteed by validate(contactSchema).
+    const { name, email, phone, subject, message } = req.body;
 
-    const contactMessage = await ContactMessage.create({ name, email, message });
+    const contactMessage = await ContactMessage.create({ name, email, phone, subject, message });
     res.status(201).json({ success: true, data: contactMessage });
   } catch (error) {
     console.error("Create contact message error:", error);

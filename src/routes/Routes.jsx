@@ -10,6 +10,9 @@ import ProductPageLayout from "../layouts/ProductPageLayout";
 import ProductDescription from "../pages/DynamicProduct/ProductDescription/ProductDescription";
 import ProductReviews from "../pages/DynamicProduct/ProductReviews/ProductReviews";
 import Shop from "../pages/Shop/Shop/Shop";
+import Contact from "../pages/Contact/Contact";
+import AdminMessages from "../pages/Dashboard/AdminMessages/AdminMessages";
+import AdminSubscribers from "../pages/Dashboard/AdminSubscribers/AdminSubscribers";
 import Wishlist from "../pages/Wishlist/Wishlist";
 import PrivateRoute from "./PrivateRoute/PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
@@ -66,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: "about",
         element: <About />,
+      },
+      {
+        path: "contact",
+        element: <Contact />,
       },
       {
         path: "wishlist",
@@ -173,6 +180,22 @@ const router = createBrowserRouter([
             element: (
               <AdminRoute>
                 <AdminManageUsers />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "adminMessages",
+            element: (
+              <AdminRoute>
+                <AdminMessages />
+              </AdminRoute>
+            ),
+          },
+          {
+            path: "adminSubscribers",
+            element: (
+              <AdminRoute>
+                <AdminSubscribers />
               </AdminRoute>
             ),
           },

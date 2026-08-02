@@ -56,6 +56,7 @@ const Footer = () => {
               <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/shop">Shop</Link>
               <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/shop?category=gold">Categories</Link>
               <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/about">About</Link>
+              <Link className="font-body-base text-on-surface-variant hover:text-primary transition-colors flex items-center min-h-11" to="/contact">Contact</Link>
             </nav>
           </div>
 

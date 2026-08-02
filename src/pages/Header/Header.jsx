@@ -47,6 +47,7 @@ const Header = () => {
     { path: '/shop', label: 'Shop' },
     { path: '/categories', label: 'Categories' },
     { path: '/about', label: 'About' },
+    { path: '/contact', label: 'Contact' },
   ];
 
   const cartCount = cartData?.length || 0;
