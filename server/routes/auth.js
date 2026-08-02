@@ -25,6 +25,30 @@ const ACCESS_TOKEN_EXPIRY = "30m";
 const REFRESH_TOKEN_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
 const BCRYPT_SALT_ROUNDS = 12;
 
+// The fixed OTP that lets any caller sign in as any phone number. It exists so
+// the app is usable while MSG91 is blocked on DLT registration, and it must
+// stay off unless explicitly turned on.
+const TEST_OTP = "123456";
+
+// Fails CLOSED: only the exact string "true" enables it. A missing, empty or
+// misspelt value — the realistic mistake of forgetting to set it on a server —
+// leaves it off. Deliberately NOT keyed on NODE_ENV: the old code accepted the
+// test OTP whenever MSG91 was unconfigured, which is exactly the production
+// state, so production accepted 123456 for every number.
+const isTestOtpEnabled = () => process.env.ALLOW_TEST_OTP === "true";
+
+const isSmsConfigured = () =>
+  Boolean(process.env.MSG91_AUTH_KEY && process.env.MSG91_TEMPLATE_ID);
+
+// Announce the bypass loudly at startup so an operator cannot leave it on by
+// accident without seeing it in the logs.
+if (isTestOtpEnabled()) {
+  console.warn(
+    "⚠️  ALLOW_TEST_OTP=true — the fixed test OTP (123456) is accepted for ALL phone numbers. " +
+      "This is an authentication bypass. Never set this in production."
+  );
+}
+
 /**
  * Generate an access token (short-lived JWT).
  */
@@ -70,14 +94,23 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
       return res.status(400).json({ error: "Phone number is required" });
     }
 
-    // Generate a 6-digit OTP (use 123456 as fallback for dev/testing)
     const authKey = process.env.MSG91_AUTH_KEY;
     const templateId = process.env.MSG91_TEMPLATE_ID;
-    const isDev = process.env.NODE_ENV === "development";
-    
-    const otp = (authKey && templateId && !isDev) 
+    const smsConfigured = isSmsConfigured();
+    const testOtp = isTestOtpEnabled();
+
+    // Neither a real SMS channel nor the deliberate test bypass: there is no way
+    // to deliver a code, so refuse rather than write an OTP nobody can receive.
+    // The message reveals nothing about whether the number is registered.
+    if (!smsConfigured && !testOtp) {
+      return res.status(503).json({
+        error: "OTP delivery is temporarily unavailable. Please try again later.",
+      });
+    }
+
+    const otp = smsConfigured
       ? Math.floor(100000 + Math.random() * 900000).toString()
-      : "123456";
+      : TEST_OTP;
 
     const otpHash = await bcrypt.hash(otp, BCRYPT_SALT_ROUNDS);
     const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
@@ -91,8 +124,7 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
     user.otpExpiresAt = otpExpiresAt;
     await user.save();
 
-    // Send via MSG91 (if keys configured and not in dev mode)
-    if (authKey && templateId && !isDev) {
+    if (smsConfigured) {
       try {
         await axios.post(
           `https://control.msg91.com/api/v5/otp?template_id=${templateId}&mobile=${phone}&authkey=${authKey}&otp=${otp}`,
@@ -100,11 +132,14 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
         );
       } catch (smsError) {
         console.error("MSG91 Error:", smsError?.response?.data || smsError.message);
-        // Even if SMS fails (e.g. pending DLT), we allow login in dev using the generated OTP,
-        // but in production, we should probably throw. We'll just log it.
+        // The OTP is stored; if delivery failed the user simply cannot verify.
+        // We do not fall back to the test code here.
       }
     } else {
-      console.log(`[DEV MODE] OTP for ${phone} is: ${otp}`);
+      // Reached only when testOtp is on. Keep it visible in the logs.
+      console.warn(
+        `⚠️  [TEST OTP] MSG91 not configured — accepting fixed OTP for ${phone} because ALLOW_TEST_OTP=true.`
+      );
     }
 
     res.json({ success: true, message: "OTP sent successfully" });
