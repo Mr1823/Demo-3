@@ -39,9 +39,7 @@ const Checkout = () => {
     // If we reach here, it means they clicked Complete Order after Razorpay success,
     // or they are using COD/UPI.
     if (paymentMethod === "card" && paymentInfo?.status === "success") {
-      // In a fully integrated flow, Payment.jsx should redirect.
-      // But if they click here, just redirect them and clear cart.
-      axiosSecure.delete("/orders/delete-cart-items").then(() => {
+      const goToConfirmation = () => {
         navigate("/order-success", {
           state: {
             orderStatus: "success",
@@ -51,7 +49,17 @@ const Checkout = () => {
         });
         setPaymentInfo(null);
         refetch();
-      });
+      };
+
+      // A "Buy Now" checkout never involved the cart, so clearing it here would
+      // silently discard items the customer had not bought yet. This mirrors
+      // the COD path, where the backend skips the cart wipe when buyNow is set.
+      if (buyNowItem) {
+        goToConfirmation();
+        return;
+      }
+
+      axiosSecure.delete("/orders/delete-cart-items").then(goToConfirmation);
       return;
     }
 
@@ -186,7 +194,13 @@ const Checkout = () => {
                   <div className="mt-6 pt-6 border-t border-outline-variant/30 px-2" onClick={(e) => e.stopPropagation()}>
                     <PaymentContext.Provider
                       value={{
+                        // The items and the total must come from the same
+                        // source: Payment used to read the cart itself, so a
+                        // "Buy Now" checkout billed the cart while showing the
+                        // Buy Now total.
                         orderTotal: checkoutSubtotal,
+                        checkoutItems: checkoutItems,
+                        isBuyNow: !!buyNowItem,
                         setPaymentInfo: setPaymentInfo,
                       }}
                     >

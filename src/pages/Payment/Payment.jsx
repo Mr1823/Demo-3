@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import useCart from "../../hooks/useCart";
 import useUserInfo from "../../hooks/useUserInfo";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuthContext from "../../hooks/useAuthContext";
@@ -7,13 +6,18 @@ import { PaymentContext } from "../Checkout/Checkout";
 
 const RAZORPAY_SRC = "https://checkout.razorpay.com/v1/checkout.js";
 
+// Line totals are floating point, so compare against the displayed total with
+// a paisa of tolerance rather than strict equality.
+const TOTAL_TOLERANCE = 0.01;
+
 const Payment = () => {
-  const { cartData, cartSubtotal } = useCart();
   const [userFromDB] = useUserInfo();
   const [axiosSecure] = useAxiosSecure();
   const { user } = useAuthContext();
   const customerName = user?.name || userFromDB?.name || user?.displayName || "Customer";
-  const { orderTotal, setPaymentInfo } = useContext(PaymentContext);
+  // Items come from the checkout context, never from the cart directly — the
+  // cart is not what is being bought when the customer used "Buy Now".
+  const { orderTotal, checkoutItems, setPaymentInfo } = useContext(PaymentContext);
 
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [loadingPayment, setLoadingPayment] = useState(false);
@@ -62,8 +66,31 @@ const Payment = () => {
     setLoadingPayment(true);
     setPaymentError(null);
 
-    if (!cartData || !cartData.length) {
-      setPaymentError("Your cart is empty.");
+    if (!checkoutItems || !checkoutItems.length) {
+      setPaymentError("There is nothing to pay for. Please add an item and try again.");
+      setLoadingPayment(false);
+      return;
+    }
+
+    // Quote-only pieces are priced on request, so there is no amount to charge.
+    // They must never reach Razorpay.
+    if (checkoutItems.some((item) => item.price == null || item.isQuoteOnly)) {
+      setPaymentError(
+        "This order contains a price-on-request item, which cannot be paid for online. Please request a quote instead."
+      );
+      setLoadingPayment(false);
+      return;
+    }
+
+    // The amount the customer is about to authorise must equal the amount shown
+    // on the button. If these disagree, the items and the total came from
+    // different places and the order would be wrong.
+    const itemsTotal = checkoutItems.reduce(
+      (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
+      0
+    );
+    if (Math.abs(itemsTotal - (orderTotal || 0)) > TOTAL_TOLERANCE) {
+      setPaymentError("Your order total does not match the items in it. Please refresh and try again.");
       setLoadingPayment(false);
       return;
     }
@@ -82,7 +109,7 @@ const Payment = () => {
       let dbOrderId = null;
       try {
         const response = await axiosSecure.post("/payment/create-order", {
-          items: cartData,
+          items: checkoutItems,
           shippingAddress: userFromDB?.shippingAddress,
           name: customerName,
         });
