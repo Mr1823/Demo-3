@@ -18,7 +18,11 @@ const AdminOrders = () => {
   const { user, isAuthLoading } = useAuthContext();
   
   const { data: allOrders, isLoading: isOrdersLoading, refetch } = useQuery({
-    enabled: !isAuthLoading && user !== null && user !== undefined && userFromDB?.admin === true,
+    enabled:
+      !isAuthLoading &&
+      user !== null &&
+      user !== undefined &&
+      (userFromDB?.admin === true || userFromDB?.role === "ADMIN"),
     queryKey: ["all-orders"],
     queryFn: async () => {
       const result = await axiosSecure.get("/orders/admin/all");
@@ -39,6 +43,34 @@ const AdminOrders = () => {
       }
     })
     .catch((e) => console.error(e));
+  };
+
+  // The 15-day delivery window is computed server-side from the approval time;
+  // this only reports the outcome.
+  const handleApproval = (orderId, approvalStatus) => {
+    let rejectionReason;
+    if (approvalStatus === "REJECTED") {
+      rejectionReason = window.prompt("Why is this order being declined? The customer will see this.");
+      if (rejectionReason === null) return;
+      if (!rejectionReason.trim()) {
+        toast.error("A reason is required when declining an order");
+        return;
+      }
+    }
+
+    axiosSecure
+      .patch(`/orders/${orderId}/approval`, { approvalStatus, rejectionReason })
+      .then((res) => {
+        if (res.data.success) {
+          toast.success(
+            approvalStatus === "APPROVED"
+              ? "Order approved — 15-day delivery window started"
+              : "Order declined"
+          );
+          refetch();
+        }
+      })
+      .catch((e) => toast.error(e.response?.data?.error || "Failed to update approval"));
   };
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,6 +124,8 @@ const AdminOrders = () => {
                   <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Customer</th>
                   <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Payment</th>
                   <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Total</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Approval</th>
+                  <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Expected Delivery</th>
                   <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Status</th>
                   <th className="px-6 py-4 font-label-caps text-outline text-[11px] text-right">Action</th>
                 </tr>
@@ -99,7 +133,7 @@ const AdminOrders = () => {
               <tbody className="divide-y divide-outline-variant/20">
                 {isOrdersLoading ? (
                   <tr>
-                    <td colSpan="7" className="px-6 py-10 text-center text-outline">Loading orders...</td>
+                    <td colSpan="9" className="px-6 py-10 text-center text-outline">Loading orders...</td>
                   </tr>
                 ) : allOrders?.slice((currentPage - 1) * pageProductLimit, currentPage * pageProductLimit).map((order) => (
                   <tr key={order._id} className="hover:bg-white/40 transition-colors group">
@@ -133,6 +167,46 @@ const AdminOrders = () => {
                       <p className="font-button-text">₹ {(order.totalAmount || 0).toLocaleString("en-IN")}</p>
                     </td>
                     <td className="px-6 py-4">
+                      {(order.approvalStatus || "PENDING") === "PENDING" ? (
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleApproval(order._id, "APPROVED")}
+                            className="inline-flex items-center justify-center min-h-11 px-3 py-2 rounded border border-success/40 text-[12px] font-medium text-success hover:bg-success hover:text-white transition-all"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleApproval(order._id, "REJECTED")}
+                            className="inline-flex items-center justify-center min-h-11 px-3 py-2 rounded border border-error/40 text-[12px] font-medium text-error hover:bg-error hover:text-white transition-all"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      ) : order.approvalStatus === "APPROVED" ? (
+                        <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium uppercase tracking-wider border bg-success/10 text-success border-success/20">
+                          Approved
+                        </span>
+                      ) : (
+                        <div className="flex flex-col gap-1">
+                          <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium uppercase tracking-wider border bg-error/10 text-error border-error/20 w-fit">
+                            Rejected
+                          </span>
+                          {order.rejectionReason && (
+                            <span className="text-[11px] text-outline max-w-[180px]">{order.rejectionReason}</span>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-[13px] text-on-surface-variant">
+                        {order.expectedDeliveryDate
+                          ? new Date(order.expectedDeliveryDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+                          : "—"}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
                       <Select
                         options={[
                           { value: "processing", label: "PROCESSING" },
@@ -158,7 +232,7 @@ const AdminOrders = () => {
                 ))}
                 {allOrders?.length === 0 && (
                   <tr>
-                    <td colSpan="7" className="px-6 py-10 text-center text-outline">No orders found.</td>
+                    <td colSpan="9" className="px-6 py-10 text-center text-outline">No orders found.</td>
                   </tr>
                 )}
               </tbody>

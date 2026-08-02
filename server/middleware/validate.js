@@ -123,6 +123,16 @@ export const orderStatusSchema = z.object({
   ),
 });
 
+export const orderApprovalSchema = z.object({
+  approvalStatus: z.enum(["APPROVED", "REJECTED"], {
+    message: "Approval status must be APPROVED or REJECTED",
+  }),
+  rejectionReason: z.string().max(500, "Reason must be under 500 characters").nullish(),
+}).refine(
+  (data) => data.approvalStatus !== "REJECTED" || Boolean(data.rejectionReason?.trim()),
+  { message: "A reason is required when rejecting an order", path: ["rejectionReason"] }
+);
+
 // ─── Analytics ───────────────────────────────────────────────────────────────
 // sessionId is a client-generated opaque id used only to deduplicate views.
 // Bounded in length so it cannot be used to smuggle bulk data into the store.

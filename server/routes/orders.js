@@ -5,9 +5,22 @@ import { Product } from "../models/Product.js";
 import { computePrice } from "../utils/computePrice.js";
 import { getRates } from "../utils/getRates.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
-import { validate, createOrderSchema, orderStatusSchema } from "../middleware/validate.js";
+import {
+  validate,
+  createOrderSchema,
+  orderStatusSchema,
+  orderApprovalSchema,
+} from "../middleware/validate.js";
 
 const router = express.Router();
+
+// How long after the owner approves an order it is promised for delivery.
+// Single source of truth — the client displays this date, it never computes it.
+export const DELIVERY_WINDOW_DAYS = 15;
+
+// Statuses an order may not reach until the owner has approved it. "processing"
+// is the resting state of a new order, and "cancelled" must stay available.
+const REQUIRES_APPROVAL = ["shipped", "delivered"];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -141,23 +154,79 @@ router.post("/", verifyJWT, validate(createOrderSchema), async (req, res) => {
 router.patch("/:id/status", verifyJWT, requireAdmin, validate(orderStatusSchema), async (req, res) => {
   try {
     const { status } = req.body;
-    if (!status) {
-      return res.status(400).json({ error: "Status is required" });
-    }
 
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { orderStatus: status },
-      { new: true }
-    );
-
+    const order = await Order.findById(req.params.id);
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
 
+    // Enforced here rather than only in the admin UI: an unapproved order has
+    // no delivery window, so it must not be able to reach a fulfilment status.
+    if (REQUIRES_APPROVAL.includes(status) && order.approvalStatus !== "APPROVED") {
+      return res.status(400).json({
+        error: "Approve this order before marking it shipped or delivered",
+      });
+    }
+
+    order.orderStatus = status;
+
+    // Stamped once, on the first transition into delivered, so re-saving a
+    // delivered order does not move the date the customer was shown.
+    if (status === "delivered" && !order.deliveredAt) {
+      order.deliveredAt = new Date();
+    }
+
+    await order.save();
+
     res.json({ success: true, data: order });
   } catch (error) {
     res.status(500).json({ error: "Failed to update order status" });
+  }
+});
+
+// PATCH /api/orders/:id/approval — owner approves or rejects an order (admin)
+router.patch("/:id/approval", verifyJWT, requireAdmin, validate(orderApprovalSchema), async (req, res) => {
+  try {
+    const { approvalStatus, rejectionReason } = req.body;
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Idempotent guard: re-approving would silently push the promised delivery
+    // date back, after the customer has already been shown the first one.
+    if (order.approvalStatus === approvalStatus) {
+      return res.status(400).json({
+        error: `This order is already ${approvalStatus.toLowerCase()}`,
+      });
+    }
+    if (order.approvalStatus === "APPROVED" && approvalStatus === "REJECTED") {
+      return res.status(400).json({ error: "An approved order cannot be rejected" });
+    }
+
+    if (approvalStatus === "APPROVED") {
+      const approvedAt = new Date();
+      order.approvalStatus = "APPROVED";
+      order.approvedAt = approvedAt;
+      // Computed server-side only — a client-supplied date is never trusted.
+      order.expectedDeliveryDate = new Date(
+        approvedAt.getTime() + DELIVERY_WINDOW_DAYS * 24 * 60 * 60 * 1000
+      );
+      order.rejectionReason = null;
+    } else {
+      order.approvalStatus = "REJECTED";
+      order.rejectionReason = rejectionReason || null;
+      order.approvedAt = null;
+      order.expectedDeliveryDate = null;
+    }
+
+    await order.save();
+
+    res.json({ success: true, data: order });
+  } catch (error) {
+    console.error("Order approval error:", error);
+    res.status(500).json({ error: "Failed to update order approval" });
   }
 });
 

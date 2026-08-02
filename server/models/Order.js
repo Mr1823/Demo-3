@@ -22,6 +22,21 @@ const OrderSchema = new mongoose.Schema({
   gstAmount: { type: Number, default: 0 },
   orderStatus: { type: String, default: "processing" },
 
+  // Owner approval (PRD: an order is not live until the owner confirms it).
+  // The delivery window is counted from approvedAt, not from createdAt.
+  approvalStatus: {
+    type: String,
+    enum: ["PENDING", "APPROVED", "REJECTED"],
+    default: "PENDING",
+  },
+  approvedAt: { type: Date, default: null },
+  expectedDeliveryDate: { type: Date, default: null },
+  rejectionReason: { type: String, default: null },
+
+  // Set once, when the order first transitions to delivered. Null on legacy
+  // orders, which are deliberately not backfilled.
+  deliveredAt: { type: Date, default: null },
+
   // Razorpay (PRD §4.1)
   razorpayOrderId: { type: String },
   razorpayPaymentId: { type: String },

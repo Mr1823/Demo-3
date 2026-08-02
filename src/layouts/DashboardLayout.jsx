@@ -24,7 +24,7 @@ const DashboardLayoutInner = () => {
       <>
         {!isAuthLoading && user && (
           <>
-            {!isUserLoading && userFromDB?.admin ? (
+            {!isUserLoading && (userFromDB?.admin || userFromDB?.role === "ADMIN") ? (
               <div className="flex h-screen w-full overflow-hidden">
                 <AdminNavigation />
                 <main className="flex-1 h-full flex flex-col overflow-hidden bg-background pt-16 lg:pt-0">

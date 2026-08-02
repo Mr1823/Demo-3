@@ -98,7 +98,50 @@ const MyOrders = () => {
           {orders.map((order) => {
             const isProcessing = order.orderStatus?.toLowerCase() === "processing";
             const isDelivered = order.orderStatus?.toLowerCase() === "delivered";
-            
+
+            const approval = order.approvalStatus || "PENDING";
+            const isApproved = approval === "APPROVED";
+            const isRejected = approval === "REJECTED";
+
+            const formatDate = (value) =>
+              value
+                ? new Date(value).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })
+                : null;
+
+            const deliveredOn = formatDate(order.deliveredAt);
+            const expectedBy = formatDate(order.expectedDeliveryDate);
+
+            // Counted from the server's date, not recomputed here — the client
+            // displays the delivery window, it never decides it.
+            const daysRemaining = order.expectedDeliveryDate
+              ? Math.ceil(
+                  (new Date(order.expectedDeliveryDate) - new Date()) / (1000 * 60 * 60 * 24)
+                )
+              : null;
+
+            // A delivered order with no deliveredAt is legacy data, deliberately
+            // not backfilled — show a dash rather than inventing today's date.
+            let timelineText;
+            if (isDelivered) {
+              timelineText = `Delivered on ${deliveredOn || "—"}`;
+            } else if (isRejected) {
+              timelineText = order.rejectionReason
+                ? `Order declined: ${order.rejectionReason}`
+                : "Order declined";
+            } else if (isApproved && expectedBy) {
+              timelineText =
+                daysRemaining > 0
+                  ? `Expected delivery by ${expectedBy} (${daysRemaining} day${daysRemaining === 1 ? "" : "s"} remaining)`
+                  : `Expected delivery by ${expectedBy}`;
+            } else {
+              timelineText =
+                "Awaiting confirmation — your 15-day delivery window starts once we approve this order.";
+            }
+
             return (
               <div 
                 key={order._id} 
@@ -138,13 +181,32 @@ const MyOrders = () => {
                   </div>
 
                   <div className="flex flex-col md:items-end gap-3 w-full md:w-auto">
-                    <span className={`px-3 py-1 border text-[10px] font-label-caps uppercase tracking-widest rounded-full ${
-                      isProcessing ? 'border-secondary/40 text-secondary bg-white/50' : 
-                      isDelivered ? 'border-outline-variant/40 text-on-surface-variant bg-surface-variant/30' : 
-                      'border-primary/40 text-primary bg-primary/5'
-                    }`}>
-                      {order.orderStatus?.toUpperCase() || 'UNKNOWN'}
-                    </span>
+                    <div className="flex flex-wrap gap-2 md:justify-end">
+                      {/* Approval is a separate axis from fulfilment status:
+                          a PENDING order is still "processing", it just is not
+                          confirmed yet. */}
+                      {!isRejected && (
+                        <span className={`px-3 py-1 border text-[10px] font-label-caps uppercase tracking-widest rounded-full ${
+                          isApproved
+                            ? 'border-success/40 text-success bg-success/5'
+                            : 'border-secondary/40 text-secondary bg-white/50'
+                        }`}>
+                          {isApproved ? 'CONFIRMED' : 'AWAITING CONFIRMATION'}
+                        </span>
+                      )}
+                      {isRejected && (
+                        <span className="px-3 py-1 border border-error/40 text-error bg-error/5 text-[10px] font-label-caps uppercase tracking-widest rounded-full">
+                          DECLINED
+                        </span>
+                      )}
+                      <span className={`px-3 py-1 border text-[10px] font-label-caps uppercase tracking-widest rounded-full ${
+                        isProcessing ? 'border-secondary/40 text-secondary bg-white/50' :
+                        isDelivered ? 'border-outline-variant/40 text-on-surface-variant bg-surface-variant/30' :
+                        'border-primary/40 text-primary bg-primary/5'
+                      }`}>
+                        {order.orderStatus?.toUpperCase() || 'UNKNOWN'}
+                      </span>
+                    </div>
                     <span className="font-display-lg text-2xl md:text-3xl text-primary">
                       ₹{order.totalAmount || order.total || 0}
                     </span>
@@ -153,10 +215,8 @@ const MyOrders = () => {
 
                 {/* Actions — always visible on touch, hover-reveal on desktop */}
                 <div className="mt-6 pt-6 border-t border-outline-variant/20 flex flex-wrap gap-4 items-center justify-between opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500">
-                  <p className="font-body-base text-xs text-on-surface-variant italic">
-                    {isDelivered 
-                      ? `Delivered on ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` 
-                      : `Estimated arrival: ${new Date(new Date().setDate(new Date().getDate() + 5)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}
+                  <p className="font-body-base text-xs text-on-surface-variant italic max-w-md">
+                    {timelineText}
                   </p>
                   <div className="flex gap-4 w-full sm:w-auto">
                     {isProcessing && (

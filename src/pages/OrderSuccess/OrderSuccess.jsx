@@ -20,7 +20,7 @@ const OrderSuccess = () => {
 
   // get all orders for admin users
   useEffect(() => {
-    if (userFromDB?.admin) {
+    if (userFromDB?.admin || userFromDB?.role === "ADMIN") {
       axiosSecure
         .get("/orders/admin/all")
         .then((res) => setAllOrders(res.data))
@@ -30,7 +30,7 @@ const OrderSuccess = () => {
 
   // get specific order by _id for orderSuccess page
   useEffect(() => {
-    const source = userFromDB?.admin ? allOrders : orders;
+    const source = userFromDB?.admin || userFromDB?.role === "ADMIN" ? allOrders : orders;
     const findOrderById = source?.find(
       (order) => order._id === location?.state?.orderId
     );
