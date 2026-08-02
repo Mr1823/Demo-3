@@ -1,11 +1,13 @@
 import express from "express";
 import { ContactMessage } from "../models/ContactMessage.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
+import { validate, contactSchema } from "../middleware/validate.js";
+import { publicFormLimiter } from "../middleware/rateLimit.js";
 
 const router = express.Router();
 
 // POST /api/contact — submit a contact message (public — visitors may not be logged in)
-router.post("/", async (req, res) => {
+router.post("/", publicFormLimiter, validate(contactSchema), async (req, res) => {
   try {
     const { name, email, message } = req.body;
     if (!name || !email || !message) {

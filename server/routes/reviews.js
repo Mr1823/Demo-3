@@ -1,6 +1,7 @@
 import express from "express";
 import { Review } from "../models/Review.js";
 import { verifyJWT } from "../middleware/auth.js";
+import { validate, createReviewSchema } from "../middleware/validate.js";
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST /api/reviews — create a review (authenticated user)
-router.post("/", verifyJWT, async (req, res) => {
+router.post("/", verifyJWT, validate(createReviewSchema), async (req, res) => {
   try {
     const { productId, productName, review, rating } = req.body;
 

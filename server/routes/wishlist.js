@@ -1,6 +1,7 @@
 import express from "express";
 import { Wishlist } from "../models/Wishlist.js";
 import { verifyJWT } from "../middleware/auth.js";
+import { validate, addToWishlistSchema } from "../middleware/validate.js";
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.get("/", verifyJWT, async (req, res) => {
 });
 
 // POST /api/wishlist — add item to wishlist
-router.post("/", verifyJWT, async (req, res) => {
+router.post("/", verifyJWT, validate(addToWishlistSchema), async (req, res) => {
   try {
     const { productId, name, img, image, category, price } = req.body;
 

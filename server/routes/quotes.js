@@ -2,11 +2,12 @@ import express from "express";
 import { QuoteRequest } from "../models/QuoteRequest.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 import { sendWhatsAppAlert } from "../utils/whatsapp.js";
+import { validate, quoteRequestSchema, quoteStatusSchema } from "../middleware/validate.js";
 
 const router = express.Router();
 
 // POST /api/quotes — submit a quote request
-router.post("/", verifyJWT, async (req, res) => {
+router.post("/", verifyJWT, validate(quoteRequestSchema), async (req, res) => {
   try {
     const { productId, productName, productImage, customerName, customerMobile, isQuoteOnly } = req.body;
 
@@ -53,7 +54,7 @@ router.get("/", verifyJWT, requireAdmin, async (req, res) => {
 });
 
 // PATCH /api/quotes/:id/status — update quote request status (admin only)
-router.patch("/:id/status", verifyJWT, requireAdmin, async (req, res) => {
+router.patch("/:id/status", verifyJWT, requireAdmin, validate(quoteStatusSchema), async (req, res) => {
   try {
     const { status } = req.body;
     if (!["Pending", "Contacted", "Closed"].includes(status)) {

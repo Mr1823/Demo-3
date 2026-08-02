@@ -5,70 +5,212 @@ import { z } from "zod";
  * @param {z.ZodSchema} schema
  */
 export const validate = (schema) => (req, res, next) => {
-  try {
-    schema.parse(req.body);
-    next();
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        error: "Validation failed",
-        details: error.errors.map((e) => ({
-          field: e.path.join("."),
-          message: e.message,
-        })),
-      });
-    }
-    next(error);
+  const result = schema.safeParse(req.body);
+
+  if (!result.success) {
+    // Zod 4 exposes the failure list as `.issues`; the old `.errors` alias is
+    // gone, and reading it here turned every 400 into a 500.
+    const issues = result.error.issues.map((e) => ({
+      field: e.path.join("."),
+      message: e.message,
+    }));
+    return res.status(400).json({
+      error: issues[0]?.message || "Validation failed",
+      details: issues,
+    });
   }
+
+  // Hand the parsed value onward so coercion (numeric strings from HTML forms)
+  // and stripping of unknown keys actually reach the route handler.
+  req.body = result.data;
+  next();
 };
 
 // ─── Schemas ─────────────────────────────────────────────────────────────────
 
+/**
+ * A required, non-empty string carrying one message for every way it can fail.
+ * `.min(1, msg)` alone only covers the empty-string case — a missing key falls
+ * through to Zod's default "expected string, received undefined", which the
+ * client renders verbatim to the customer.
+ */
+const requiredString = (message, max) => {
+  let schema = z.string({ error: message }).min(1, message);
+  return max ? schema.max(max, message) : schema;
+};
+
 export const registerSchema = z.object({
   name: z.string().min(1, "Name is required").optional(),
-  email: z.string().email("Valid email is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.email("Valid email is required"),
+  password: z.string({ error: "Password is required" }).min(6, "Password must be at least 6 characters"),
 });
 
 export const loginSchema = z.object({
-  email: z.string().email("Valid email is required"),
-  password: z.string().min(1, "Password is required"),
+  email: z.email("Valid email is required"),
+  password: requiredString("Password is required"),
 });
 
 export const refreshSchema = z.object({
-  refreshToken: z.string().min(1, "Refresh token is required"),
+  refreshToken: requiredString("Refresh token is required"),
 });
 
+// Admin forms post numbers as strings, and clear optional numeric fields by
+// sending null. `coerce` handles the former, `nullish` the latter.
+const optionalNumber = z.coerce.number().nullish();
+const optionalPercent = z.coerce
+  .number()
+  .min(0, "Must be between 0 and 100")
+  .max(100, "Must be between 0 and 100")
+  .nullish();
+
 export const createProductSchema = z.object({
-  name: z.string().min(1, "Product name is required"),
-  category: z.string().min(1, "Category is required"),
-  metalType: z.enum(["gold", "silver"]).optional(),
-  weight: z.number().min(0).optional(),
-  wastagePercent: z.number().min(0).max(100).optional(),
-  gstPercent: z.number().min(0).max(100).optional(),
-  isQuoteOnly: z.boolean().optional(),
+  name: requiredString("Product name is required"),
+  category: requiredString("Category is required"),
+  metalType: z.enum(["gold", "silver"]).nullish(),
+  weight: optionalNumber,
+  wastagePercent: optionalPercent,
+  gstPercent: optionalPercent,
+  price: optionalNumber,
+  discountPrice: optionalNumber,
+  discountPercentage: optionalPercent,
+  stock: optionalNumber,
+  carate: optionalNumber,
+  isQuoteOnly: z.coerce.boolean().nullish(),
 }).passthrough();
 
+// PATCH may touch any subset of fields, so nothing is required — but whatever
+// is sent still has to be the right shape.
+export const updateProductSchema = createProductSchema.partial();
+
 export const updateRatesSchema = z.object({
-  gold: z.number().positive().optional(),
-  silver: z.number().positive().optional(),
+  gold: z.coerce.number().positive("Gold rate must be greater than zero").optional(),
+  silver: z.coerce.number().positive("Silver rate must be greater than zero").optional(),
 }).refine(
-  (data) => data.gold || data.silver,
+  (data) => data.gold !== undefined || data.silver !== undefined,
   { message: "Must provide at least one rate to update (gold or silver)" }
 );
 
 export const quoteRequestSchema = z.object({
-  productId: z.string().min(1, "Product ID is required"),
+  productId: requiredString("Product ID is required"),
   productName: z.string().optional(),
   productImage: z.string().optional(),
-  customerName: z.string().min(1, "Customer name is required"),
-  customerMobile: z.string().min(10, "Valid mobile number is required"),
+  customerName: requiredString("Customer name is required"),
+  customerMobile: z.string({ error: "Valid mobile number is required" }).min(10, "Valid mobile number is required"),
+  isQuoteOnly: z.coerce.boolean().nullish(),
+});
+
+export const quoteStatusSchema = z.object({
+  status: z.enum(["Pending", "Contacted", "Closed"], {
+    message: "Status must be Pending, Contacted, or Closed",
+  }),
 });
 
 export const createOrderSchema = z.object({
   items: z.array(z.object({
-    productId: z.string().min(1),
-    quantity: z.number().int().positive().optional(),
-  })).min(1, "At least one item required"),
-  shippingAddress: z.object({}).passthrough().optional(),
+    productId: requiredString("Product ID is required"),
+    quantity: z.coerce.number().int().positive("Quantity must be at least 1").optional(),
+  }).passthrough()).min(1, "At least one item required"),
+  shippingAddress: z.object({}).passthrough().nullish(),
+  name: z.string().optional(),
+  paymentMethod: z.string().optional(),
+  buyNow: z.coerce.boolean().optional(),
+}).passthrough();
+
+export const orderStatusSchema = z.object({
+  status: z.enum(
+    ["processing", "shipped", "delivered", "cancelled"],
+    { message: "Invalid order status" }
+  ),
 });
+
+// ─── Cart / wishlist ─────────────────────────────────────────────────────────
+// `price` is accepted for display only — orders recompute every price from the
+// live metal rate server-side, so a tampered value here cannot affect billing.
+const cartItemBase = {
+  productId: requiredString("Product ID is required"),
+  name: z.string().optional(),
+  img: z.string().optional(),
+  image: z.string().optional(),
+  category: z.string().optional(),
+  price: optionalNumber,
+};
+
+export const addToCartSchema = z.object({
+  ...cartItemBase,
+  quantity: z.coerce.number().int().positive("Quantity must be at least 1").max(99, "Quantity cannot exceed 99").optional(),
+});
+
+export const updateCartItemSchema = z.object({
+  quantity: z.coerce.number({ error: "Quantity is required" }).int().min(0, "Quantity cannot be negative").max(99, "Quantity cannot exceed 99"),
+});
+
+export const addToWishlistSchema = z.object(cartItemBase);
+
+// ─── Reviews ─────────────────────────────────────────────────────────────────
+
+export const createReviewSchema = z.object({
+  productId: z.string().optional(),
+  productName: z.string().optional(),
+  review: requiredString("Review text is required", 2000),
+  rating: z.coerce
+    .number({ error: "Rating must be between 1 and 5" })
+    .min(1, "Rating must be between 1 and 5")
+    .max(5, "Rating must be between 1 and 5"),
+  name: z.string().optional(),
+  location: z.string().optional(),
+});
+
+// ─── Categories ──────────────────────────────────────────────────────────────
+// Both handlers pass req.body straight to Mongoose, so an explicit shape here
+// is what stops arbitrary keys reaching the document.
+
+export const createCategorySchema = z.object({
+  name: requiredString("Category name is required"),
+  img: z.string().optional(),
+  image: z.string().optional(),
+  description: z.string().optional(),
+});
+
+export const updateCategorySchema = createCategorySchema.partial();
+
+// ─── Public forms ────────────────────────────────────────────────────────────
+
+export const contactSchema = z.object({
+  name: requiredString("Name is required", 100),
+  email: z.email("Valid email is required"),
+  message: requiredString("Message is required", 5000),
+  phone: z.string().max(20).optional(),
+  subject: z.string().max(200).optional(),
+});
+
+export const newsletterSchema = z.object({
+  email: z.email("Valid email is required"),
+});
+
+// ─── User profile ────────────────────────────────────────────────────────────
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100).optional(),
+  phone: z.string().max(20).optional(),
+}).passthrough();
+
+export const changePasswordSchema = z.object({
+  currentPassword: requiredString("Current password is required"),
+  newPassword: z.string({ error: "New password is required" }).min(6, "New password must be at least 6 characters"),
+});
+
+// Mirrors the AddressBook form, which posts the whole address as one object.
+// `number` is assembled client-side as "+91 9876543210"; `country` is pinned to
+// India, so it is accepted but not trusted for anything.
+export const shippingAddressSchema = z.object({
+  firstName: requiredString("First name is required", 100),
+  lastName: z.string().max(100).optional().or(z.literal("")),
+  email: z.email("Valid email is required"),
+  streetAddress: requiredString("Street address is required", 500),
+  city: requiredString("City is required", 100),
+  state: requiredString("State is required", 100),
+  postalCode: z.string({ error: "Enter a valid 6-digit PIN code" }).regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
+  mobileNumber: z.string({ error: "Valid mobile number is required" }).min(10, "Valid mobile number is required").max(15, "Valid mobile number is required"),
+  number: z.string().max(25).optional(),
+  country: z.string().max(100).optional(),
+}).passthrough();

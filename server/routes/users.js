@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { User } from "../models/User.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 import mongoose from "mongoose";
+import { validate, updateProfileSchema, changePasswordSchema, shippingAddressSchema } from "../middleware/validate.js";
 
 const BCRYPT_SALT_ROUNDS = 12;
 
@@ -34,7 +35,7 @@ router.get("/me", verifyJWT, async (req, res) => {
 });
 
 // PATCH /api/users/me — update authenticated user's profile
-router.patch("/me", verifyJWT, async (req, res) => {
+router.patch("/me", verifyJWT, validate(updateProfileSchema), async (req, res) => {
   try {
     const { name, phone, photoURL } = req.body;
     const updateData = {};
@@ -59,7 +60,7 @@ router.patch("/me", verifyJWT, async (req, res) => {
 });
 
 // PATCH /api/users/me/password — change authenticated user's password
-router.patch("/me/password", verifyJWT, async (req, res) => {
+router.patch("/me/password", verifyJWT, validate(changePasswordSchema), async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) {
@@ -94,7 +95,7 @@ router.patch("/me/password", verifyJWT, async (req, res) => {
 // ─── Addresses ───────────────────────────────────────────────────────────────
 
 // PATCH /api/users/shipping-address
-router.patch("/shipping-address", verifyJWT, async (req, res) => {
+router.patch("/shipping-address", verifyJWT, validate(shippingAddressSchema), async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.user.userId,

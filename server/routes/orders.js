@@ -5,6 +5,7 @@ import { Product } from "../models/Product.js";
 import { computePrice } from "../utils/computePrice.js";
 import { getRates } from "../utils/getRates.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
+import { validate, createOrderSchema, orderStatusSchema } from "../middleware/validate.js";
 
 const router = express.Router();
 
@@ -52,7 +53,7 @@ router.get("/:id", verifyJWT, async (req, res) => {
 });
 
 // POST /api/orders — create order with server-side price verification
-router.post("/", verifyJWT, async (req, res) => {
+router.post("/", verifyJWT, validate(createOrderSchema), async (req, res) => {
   try {
     const { items, shippingAddress, name, paymentMethod } = req.body;
 
@@ -137,7 +138,7 @@ router.post("/", verifyJWT, async (req, res) => {
 });
 
 // PATCH /api/orders/:id/status — admin update order status
-router.patch("/:id/status", verifyJWT, requireAdmin, async (req, res) => {
+router.patch("/:id/status", verifyJWT, requireAdmin, validate(orderStatusSchema), async (req, res) => {
   try {
     const { status } = req.body;
     if (!status) {

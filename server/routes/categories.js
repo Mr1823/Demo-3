@@ -1,6 +1,7 @@
 import express from "express";
 import { Category } from "../models/Category.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
+import { validate, createCategorySchema, updateCategorySchema } from "../middleware/validate.js";
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST /api/categories — create category (admin)
-router.post("/", verifyJWT, requireAdmin, async (req, res) => {
+router.post("/", verifyJWT, requireAdmin, validate(createCategorySchema), async (req, res) => {
   try {
     const category = await Category.create(req.body);
     res.status(201).json({ success: true, data: category, insertedId: category._id });
@@ -32,7 +33,7 @@ router.post("/", verifyJWT, requireAdmin, async (req, res) => {
 });
 
 // PATCH /api/categories/:id — update category (admin)
-router.patch("/:id", verifyJWT, requireAdmin, async (req, res) => {
+router.patch("/:id", verifyJWT, requireAdmin, validate(updateCategorySchema), async (req, res) => {
   try {
     const category = await Category.findByIdAndUpdate(
       req.params.id,

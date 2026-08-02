@@ -1,11 +1,13 @@
 import express from "express";
 import { NewsletterSubscriber } from "../models/NewsletterSubscriber.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
+import { validate, newsletterSchema } from "../middleware/validate.js";
+import { publicFormLimiter } from "../middleware/rateLimit.js";
 
 const router = express.Router();
 
 // POST /api/newsletter — subscribe an email (public)
-router.post("/", async (req, res) => {
+router.post("/", publicFormLimiter, validate(newsletterSchema), async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {

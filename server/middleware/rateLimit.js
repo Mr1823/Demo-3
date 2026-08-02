@@ -34,6 +34,21 @@ export const apiLimiter = rateLimit({
 });
 
 /**
+ * Rate limiter for unauthenticated public forms (contact, newsletter).
+ * These write to the database without a JWT, so without a cap a single client
+ * can flood the admin inbox and the subscriber list.
+ * 5 submissions per 15 minutes per IP.
+ */
+export const publicFormLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  message: { error: "Too many submissions. Please try again later." },
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: skipInDevelopment,
+});
+
+/**
  * Rate limiter for OTP requests.
  * Max 3 attempts per 5 minutes, keyed by phone number.
  */

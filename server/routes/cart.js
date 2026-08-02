@@ -4,6 +4,7 @@ import { verifyJWT } from "../middleware/auth.js";
 import { Product } from "../models/Product.js";
 import { computePrice } from "../utils/computePrice.js";
 import { getRates } from "../utils/getRates.js";
+import { validate, addToCartSchema, updateCartItemSchema } from "../middleware/validate.js";
 const router = express.Router();
 
 // GET /api/cart — user's cart items
@@ -76,7 +77,7 @@ router.get("/subtotal", verifyJWT, async (req, res) => {
 });
 
 // POST /api/cart — add item to cart
-router.post("/", verifyJWT, async (req, res) => {
+router.post("/", verifyJWT, validate(addToCartSchema), async (req, res) => {
   try {
     const { productId, name, img, image, category, price, quantity = 1 } = req.body;
 
@@ -107,7 +108,7 @@ router.post("/", verifyJWT, async (req, res) => {
 });
 
 // PATCH /api/cart/:itemId — update cart item quantity
-router.patch("/:itemId", verifyJWT, async (req, res) => {
+router.patch("/:itemId", verifyJWT, validate(updateCartItemSchema), async (req, res) => {
   try {
     const { quantity } = req.body;
     const cartItem = await Cart.findOne({

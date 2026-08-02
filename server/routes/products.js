@@ -3,6 +3,7 @@ import { Product } from "../models/Product.js";
 import { computePrice } from "../utils/computePrice.js";
 import { getRates } from "../utils/getRates.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
+import { validate, createProductSchema, updateProductSchema } from "../middleware/validate.js";
 
 const router = express.Router();
 
@@ -152,7 +153,7 @@ router.get("/:id", async (req, res) => {
 // ─── Admin CRUD ──────────────────────────────────────────────────────────────
 
 // POST /api/products — create product (admin)
-router.post("/", verifyJWT, requireAdmin, async (req, res) => {
+router.post("/", verifyJWT, requireAdmin, validate(createProductSchema), async (req, res) => {
   try {
     const productData = {
       productId: req.body.productId || `p-${Date.now()}`,
@@ -167,7 +168,7 @@ router.post("/", verifyJWT, requireAdmin, async (req, res) => {
 });
 
 // PATCH /api/products/:id — update product (admin)
-router.patch("/:id", verifyJWT, requireAdmin, async (req, res) => {
+router.patch("/:id", verifyJWT, requireAdmin, validate(updateProductSchema), async (req, res) => {
   try {
     const product = await Product.findOneAndUpdate(
       {

@@ -1,6 +1,7 @@
 import express from "express";
 import { GoldRate } from "../models/GoldRate.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
+import { validate, updateRatesSchema } from "../middleware/validate.js";
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ router.get("/", async (req, res) => {
 });
 
 // PATCH /api/rates — update gold/silver rates (admin only)
-router.patch("/", verifyJWT, requireAdmin, async (req, res) => {
+router.patch("/", verifyJWT, requireAdmin, validate(updateRatesSchema), async (req, res) => {
   try {
     const { gold, silver } = req.body;
 
