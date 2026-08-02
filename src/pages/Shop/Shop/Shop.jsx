@@ -30,29 +30,63 @@ const Shop = () => {
     setSearchParams(newParams);
   };
 
+  // Quote-only pieces are priced on request and carry no number, so they can
+  // neither satisfy nor fail a numeric range. Left to `undefined >= 50000` every
+  // comparison returns false and they leaked into all three brackets at once.
+  const priceOf = (p) => {
+    const value = p.discountPrice ?? p.price;
+    return typeof value === 'number' && Number.isFinite(value) ? value : null;
+  };
+
+  const timeOf = (p) => {
+    const t = new Date(p.addedAt || 0).getTime();
+    return Number.isNaN(t) ? 0 : t;
+  };
+
+  // Newest first, used on its own and as the tie-break for `featured` so equally
+  // ranked products keep a stable order between renders.
+  const byNewest = (a, b) => timeOf(b) - timeOf(a);
+
   const filteredProducts = products?.filter(p => {
     if (categoryParam && p.category?.toLowerCase() !== categoryParam.toLowerCase()) return false;
     if (metalParam && p.metalType?.toLowerCase() !== metalParam.toLowerCase()) return false;
     if (searchTerm && !p.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-    
-    const productPrice = p.discountPrice || p.price;
+
+    const productPrice = priceOf(p);
+
+    // Price-on-request is its own bracket rather than a member of every one.
+    if (priceParam === 'on_request') return productPrice === null;
+    if (priceParam && productPrice === null) return false;
+
     if (priceParam === 'under50k' && productPrice >= 50000) return false;
     if (priceParam === '50k-1l' && (productPrice < 50000 || productPrice > 100000)) return false;
     if (priceParam === 'over1l' && productPrice <= 100000) return false;
 
     return true;
-  }).sort((a, b) => {
-    const priceA = a.discountPrice || a.price;
-    const priceB = b.discountPrice || b.price;
-    
-    switch (sortParam) {
-      case 'price_low_high': return priceA - priceB;
-      case 'price_high_low': return priceB - priceA;
-      case 'newest': return new Date(b.addedAt || 0) > new Date(a.addedAt || 0) ? 1 : -1;
-      case 'featured':
-      default: return b.featured ? -1 : 1;
-    }
   }) || [];
+
+  const sortedProducts = (() => {
+    const items = [...filteredProducts];
+
+    if (sortParam === 'price_low_high' || sortParam === 'price_high_low') {
+      // Partition first so a null price never reaches the comparator as NaN.
+      const priced = items.filter((p) => priceOf(p) !== null);
+      const onRequest = items.filter((p) => priceOf(p) === null);
+      priced.sort((a, b) =>
+        sortParam === 'price_low_high'
+          ? priceOf(a) - priceOf(b)
+          : priceOf(b) - priceOf(a)
+      );
+      // Unpriced pieces trail the list in both directions — they have no rank.
+      return [...priced, ...onRequest.sort(byNewest)];
+    }
+
+    if (sortParam === 'newest') return items.sort(byNewest);
+
+    return items.sort(
+      (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || byNewest(a, b)
+    );
+  })();
 
   return (
     <div className="font-body-base bg-background text-on-surface min-h-screen pb-20">
@@ -141,6 +175,7 @@ const Shop = () => {
                   <button onClick={() => { handleParamChange('price', 'under50k'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Under ₹50k</button>
                   <button onClick={() => { handleParamChange('price', '50k-1l'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">₹50k - ₹1L</button>
                   <button onClick={() => { handleParamChange('price', 'over1l'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Over ₹1L</button>
+                  <button onClick={() => { handleParamChange('price', 'on_request'); closeFilter(); }} className="block w-full text-left px-4 py-2 hover:bg-surface-container font-label-caps text-xs text-on-surface uppercase">Price on Request</button>
                 </div>
               )}
             </div>
@@ -179,9 +214,9 @@ const Shop = () => {
               <div key={i} className="animate-pulse bg-surface-container aspect-[4/5] rounded-sm"></div>
             ))}
           </section>
-        ) : filteredProducts.length > 0 ? (
+        ) : sortedProducts.length > 0 ? (
           <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-16">
-            {filteredProducts.map(product => (
+            {sortedProducts.map(product => (
               <ProductCard key={product._id} product={product} />
             ))}
           </section>
