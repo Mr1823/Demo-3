@@ -1,6 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
+// Deliberately imports nothing from react-router: this boundary sits *above*
+// RouterProvider, so anything needing router context would throw while trying
+// to render the fallback and hide the original error. Navigation here uses
+// window.location for the same reason.
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
