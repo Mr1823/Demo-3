@@ -123,6 +123,14 @@ export const orderStatusSchema = z.object({
   ),
 });
 
+// ─── Analytics ───────────────────────────────────────────────────────────────
+// sessionId is a client-generated opaque id used only to deduplicate views.
+// Bounded in length so it cannot be used to smuggle bulk data into the store.
+
+export const trackViewSchema = z.object({
+  sessionId: requiredString("Session ID is required", 64),
+});
+
 // ─── Cart / wishlist ─────────────────────────────────────────────────────────
 // `price` is accepted for display only — orders recompute every price from the
 // live metal rate server-side, so a tampered value here cannot affect billing.

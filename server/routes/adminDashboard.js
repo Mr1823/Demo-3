@@ -4,6 +4,7 @@ import { Wishlist } from "../models/Wishlist.js";
 import { Product } from "../models/Product.js";
 import { Category } from "../models/Category.js";
 import { Review } from "../models/Review.js";
+import { ProductView } from "../models/ProductView.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -245,6 +246,55 @@ router.get("/recent-reviews", verifyJWT, requireAdmin, async (req, res) => {
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch recent reviews" });
+  }
+});
+
+// ─── GET /api/admin-dashboard/most-viewed ───────────────────────────────────
+// Most-viewed products. `days` (default 30) scopes the window, which is the
+// whole reason views are stored as events rather than a counter on Product.
+router.get("/most-viewed", verifyJWT, requireAdmin, async (req, res) => {
+  try {
+    const days = Math.min(Math.max(parseInt(req.query.days) || 30, 1), 365);
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 50);
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+    const mostViewed = await ProductView.aggregate([
+      { $match: { viewedAt: { $gte: since } } },
+      {
+        $group: {
+          _id: "$productId",
+          productName: { $first: "$productName" },
+          productImage: { $first: "$productImage" },
+          category: { $first: "$category" },
+          viewCount: { $sum: 1 },
+          // Views are already deduplicated per session on write, so counting
+          // distinct sessions separates reach from repeat interest.
+          uniqueVisitors: { $addToSet: "$sessionId" },
+          signedInViews: {
+            $sum: { $cond: [{ $ifNull: ["$userId", false] }, 1, 0] },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          productId: "$_id",
+          productName: 1,
+          productImage: 1,
+          category: 1,
+          viewCount: 1,
+          uniqueVisitors: { $size: "$uniqueVisitors" },
+          signedInViews: 1,
+        },
+      },
+      { $sort: { viewCount: -1 } },
+      { $limit: limit },
+    ]);
+
+    res.json({ success: true, data: mostViewed, periodDays: days });
+  } catch (error) {
+    console.error("Most viewed products error:", error);
+    res.status(500).json({ error: "Failed to fetch most-viewed products" });
   }
 });
 

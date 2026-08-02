@@ -10,9 +10,11 @@ import toast from "react-hot-toast";
 import ImageZoomLens from "../../components/ImageZoomLens/ImageZoomLens";
 import { optimizeCloudinaryUrl } from "../../utils/cloudinaryImage";
 import { useLoginGate } from "../../context/LoginGateContext";
+import useTrackProductView from "../../hooks/useTrackProductView";
 
 const DynamicProduct = () => {
   const { id } = useParams();
+  useTrackProductView(id);
   const { user } = useAuthContext();
   const [dynamicProduct, setDynamicProduct] = useState(null);
   const [presentInCart, setPresentInCart] = useState(false);

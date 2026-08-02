@@ -1,11 +1,18 @@
 import express from "express";
 import { Product } from "../models/Product.js";
+import { ProductView } from "../models/ProductView.js";
 import { computePrice } from "../utils/computePrice.js";
 import { getRates } from "../utils/getRates.js";
-import { verifyJWT, requireAdmin } from "../middleware/auth.js";
-import { validate, createProductSchema, updateProductSchema } from "../middleware/validate.js";
+import { verifyJWT, optionalJWT, requireAdmin } from "../middleware/auth.js";
+import { validate, createProductSchema, updateProductSchema, trackViewSchema } from "../middleware/validate.js";
 
 const router = express.Router();
+
+// Repeat views of the same product from the same session inside this window
+// collapse into one. Long enough to absorb refreshes and back-navigation
+// during a single shopping session, short enough that a genuine return visit
+// later in the day still registers.
+const VIEW_DEDUPE_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 // Use shared getRates from utils
@@ -147,6 +154,60 @@ router.get("/:id", async (req, res) => {
     res.json({ success: true, data: product });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch product" });
+  }
+});
+
+// POST /api/products/:id/view — record a product-detail view.
+// Public: browsing is open to guests, so most views arrive without a token.
+// optionalJWT attributes the view when the visitor happens to be signed in.
+router.post("/:id/view", optionalJWT, validate(trackViewSchema), async (req, res) => {
+  try {
+    const { sessionId } = req.body;
+
+    const product = await Product.findOne({
+      $or: [
+        { _id: req.params.id.match(/^[0-9a-fA-F]{24}$/) ? req.params.id : null },
+        { productId: req.params.id },
+      ].filter(Boolean),
+    })
+      .select("_id name img image images category")
+      .lean();
+
+    if (!product) {
+      return res.status(404).json({ success: false, error: "Product not found" });
+    }
+
+    const productId = String(product._id);
+
+    // Collapse repeat views from the same session within the window, so a
+    // refresh, a back-navigation, or React StrictMode's double-invoked effect
+    // all count once. The client also guards, but the client is not trusted.
+    const since = new Date(Date.now() - VIEW_DEDUPE_WINDOW_MS);
+    const recent = await ProductView.findOne({
+      productId,
+      sessionId,
+      viewedAt: { $gte: since },
+    })
+      .select("_id")
+      .lean();
+
+    if (recent) {
+      return res.json({ success: true, counted: false });
+    }
+
+    await ProductView.create({
+      productId,
+      productName: product.name,
+      productImage: product.img || product.image || product.images?.[0],
+      category: product.category,
+      userId: req.user?.userId || null,
+      sessionId,
+    });
+
+    res.status(201).json({ success: true, counted: true });
+  } catch (error) {
+    console.error("Track product view error:", error);
+    res.status(500).json({ error: "Failed to record view" });
   }
 });
 

@@ -48,6 +48,34 @@ export const verifyJWT = (req, res, next) => {
 };
 
 /**
+ * Middleware: attach req.user when a valid token is present, but never reject.
+ *
+ * For endpoints that serve guests and signed-in customers alike and only want
+ * to enrich the record when it can. An invalid or expired token is treated the
+ * same as no token at all — a stale token in a browser tab must not turn a
+ * public page into an error.
+ */
+export const optionalJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!JWT_SECRET || !authHeader || !authHeader.startsWith("Bearer ")) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(authHeader.split(" ")[1], JWT_SECRET);
+    req.user = {
+      userId: decoded.userId,
+      role: decoded.role,
+      email: decoded.email,
+    };
+  } catch {
+    // Deliberately ignored — the request continues as a guest.
+  }
+  next();
+};
+
+/**
  * Middleware: Require ADMIN role (must be used after verifyJWT).
  */
 export const requireAdmin = (req, res, next) => {

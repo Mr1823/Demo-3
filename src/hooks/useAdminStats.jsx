@@ -67,6 +67,45 @@ const useAdminStats = () => {
     },
   });
 
+  const { data: mostViewed } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-most-viewed"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/most-viewed?days=30");
+      return res.data?.data || [];
+    },
+  });
+
+  // These three endpoints already existed on the server but nothing fetched
+  // them, so the panels that read them rendered permanently empty. Unlike the
+  // newer routes they answer with a bare payload rather than { success, data }.
+  const { data: topCategories } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-top-categories"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/top-selling-categories");
+      return res.data?.topCategories || [];
+    },
+  });
+
+  const { data: popularProducts } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-popular-products"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/popular-products");
+      return Array.isArray(res.data) ? res.data : [];
+    },
+  });
+
+  const { data: recentReviews } = useQuery({
+    enabled: hasValidUser,
+    queryKey: ["admin-recent-reviews"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin-dashboard/recent-reviews");
+      return Array.isArray(res.data) ? res.data : [];
+    },
+  });
+
   return {
     adminStats,
     incomeStats,
@@ -74,6 +113,10 @@ const useAdminStats = () => {
     salesByCategory,
     bestSelling,
     mostWishlisted,
+    mostViewed,
+    topCategories,
+    popularProducts,
+    recentReviews,
   };
 };
 

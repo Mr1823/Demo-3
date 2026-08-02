@@ -30,6 +30,7 @@ const AdminDashboard = () => {
     salesByCategory,
     bestSelling,
     mostWishlisted,
+    mostViewed,
   } = useAdminStats();
 
   const { quotes, updateQuoteStatus } = useQuotes();
@@ -173,6 +174,61 @@ const AdminDashboard = () => {
                       <td className="p-4 text-right text-on-surface-variant font-medium">{p.wishlistCount}</td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* Most Viewed Products — last 30 days */}
+        <section className="mt-12">
+          <div className="bg-surface rounded shadow-sm border border-outline-variant/10 overflow-hidden">
+            <div className="p-6 border-b border-outline-variant/10 flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="font-headline-sm text-headline-sm text-on-surface">Most Viewed Products</h2>
+              <span className="font-label-caps text-[11px] uppercase tracking-[0.1em] text-on-surface-variant">
+                Last 30 days
+              </span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-sand-light/20 text-on-surface-variant font-label-caps text-[11px] uppercase tracking-[0.1em]">
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold">Product</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold">Category</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold text-right">Views</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold text-right">Visitors</th>
+                    <th className="p-4 border-b border-outline-variant/10 font-semibold text-right">Signed In</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant/10">
+                  {mostViewed?.length ? (
+                    mostViewed.slice(0, 10).map((p) => (
+                      <tr key={p.productId} className="hover:bg-sand-light/10 transition-colors">
+                        <td className="p-4 flex items-center gap-3">
+                          <div className="w-10 h-10 rounded border border-outline-variant/30 overflow-hidden shrink-0">
+                            <img
+                              src={p.productImage || "/logo.png"}
+                              className="w-full h-full object-cover"
+                              alt={p.productName || "Product"}
+                            />
+                          </div>
+                          <span className="text-sm font-medium text-on-surface">
+                            {p.productName || "Removed product"}
+                          </span>
+                        </td>
+                        <td className="p-4 text-sm text-on-surface-variant">{p.category || "—"}</td>
+                        <td className="p-4 text-right text-on-surface font-medium">{p.viewCount}</td>
+                        <td className="p-4 text-right text-on-surface-variant font-medium">{p.uniqueVisitors}</td>
+                        <td className="p-4 text-right text-on-surface-variant font-medium">{p.signedInViews}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="p-8 text-center text-sm text-on-surface-variant">
+                        No product views recorded yet.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
