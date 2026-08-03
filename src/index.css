@@ -309,3 +309,49 @@
 .stagger-3 { animation-delay: 0.3s; }
 .stagger-4 { animation-delay: 0.4s; }
 .stagger-5 { animation-delay: 0.5s; }
+
+/* ── Printable invoice ──────────────────────────────────────────────────────
+   The invoice is in the page but hidden on screen. On print everything else
+   is hidden and only #invoice-print is shown, so the browser's "Save as PDF"
+   yields the document — no third-party PDF service, works offline. */
+.invoice-print-root {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .invoice-print-root,
+  .invoice-print-root * {
+    visibility: visible;
+  }
+  .invoice-print-root {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 32px;
+    background: #fff;
+    color: #1f1b12;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 12px;
+  }
+  .ip-head { display: flex; justify-content: space-between; gap: 24px; border-bottom: 2px solid #8b6447; padding-bottom: 16px; }
+  .ip-brand { font-size: 22px; font-weight: 700; color: #8b6447; margin: 0 0 4px; }
+  .ip-title { font-size: 16px; letter-spacing: 0.15em; margin: 0 0 6px; }
+  .ip-right { text-align: right; }
+  .ip-muted { color: #5f5749; margin: 2px 0; }
+  .ip-strong { font-weight: 700; margin: 2px 0; }
+  .ip-label { display: block; text-transform: uppercase; letter-spacing: 0.15em; font-size: 10px; color: #8b6447; margin-bottom: 6px; }
+  .ip-parties { display: flex; justify-content: space-between; gap: 32px; margin: 20px 0; }
+  .ip-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .ip-table th { text-align: left; text-transform: uppercase; font-size: 10px; letter-spacing: 0.1em; border-bottom: 1px solid #8b6447; padding: 8px 6px; }
+  .ip-table td { padding: 8px 6px; border-bottom: 1px solid #e5ddd2; vertical-align: top; }
+  .ip-num { text-align: right; }
+  .ip-totals { margin-top: 16px; margin-left: auto; width: 260px; }
+  .ip-row { display: flex; justify-content: space-between; padding: 5px 0; }
+  .ip-grand { border-top: 2px solid #8b6447; margin-top: 6px; padding-top: 8px; font-weight: 700; font-size: 14px; }
+  .ip-footer { margin-top: 28px; border-top: 1px solid #e5ddd2; padding-top: 12px; text-align: center; }
+  @page { margin: 12mm; }
+}

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import useUserInfo from "../../hooks/useUserInfo";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { optimizeCloudinaryUrl } from "../../utils/cloudinaryImage";
+import InvoiceDocument from "../../components/InvoiceDocument/InvoiceDocument";
 
 const OrderSuccess = () => {
   const location = useLocation();
@@ -45,62 +46,22 @@ const OrderSuccess = () => {
     setOrderDate({ date, month, year });
   }, [orderObj]);
 
-  // create invoice
-  const handleDownloadInvoice = async () => {
-    setInvoiceLoading(true);
-    let invoiceData = {
-      images: {
-        logo: "https://i.ibb.co/BG5NMsk/output.png",
-      },
-      sender: {
-        company: "Sri Ram Jewellery",
-        address: "Timeless Craftsmanship",
-        zip: "",
-        city: "",
-        country: "India",
-      },
-      client: {
-        company: userFromDB?.name,
-        address:
-          orderObj?.shippingAddress?.streetAddress +
-          ", " +
-          orderObj?.shippingAddress?.city,
-        zip: orderObj?.shippingAddress?.postalCode,
-        city: orderObj?.shippingAddress?.state,
-        country: orderObj?.shippingAddress?.country,
-      },
-      information: {
-        number:
-          orderObj?.items?.length +
-          "" +
-          orderObj?.totalAmount +
-          orderDate?.year,
-        date: `${orderDate?.date}-${new Date(orderDate?.date).getMonth() + 1}-${orderDate?.year}`,
-      },
-      products: orderObj?.items?.map((product) => ({
-        quantity: product?.quantity,
-        description: product?.name,
-        price: product?.unitPrice,
-        "tax-rate": 0,
-      })),
-      "bottom-notice": "Thank you for shopping with Sri Ram Jewellery ✨",
-      settings: {
-        currency: "INR",
-      },
-    };
-
-    try {
-      if (invoiceData) {
-        const easyinvoiceModule = await import("easyinvoice");
-        const easyinvoice = easyinvoiceModule.default || easyinvoiceModule;
-        const result = await easyinvoice.createInvoice(invoiceData);
-        easyinvoice.download(`invoice_${orderObj?.orderId}.pdf`, result?.pdf);
-      }
-    } catch (error) {
-      toast.error("Sorry, our download server is busy. Please try again later");
+  // Print the invoice using the browser's own PDF export. The previous
+  // implementation posted the customer's name, address and order contents to
+  // api.easyinvoice.cloud, a third-party service, and hardcoded tax-rate 0 so
+  // the GST the order actually carries never appeared. It also navigated away
+  // immediately, which cancelled the download even when the service answered.
+  const handleDownloadInvoice = () => {
+    if (!orderObj?.orderId) {
+      toast.error("This order is still loading. Please try again in a moment.");
+      return;
     }
-    setInvoiceLoading(false);
-    navigate("/", { state: {}, replace: true });
+    setInvoiceLoading(true);
+    // Let React paint the invoice before the print dialog snapshots the page.
+    requestAnimationFrame(() => {
+      window.print();
+      setInvoiceLoading(false);
+    });
   };
 
   return (
@@ -220,6 +181,9 @@ const OrderSuccess = () => {
           <p className="font-body-base text-sm text-on-surface-variant text-center max-w-md mx-auto">
             Need help? Contact our concierge at <a className="text-primary hover:underline underline-offset-4" href="mailto:support@sriramjewellery.com">support@sriramjewellery.com</a>
           </p>
+
+          {/* Hidden on screen; the print stylesheet reveals only this. */}
+          <InvoiceDocument order={orderObj} />
         </>
       ) : (
         <div className="flex flex-col justify-center items-center min-h-[60vh] text-center space-y-6">
