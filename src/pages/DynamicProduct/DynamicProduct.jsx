@@ -31,6 +31,7 @@ const DynamicProduct = () => {
   const [quoteName, setQuoteName] = useState("");
   const [quoteMobile, setQuoteMobile] = useState("");
   const [quoteLoading, setQuoteLoading] = useState(false);
+  const [isImageZoomed, setIsImageZoomed] = useState(false);
 
   useEffect(() => {
     const filteredProduct = products?.find((data) => data._id === id);
@@ -185,10 +186,10 @@ const DynamicProduct = () => {
               <ImageZoomLens
                 src={optimizeCloudinaryUrl(mainImage, { width: 800 }) || "https://placehold.co/800x800"}
                 alt={dynamicProduct.name} 
-                onClick={() => document.getElementById('imageModal').showModal()}
+                onClick={() => { setIsImageZoomed(false); document.getElementById('imageModal').showModal(); }}
               />
               <button 
-                onClick={() => document.getElementById('imageModal').showModal()}
+                onClick={() => { setIsImageZoomed(false); document.getElementById('imageModal').showModal(); }}
                 className="absolute top-4 right-4 bg-white/80 p-2 rounded-full backdrop-blur-sm hover:bg-white transition-colors"
               >
                 <span className="material-symbols-outlined text-primary">zoom_in</span>
@@ -457,7 +458,25 @@ const DynamicProduct = () => {
               ✕
             </button>
           </form>
-          <img src={optimizeCloudinaryUrl(mainImage)} className="w-full h-full object-contain" alt="Zoomed Product" />
+          {/* The lens magnifier is pointer-only, so on a phone this modal is the
+              entire zoom feature — and it was rendering the image at the same
+              size as the page, i.e. no magnification at all. Tapping now
+              toggles a 2.5x view that pans by scrolling. */}
+          <div className={`w-full h-full ${isImageZoomed ? "overflow-auto" : "overflow-hidden"}`}>
+            <img
+              src={optimizeCloudinaryUrl(mainImage)}
+              onClick={() => setIsImageZoomed((z) => !z)}
+              className={
+                isImageZoomed
+                  ? "w-[250%] max-w-none h-auto cursor-zoom-out"
+                  : "w-full h-full object-contain cursor-zoom-in"
+              }
+              alt="Zoomed Product"
+            />
+          </div>
+          <span className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-black/55 text-white text-[11px] font-label-caps uppercase tracking-[0.1em] pointer-events-none">
+            {isImageZoomed ? "Tap image to fit · drag to pan" : "Tap image to zoom"}
+          </span>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

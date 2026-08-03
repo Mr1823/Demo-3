@@ -69,7 +69,10 @@ const Header = () => {
               <img
                 alt="Sri Ram Jewellery Logo"
                 className="h-9 sm:h-14 w-auto object-contain shrink-0 transition-transform duration-500 group-hover:scale-105"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnkKiBYrjO5ja_yOK74ECm5mdzcfxXWJFezzcd6geLOcrRGlRUhiETPqKr3Zn23LkiSeCA-2yk2yZaZTExvLRljEPg8jgwT3M7OXFjr6FiN4jdTz7JOoLaGPpyrvz-XwlSXUBgBxuAPJBocfWIt-FNsBrSwcnsluG1KWLQq0yV48ay72CCsvOdBVp_E-WSzhmxhaMrUZ77yQ0VaQ1Q-Qt9JsuKN2h92bYepfcKNheJ0kLbbJ_6dnS5lHMnVY0f3wRUW6tuOZIJ4mY"
+                // Self-hosted. This was a lh3.googleusercontent.com/aida-public URL —
+                // a temporary design-tool asset that expires, which would have
+                // silently emptied the header on every page.
+                src="/logo.png"
               />
               <span className={`hidden min-[360px]:inline-block whitespace-nowrap font-display-lg text-[15px] sm:text-body-lg lg:text-headline-sm tracking-tight ${isHome && !scrolled ? 'text-white' : 'text-primary'}`}>
                 Sri Ram Jewellery
