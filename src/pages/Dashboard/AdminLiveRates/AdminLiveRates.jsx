@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import toast from "react-hot-toast";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { getErrorMessage } from "../../../utils/errorMessage";
 
 const AdminLiveRates = () => {
+  // Bounds are served by GET /api/rates so the hint always matches whatever
+  // the server will actually accept.
+  const DEFAULT_BOUNDS = { gold: { min: 2000, max: 50000 }, silver: { min: 20, max: 5000 } };
   const [axiosSecure] = useAxiosSecure();
   const [goldRate, setGoldRate] = useState("");
   const [silverRate, setSilverRate] = useState("");
@@ -26,6 +30,9 @@ const AdminLiveRates = () => {
     if (rates?.silver) setSilverRate(rates.silver.ratePerGram);
   }, [rates]);
 
+  const GOLD_RANGE = rates?.bounds?.gold || DEFAULT_BOUNDS.gold;
+  const SILVER_RANGE = rates?.bounds?.silver || DEFAULT_BOUNDS.silver;
+
   const handleUpdateRates = (e) => {
     e.preventDefault();
     setIsUpdating(true);
@@ -40,8 +47,11 @@ const AdminLiveRates = () => {
       }
     })
     .catch((err) => {
-      console.error(err);
-      toast.error("Failed to update rates");
+      // The server rejects implausible rates with a message naming the valid
+      // band — the usual cause is entering the per-10-gram price into a
+      // per-gram field. Swallowing that behind "Failed to update rates" left
+      // the owner with no idea what was wrong.
+      toast.error(getErrorMessage(err, "Failed to update rates"), { duration: 6000 });
     })
     .finally(() => {
       setIsUpdating(false);
@@ -120,9 +130,14 @@ const AdminLiveRates = () => {
                       value={goldRate}
                       onChange={(e) => setGoldRate(e.target.value)}
                       className="w-full pl-6 pr-4 py-2 bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-primary text-body-base text-on-surface outline-none transition-all placeholder:text-outline/40"
-                      placeholder="e.g. 6800"
+                      placeholder="e.g. 13230"
                     />
                   </div>
+                  {/* Per GRAM, not per 10 grams — the trade quotes per 10g and
+                      that figure entered here is a 10x overprice. */}
+                  <p className="mt-2 text-[11px] text-on-surface-variant">
+                    Per <strong>gram</strong>. Accepted range ₹{GOLD_RANGE.min.toLocaleString("en-IN")}–₹{GOLD_RANGE.max.toLocaleString("en-IN")}.
+                  </p>
                 </div>
 
                 <div>
@@ -135,9 +150,14 @@ const AdminLiveRates = () => {
                       value={silverRate}
                       onChange={(e) => setSilverRate(e.target.value)}
                       className="w-full pl-6 pr-4 py-2 bg-transparent border-0 border-b border-outline-variant focus:ring-0 focus:border-primary text-body-base text-on-surface outline-none transition-all placeholder:text-outline/40"
-                      placeholder="e.g. 85"
+                      placeholder="e.g. 218"
                     />
                   </div>
+                  {/* Per GRAM, not per 10 grams — the trade quotes per 10g and
+                      that figure entered here is a 10x overprice. */}
+                  <p className="mt-2 text-[11px] text-on-surface-variant">
+                    Per <strong>gram</strong>. Accepted range ₹{SILVER_RANGE.min.toLocaleString("en-IN")}–₹{SILVER_RANGE.max.toLocaleString("en-IN")}.
+                  </p>
                 </div>
               </div>
 

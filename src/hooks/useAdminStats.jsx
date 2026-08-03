@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import useAuthContext from "./useAuthContext";
 import useAxiosSecure from "./useAxiosSecure";
 
-const useAdminStats = () => {
+const useAdminStats = ({ mostViewedDays = 30 } = {}) => {
   const { user, isAuthLoading } = useAuthContext();
   const [axiosSecure] = useAxiosSecure();
 
@@ -67,11 +67,13 @@ const useAdminStats = () => {
     },
   });
 
+  // Window is a caller-supplied argument so the dashboard can offer a period
+  // selector; the endpoint already accepts ?days=.
   const { data: mostViewed } = useQuery({
     enabled: hasValidUser,
-    queryKey: ["admin-most-viewed"],
+    queryKey: ["admin-most-viewed", mostViewedDays],
     queryFn: async () => {
-      const res = await axiosSecure.get("/admin-dashboard/most-viewed?days=30");
+      const res = await axiosSecure.get(`/admin-dashboard/most-viewed?days=${mostViewedDays}`);
       return res.data?.data || [];
     },
   });

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./AdminAddProduct.css";
 import { useForm, Controller } from "react-hook-form";
+import PriceBreakdownPreview from "../../../components/PriceBreakdownPreview/PriceBreakdownPreview";
+import useRates from "../../../hooks/useRates";
 import { Link, useLocation, useParams } from "react-router-dom";
 import uploadIcon from "../../../assets/image-upload.png";
 import axios from "axios";
@@ -46,6 +48,12 @@ const AdminAddProduct = () => {
   } = useForm();
 
   const isQuoteOnlyValue = watch("isQuoteOnly", false);
+  // Watched so the price preview recalculates as the owner types.
+  const weightValue = watch("weight");
+  const wastageValue = watch("wastagePercent");
+  const gstValue = watch("gstPercent");
+  const metalTypeValue = watch("metalType");
+  const { rates } = useRates();
 
   // default tag options for badges list
   const [tagOptions] = useState([
@@ -79,6 +87,7 @@ const AdminAddProduct = () => {
       defaultValues.weight = dynamicProduct.weight || "";
       defaultValues.wastagePercent = dynamicProduct.wastagePercent || "";
       defaultValues.gstPercent = dynamicProduct.gstPercent || "";
+      defaultValues.metalType = dynamicProduct.metalType || "gold";
       defaultValues.isQuoteOnly = dynamicProduct.isQuoteOnly || false;
       defaultValues.category = dynamicProduct.category || "";
       defaultValues.selectedBadges = defaultBadges;
@@ -116,12 +125,13 @@ const AdminAddProduct = () => {
       category: data.category,
       details: {
         description: data.description,
-        advantages: data.advantages.split(","),
+        advantages: data.advantages ? data.advantages.split(",").map((a) => a.trim()).filter(Boolean) : [],
       },
       price: parseFloat(data.price) || 0,
       weight: parseFloat(data.weight) || 0,
       wastagePercent: parseFloat(data.wastagePercent) || 0,
       gstPercent: parseFloat(data.gstPercent) || 0,
+      metalType: data.metalType || "gold",
       isQuoteOnly: data.isQuoteOnly || false,
       discountPrice: parseFloat(data.discountPrice) || null,
       discountPercentage: data.discountPrice
@@ -296,13 +306,8 @@ const AdminAddProduct = () => {
                     name="description"
                     rows="8"
                     className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary resize-none"
-                    {...register("description", { required: true })}
+                    {...register("description")}
                   ></textarea>
-                  {errors.description && (
-                    <span className="text-error mt-1 block">
-                      Product Description is required
-                    </span>
-                  )}
                 </div>
 
                 {/* advantages input */}
@@ -312,14 +317,9 @@ const AdminAddProduct = () => {
                     name="advantages"
                     rows="4"
                     className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface placeholder:text-on-surface-variant/30 transition-all duration-300 outline-none focus:border-primary resize-none"
-                    {...register("advantages", { required: true })}
+                    {...register("advantages")}
                     placeholder="Separate each advantage with comma(,)"
                   ></textarea>
-                  {errors.advantages && (
-                    <span className="text-error mt-1 block">
-                      Product Advantages is required
-                    </span>
-                  )}
                 </div>
               </div>
 
@@ -344,6 +344,23 @@ const AdminAddProduct = () => {
                 {!isQuoteOnlyValue && (
                   <>
                     <div className="w-full auth-input-con px-6">
+                      <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Metal *</p>
+                      <select
+                        {...register("metalType", { required: !isQuoteOnlyValue })}
+                        className="w-full bg-transparent border-0 border-b border-outline-variant py-3 px-0 focus:ring-0 text-on-surface transition-all duration-300 outline-none focus:border-primary"
+                      >
+                        <option value="gold">Gold</option>
+                        <option value="silver">Silver</option>
+                      </select>
+                      <p className="text-xs text-on-surface-variant mt-1">
+                        Decides which live rate prices this piece.
+                      </p>
+                      {errors.metalType && (
+                        <span className="text-error mt-1 block">Metal is required</span>
+                      )}
+                    </div>
+
+                    <div className="w-full auth-input-con px-6 mt-8">
                       <p className="text-outline font-label-caps tracking-[0.1em] text-xs uppercase">Weight (grams) *</p>
                       <input
                         type="number"
@@ -385,6 +402,14 @@ const AdminAddProduct = () => {
                         <span className="text-error mt-1 block">Valid GST % is required (0-100)</span>
                       )}
                     </div>
+
+                    <PriceBreakdownPreview
+                      weight={weightValue}
+                      wastagePercent={wastageValue}
+                      gstPercent={gstValue}
+                      metalType={metalTypeValue}
+                      rates={rates}
+                    />
 
                     {/* Product price input */}
                     <div className="w-full auth-input-con px-6 mt-8">

@@ -26,13 +26,16 @@ const StatCard = ({ title, value, icon, subtitle }) => {
 };
 
 const AdminDashboard = () => {
+  // Declared before useAdminStats, which reads it.
+  const [mostViewedDays, setMostViewedDays] = useState(30);
+
   const {
     revenueStats,
     salesByCategory,
     bestSelling,
     mostWishlisted,
     mostViewed,
-  } = useAdminStats();
+  } = useAdminStats({ mostViewedDays });
 
   const { quotes, updateQuoteStatus } = useQuotes();
   const { rates, updateRates } = useRates();
@@ -210,9 +213,21 @@ const AdminDashboard = () => {
           <div className="bg-surface rounded shadow-sm border border-outline-variant/10 overflow-hidden">
             <div className="p-6 border-b border-outline-variant/10 flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-headline-sm text-headline-sm text-on-surface">Most Viewed Products</h2>
-              <span className="font-label-caps text-[11px] uppercase tracking-[0.1em] text-on-surface-variant">
-                Last 30 days
-              </span>
+              <label className="flex items-center gap-2">
+                <span className="font-label-caps text-[11px] uppercase tracking-[0.1em] text-on-surface-variant">
+                  Period
+                </span>
+                <select
+                  value={mostViewedDays}
+                  onChange={(e) => setMostViewedDays(Number(e.target.value))}
+                  className="bg-transparent border-b border-outline-variant/50 py-1 pr-6 text-sm text-on-surface focus:border-primary focus:ring-0 outline-none cursor-pointer"
+                >
+                  <option value={7}>Last 7 days</option>
+                  <option value={30}>Last 30 days</option>
+                  <option value={90}>Last 90 days</option>
+                  <option value={365}>Last 12 months</option>
+                </select>
+              </label>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">

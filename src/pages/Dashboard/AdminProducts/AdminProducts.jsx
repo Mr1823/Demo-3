@@ -92,7 +92,7 @@ const AdminProducts = () => {
                 <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Thumbnail</th>
                 <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Product Name</th>
                 <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Category</th>
-                <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Price/Quote</th>
+                <th className="px-6 py-4 font-label-caps text-outline text-[11px]">Total Price</th>
                 <th className="px-6 py-4 font-label-caps text-outline text-[11px] text-center">Status</th>
                 <th className="px-6 py-4 font-label-caps text-outline text-[11px] text-right">Actions</th>
               </tr>
@@ -116,12 +116,29 @@ const AdminProducts = () => {
                     {product.isQuoteOnly ? (
                       <p className="font-button-text italic text-outline">Quote Only</p>
                     ) : product.price ? (
-                      <p className="font-button-text">₹ {product.price}</p>
+                      <>
+                        {/* The customer-facing total: metal + wastage + GST.
+                            Unformatted it read as an arbitrary number and gave
+                            no way to tell a wrong rate from a wrong weight. */}
+                        <p className="font-button-text">
+                          ₹ {Number(product.price).toLocaleString("en-IN")}
+                        </p>
+                        {product.priceBreakdown && (
+                          <p className="text-[11px] text-on-surface-variant">
+                            metal ₹{Number(product.priceBreakdown.metalValue).toLocaleString("en-IN")}
+                            {" + "}wastage ₹{Number(product.priceBreakdown.wastageValue).toLocaleString("en-IN")}
+                            {" + "}GST ₹{Number(product.priceBreakdown.gst).toLocaleString("en-IN")}
+                          </p>
+                        )}
+                      </>
                     ) : (
                       <p className="font-button-text italic text-outline">Dynamic</p>
                     )}
                     <p className="text-[11px] text-tertiary-container uppercase tracking-tighter">
                       {product.metalType || "Gold"} | {product.weight}g
+                      {product.priceBreakdown?.ratePerGram
+                        ? ` @ ₹${Number(product.priceBreakdown.ratePerGram).toLocaleString("en-IN")}/g`
+                        : ""}
                     </p>
                   </td>
                   <td className="px-6 py-4 text-center">
