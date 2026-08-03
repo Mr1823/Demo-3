@@ -10,6 +10,29 @@ const RAZORPAY_SRC = "https://checkout.razorpay.com/v1/checkout.js";
 // a paisa of tolerance rather than strict equality.
 const TOTAL_TOLERANCE = 0.01;
 
+/**
+ * Razorpay renders the merchant logo inside its own https iframe, so a relative
+ * path like "/logo.png" resolves against the *checkout* origin, not ours — it
+ * is blocked as mixed content in local http and silently fails in production.
+ * It has to be an absolute https URL.
+ *
+ * Returns undefined when unconfigured: Razorpay then shows its default header,
+ * which is better than a broken image request.
+ */
+const getMerchantLogoUrl = () => {
+  const base = import.meta.env.VITE_PUBLIC_SITE_URL;
+  if (!base) return undefined;
+
+  const normalised = base.replace(/\/+$/, "");
+  if (!normalised.startsWith("https://")) {
+    console.warn(
+      `VITE_PUBLIC_SITE_URL is "${base}" — Razorpay only loads the merchant logo over https, so it will be omitted.`
+    );
+    return undefined;
+  }
+  return `${normalised}/logo.png`;
+};
+
 const Payment = () => {
   const [userFromDB] = useUserInfo();
   const [axiosSecure] = useAxiosSecure();
@@ -131,7 +154,7 @@ const Payment = () => {
         currency: "INR",
         name: "Sri Ram Jewellery",
         description: "Secure purchase of premium jewelry",
-        image: "/logo.png",
+        image: getMerchantLogoUrl(),
         order_id: orderId,
         handler: async function (response) {
           try {
