@@ -133,7 +133,15 @@ const Shop = () => {
 
         {/* Filter Bar */}
         <section className="relative flex flex-col md:flex-row justify-between items-center border-y border-outline-variant/30 py-6 gap-6 bg-surface-container-low/30 px-6">
-          <div className="flex gap-8 w-full overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+          <div
+            className={`flex gap-8 w-full pb-2 md:pb-0 scrollbar-hide ${
+              // The dropdowns are absolutely positioned *below* this row, so a
+              // scroll container clips them away entirely — the menu renders but
+              // is invisible, and the click lands on the backdrop behind it.
+              // Only clip while every menu is closed.
+              openFilter ? '' : 'overflow-x-auto'
+            }`}
+          >
 
             {/* Metal Filter */}
             <div className="relative">
