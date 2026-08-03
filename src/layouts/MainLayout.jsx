@@ -9,6 +9,15 @@ import { LoginGateProvider } from "../context/LoginGateContext";
 import useResumePendingAction from "../hooks/useResumePendingAction";
 import "aos/dist/aos.css";
 
+// How often a signed-out visitor is invited to sign in. The prompt repeats
+// until they do; raise this if it starts to feel like nagging.
+const LOGIN_NUDGE_INTERVAL_MS = 30 * 1000;
+// How long each prompt stays on screen — comfortably shorter than the interval
+// so there is a quiet gap rather than a permanent banner.
+const NUDGE_VISIBLE_MS = 15 * 1000;
+// Prompting someone to sign in while they are on the sign-in page is noise.
+const AUTH_PATHS = ["/login", "/register", "/admin-login"];
+
 const MainLayoutInner = () => {
   useResumePendingAction();
   const location = useLocation();
@@ -35,18 +44,17 @@ const MainLayoutInner = () => {
     AOS.init({ once: true });
   }, []);
 
-  // ─── Login Nudge: 30-second timer (PRD §4.3) ──────────────────────────────
+  // ─── Login Nudge (PRD §4.3) ───────────────────────────────────────────────
+  // Repeats on this interval until the visitor signs in, rather than showing
+  // once per tab. Dial it up here if it starts to feel like nagging.
   useEffect(() => {
-    // Only start timer if user is NOT logged in and hasn't dismissed it this session
     if (user || isAuthLoading) return;
-    
-    const alreadyShown = sessionStorage.getItem("login-nudge-shown");
-    if (alreadyShown) return;
 
-    const timer = setTimeout(() => {
+    const showNudge = () => {
       const currentPath = window.location.pathname;
-      // Double-check user hasn't logged in during the 30s and isn't on auth pages
-      if (!user && currentPath !== "/login" && currentPath !== "/register") {
+      // Never interrupt someone already on an auth screen, and re-check the
+      // user because they may have signed in since the last tick.
+      if (!user && !AUTH_PATHS.includes(currentPath)) {
         toast.custom(
           (t) => (
             <div
@@ -91,13 +99,22 @@ const MainLayoutInner = () => {
               </div>
             </div>
           ),
-          { duration: 15000, position: "bottom-right", id: "login-nudge-toast" }
+          // The fixed id means a re-fire replaces the existing toast rather
+          // than stacking a second one.
+          { duration: NUDGE_VISIBLE_MS, position: "bottom-right", id: "login-nudge-toast" }
         );
-        sessionStorage.setItem("login-nudge-shown", "true");
       }
-    }, 30000); // 30 seconds
+    };
 
-    return () => clearTimeout(timer);
+    // setInterval already fires first at one full interval, so no separate
+    // initial timeout is needed.
+    const repeat = setInterval(showNudge, LOGIN_NUDGE_INTERVAL_MS);
+
+    return () => {
+      clearInterval(repeat);
+      // Signing in mid-cycle should take the prompt away immediately.
+      toast.dismiss("login-nudge-toast");
+    };
   }, [user, isAuthLoading]);
 
   return (
