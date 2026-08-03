@@ -92,6 +92,10 @@ const AdminLogin = () => {
               id="login-email"
               placeholder="Enter your email"
               type="email"
+              // Without an autoComplete hint the browser cannot tell which saved
+              // login belongs to this form and will offer one from an unrelated
+              // site, which then fails as "invalid email or password".
+              autoComplete="username"
               {...register("email", { required: true })}
             />
             {errors.email && <span className="text-error text-xs mt-1 block font-semibold">Email is required</span>}
@@ -108,6 +112,7 @@ const AdminLogin = () => {
                 id="login-password"
                 placeholder="••••••••"
                 type="password"
+                autoComplete="current-password"
                 {...register("password", { required: true })}
               />
               {errors.password && <span className="text-error text-xs mt-1 block font-semibold">Password is required</span>}
