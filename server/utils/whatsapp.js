@@ -2,53 +2,51 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Send a WhatsApp Cloud API (Meta official) alert to the admin.
+ * WhatsApp Cloud API (Meta official) alerts to the shop owner.
  *
  * Requires the following environment variables:
- *   WHATSAPP_TOKEN — permanent or temporary access token from Meta Business
+ *   WHATSAPP_TOKEN — permanent System User token from Meta Business. The token
+ *     Meta shows first is a 24-hour test token; alerts stop silently when it
+ *     expires.
  *   WHATSAPP_PHONE_NUMBER_ID — phone number ID from the WhatsApp Business API
- *   ADMIN_WHATSAPP_NUMBER — the admin's phone number in international format (e.g. 919876543210)
+ *   ADMIN_WHATSAPP_NUMBER — owner's number, international format, no '+'
+ *     (e.g. 919876543210)
  *
- * @param {Object} params
- * @param {string} params.customerName
- * @param {string} params.customerMobile
- * @param {string} params.productName
+ * None of these are configured yet, so every alert currently no-ops. The
+ * skip is logged with the message that would have gone out, so the owner can
+ * still see the event in the server log.
  */
-export const sendWhatsAppAlert = async ({ customerName, customerMobile, productName, isQuoteOnly }) => {
+
+const ADMIN_BASE_URL = process.env.PUBLIC_SITE_URL || "https://sriramjewellery.com";
+
+/**
+ * Shared transport. Returns false when unconfigured or on failure, so callers
+ * can log without needing to care why — an alert must never be the reason an
+ * order fails.
+ */
+const dispatch = async (text, skipSummary) => {
   const token = process.env.WHATSAPP_TOKEN;
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
   const adminNumber = process.env.ADMIN_WHATSAPP_NUMBER;
 
   if (!token || !phoneNumberId || !adminNumber) {
-    console.log("📱 WhatsApp alert skipped — env vars not configured");
-    console.log(`   Would have sent: Quote request from ${customerName} (${customerMobile}) for "${productName}"`);
-    return;
+    console.log("📱 WhatsApp alert skipped — WHATSAPP_TOKEN/PHONE_NUMBER_ID/ADMIN_NUMBER not configured");
+    console.log(`   Would have sent: ${skipSummary}`);
+    return false;
   }
 
-  const url = `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`;
-  
-  const alertHeader = isQuoteOnly ? "🔔 New Enquiry (Quote Required)" : "🔔 New Enquiry (Priced Item)";
-
-  const messageBody = {
-    messaging_product: "whatsapp",
-    to: adminNumber,
-    type: "text",
-    text: {
-      body: `${alertHeader}\n\n` +
-        `Product: ${productName}\n` +
-        `Customer: ${customerName}\n` +
-        `Mobile: ${customerMobile}\n\n` +
-        `View request: https://sriramjewellery.com/dashboard/adminQuoteRequests`,
-    },
-  };
-
-  const response = await fetch(url, {
+  const response = await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/messages`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(messageBody),
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      to: adminNumber,
+      type: "text",
+      text: { body: text },
+    }),
   });
 
   if (!response.ok) {
@@ -57,5 +55,81 @@ export const sendWhatsAppAlert = async ({ customerName, customerMobile, productN
   }
 
   console.log("✅ WhatsApp alert sent successfully");
-  return response.json();
+  return true;
+};
+
+/**
+ * Quote/enquiry alert. Unchanged behaviour.
+ */
+export const sendWhatsAppAlert = async ({ customerName, customerMobile, productName, isQuoteOnly }) => {
+  const alertHeader = isQuoteOnly ? "🔔 New Enquiry (Quote Required)" : "🔔 New Enquiry (Priced Item)";
+
+  return dispatch(
+    `${alertHeader}\n\n` +
+      `Product: ${productName}\n` +
+      `Customer: ${customerName}\n` +
+      `Mobile: ${customerMobile}\n\n` +
+      `View request: ${ADMIN_BASE_URL}/dashboard/adminQuoteRequests`,
+    `Quote request from ${customerName} (${customerMobile}) for "${productName}"`
+  );
+};
+
+const formatItems = (items = []) =>
+  items
+    .slice(0, 5)
+    .map((i) => `• ${i.name || i.productId} ×${i.quantity || 1}`)
+    .join("\n") + (items.length > 5 ? `\n• …and ${items.length - 5} more` : "");
+
+const formatAmount = (n) => `₹${Number(n || 0).toLocaleString("en-IN")}`;
+
+/**
+ * New order placed. Sent for COD at order creation and for card orders only
+ * after payment is confirmed, so abandoned checkout attempts raise nothing.
+ *
+ * Kept short deliberately — the owner reads this on a lock screen.
+ */
+export const sendOrderAlert = async ({ order, paymentMethod }) => {
+  const method = paymentMethod === "cod" ? "Cash on Delivery" : "Paid online";
+  const customer = order.name || "Customer";
+  const mobile =
+    order.shippingAddress?.mobileNumber || order.shippingAddress?.number || order.phone || "—";
+
+  return dispatch(
+    `🛒 New Order — ${order.orderId}\n\n` +
+      `${customer}\n` +
+      `${mobile}\n\n` +
+      `${formatItems(order.items)}\n\n` +
+      `Total: ${formatAmount(order.totalAmount)}\n` +
+      `Payment: ${method}\n\n` +
+      `⏳ Awaiting your approval — the 15-day delivery window starts when you approve.\n` +
+      `${ADMIN_BASE_URL}/dashboard/adminOrders`,
+    `New order ${order.orderId} from ${customer} (${mobile}), ${formatAmount(order.totalAmount)}, ${method}`
+  );
+};
+
+/**
+ * Approval decision, so the owner keeps a record of what they approved and
+ * the delivery date it committed them to.
+ */
+export const sendOrderApprovalAlert = async ({ order }) => {
+  const approved = order.approvalStatus === "APPROVED";
+  const expected = order.expectedDeliveryDate
+    ? new Date(order.expectedDeliveryDate).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : null;
+
+  const detail = approved
+    ? `Deliver by: ${expected || "—"}`
+    : `Reason: ${order.rejectionReason || "—"}`;
+
+  return dispatch(
+    `${approved ? "✅ Order Approved" : "❌ Order Declined"} — ${order.orderId}\n\n` +
+      `${order.name || "Customer"}\n` +
+      `Total: ${formatAmount(order.totalAmount)}\n` +
+      `${detail}`,
+    `Order ${order.orderId} ${approved ? "approved" : "declined"} — ${detail}`
+  );
 };

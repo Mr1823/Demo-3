@@ -5,6 +5,7 @@ import { Product } from "../models/Product.js";
 import { computePrice } from "../utils/computePrice.js";
 import { getRates } from "../utils/getRates.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
+import { sendOrderAlert, sendOrderApprovalAlert } from "../utils/whatsapp.js";
 import {
   validate,
   createOrderSchema,
@@ -137,6 +138,13 @@ router.post("/", verifyJWT, validate(createOrderSchema), async (req, res) => {
 
     await newOrder.save();
 
+    // Owner alert, fire-and-forget. Card orders are announced from the payment
+    // verification handler instead, so an abandoned checkout raises nothing.
+    // A notification must never be the reason a saved order reports failure.
+    sendOrderAlert({ order: newOrder, paymentMethod: newOrder.paymentMethod }).catch((err) =>
+      console.error("Owner order alert failed (non-critical):", err.message)
+    );
+
     // Clear cart after successful order — but a "Buy Now" purchase bypasses the
     // cart entirely, so it must leave whatever the user had saved intact.
     if (!req.body.buyNow) {
@@ -222,6 +230,10 @@ router.patch("/:id/approval", verifyJWT, requireAdmin, validate(orderApprovalSch
     }
 
     await order.save();
+
+    sendOrderApprovalAlert({ order }).catch((err) =>
+      console.error("Owner approval alert failed (non-critical):", err.message)
+    );
 
     res.json({ success: true, data: order });
   } catch (error) {

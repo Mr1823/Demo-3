@@ -4,6 +4,7 @@ import { Order } from "../models/Order.js";
 import { Product } from "../models/Product.js";
 import { computePrice } from "../utils/computePrice.js";
 import { verifyJWT } from "../middleware/auth.js";
+import { sendOrderAlert } from "../utils/whatsapp.js";
 import { getRates } from "../utils/getRates.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -170,6 +171,12 @@ router.post("/verify", verifyJWT, async (req, res) => {
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
+
+    // Announced here rather than at order creation: only a confirmed payment
+    // is worth waking the owner for.
+    sendOrderAlert({ order, paymentMethod: "razorpay" }).catch((err) =>
+      console.error("Owner order alert failed (non-critical):", err.message)
+    );
 
     res.json({
       success: true,
