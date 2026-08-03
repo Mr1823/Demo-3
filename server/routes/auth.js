@@ -37,15 +37,38 @@ const TEST_OTP = "123456";
 // state, so production accepted 123456 for every number.
 const isTestOtpEnabled = () => process.env.ALLOW_TEST_OTP === "true";
 
+/**
+ * Optional allowlist, e.g. TEST_OTP_PHONES="9363750806,9876543210".
+ *
+ * Unset means the bypass applies to every number, which also means every
+ * existing customer account can be signed into by anyone who knows the phone
+ * number. Setting it confines the bypass to demo handsets, so a shared
+ * preview link cannot be used to reach a real account.
+ */
+const testOtpPhones = () =>
+  (process.env.TEST_OTP_PHONES || "")
+    .split(",")
+    .map((s) => s.trim().replace(/^\+?91/, ""))
+    .filter(Boolean);
+
+const isTestOtpAllowedFor = (phone) => {
+  if (!isTestOtpEnabled()) return false;
+  const allowed = testOtpPhones();
+  if (!allowed.length) return true; // no allowlist configured — applies to all
+  return allowed.includes(String(phone).trim().replace(/^\+?91/, ""));
+};
+
 const isSmsConfigured = () =>
   Boolean(process.env.MSG91_AUTH_KEY && process.env.MSG91_TEMPLATE_ID);
 
 // Announce the bypass loudly at startup so an operator cannot leave it on by
 // accident without seeing it in the logs.
 if (isTestOtpEnabled()) {
+  const scoped = testOtpPhones();
   console.warn(
-    "⚠️  ALLOW_TEST_OTP=true — the fixed test OTP (123456) is accepted for ALL phone numbers. " +
-      "This is an authentication bypass. Never set this in production."
+    `⚠️  ALLOW_TEST_OTP=true — the fixed test OTP (123456) is accepted for ${
+      scoped.length ? `these numbers only: ${scoped.join(", ")}` : "ALL phone numbers"
+    }. This is an authentication bypass; turn it off before launch.`
   );
 }
 
@@ -97,7 +120,7 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
     const authKey = process.env.MSG91_AUTH_KEY;
     const templateId = process.env.MSG91_TEMPLATE_ID;
     const smsConfigured = isSmsConfigured();
-    const testOtp = isTestOtpEnabled();
+    const testOtp = isTestOtpAllowedFor(phone);
 
     // Neither a real SMS channel nor the deliberate test bypass: there is no way
     // to deliver a code, so refuse rather than write an OTP nobody can receive.
