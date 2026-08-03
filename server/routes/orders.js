@@ -3,7 +3,7 @@ import { Order } from "../models/Order.js";
 import { Cart } from "../models/Cart.js";
 import { Product } from "../models/Product.js";
 import { computePrice } from "../utils/computePrice.js";
-import { getRates } from "../utils/getRates.js";
+import { getRates, getRateStatus, findStaleMetalsForProducts } from "../utils/getRates.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 import { sendOrderAlert, sendOrderApprovalAlert } from "../utils/whatsapp.js";
 import {
@@ -73,6 +73,29 @@ router.post("/", verifyJWT, validate(createOrderSchema), async (req, res) => {
 
     if (!items || !items.length) {
       return res.status(400).json({ error: "Order must contain at least one item" });
+    }
+
+
+    // A stale metal rate produces a confident, wrong price — exactly how a
+    // ₹96/gram gold rate reached checkout. Refuse rather than charge against it.
+    const { staleMetals } = await getRateStatus();
+    if (staleMetals.length) {
+      const affected = findStaleMetalsForProducts(
+        await Product.find({
+          $or: items.map((i) => ({
+            $or: [
+              { _id: i.productId?.match(/^[0-9a-fA-F]{24}$/) ? i.productId : null },
+              { productId: i.productId },
+            ].filter(Boolean),
+          })).flat(),
+        }).lean(),
+        staleMetals
+      );
+      if (affected.length) {
+        return res.status(503).json({
+          error: `Our ${affected.join(" and ")} rate is being updated, so these items cannot be priced right now. Please try again shortly.`,
+        });
+      }
     }
 
     // Server-side price verification (PRD: price never trusted from frontend)

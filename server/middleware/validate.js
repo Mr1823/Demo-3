@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { RATE_BOUNDS, rateOutOfBoundsMessage } from "../utils/rateGuards.js";
 
 /**
  * Express middleware factory: validate request body against a Zod schema.
@@ -82,9 +83,20 @@ export const createProductSchema = z.object({
 // is sent still has to be the right shape.
 export const updateProductSchema = createProductSchema.partial();
 
+// Bounds live in rateGuards.js so the API, the admin form and the dashboard
+// warning cannot drift apart. A rate outside these is an order-of-magnitude
+// slip, and one of those already reached production.
 export const updateRatesSchema = z.object({
-  gold: z.coerce.number().positive("Gold rate must be greater than zero").optional(),
-  silver: z.coerce.number().positive("Silver rate must be greater than zero").optional(),
+  gold: z.coerce
+    .number({ error: rateOutOfBoundsMessage("gold") })
+    .min(RATE_BOUNDS.gold.min, rateOutOfBoundsMessage("gold"))
+    .max(RATE_BOUNDS.gold.max, rateOutOfBoundsMessage("gold"))
+    .optional(),
+  silver: z.coerce
+    .number({ error: rateOutOfBoundsMessage("silver") })
+    .min(RATE_BOUNDS.silver.min, rateOutOfBoundsMessage("silver"))
+    .max(RATE_BOUNDS.silver.max, rateOutOfBoundsMessage("silver"))
+    .optional(),
 }).refine(
   (data) => data.gold !== undefined || data.silver !== undefined,
   { message: "Must provide at least one rate to update (gold or silver)" }

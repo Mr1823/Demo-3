@@ -4,6 +4,7 @@ import BarChartComponent from "../../../components/BarChartComponent/BarChartCom
 import useAdminStats from "../../../hooks/useAdminStats";
 import useQuotes from "../../../hooks/useQuotes";
 import useRates from "../../../hooks/useRates";
+import useProducts from "../../../hooks/useProducts";
 
 const StatCard = ({ title, value, icon, subtitle }) => {
   return (
@@ -35,9 +36,33 @@ const AdminDashboard = () => {
 
   const { quotes, updateQuoteStatus } = useQuotes();
   const { rates, updateRates } = useRates();
+  const [products] = useProducts();
 
   const [goldInput, setGoldInput] = useState("");
   const [silverInput, setSilverInput] = useState("");
+
+  // First real weighted product, priced by the server from the live rate. Shown
+  // beside the rate so an order-of-magnitude error is visible at a glance —
+  // ₹96/gram and ₹100,000/gram both look plausible in isolation, but the piece
+  // they produce does not.
+  const rateSample = (() => {
+    const p = products?.find(
+      (x) => !x.isQuoteOnly && x.weight > 0 && typeof x.price === "number" && x.price > 0
+    );
+    return p
+      ? { name: p.name, weight: p.weight, metalType: p.metalType || "gold", price: p.price }
+      : null;
+  })();
+
+  const formatRateDate = (value) =>
+    value
+      ? new Date(value).toLocaleString("en-IN", {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "never";
   
   // Calculate some aggregate values for KPI cards
   const totalRevenue = revenueStats?.reduce((acc, curr) => acc + curr.totalRevenue, 0) || 0;
@@ -301,6 +326,36 @@ const AdminDashboard = () => {
               <h2 className="font-headline-sm text-headline-sm text-on-surface">Daily Rates</h2>
               <span className="text-[10px] uppercase tracking-wider text-on-surface-variant/70 bg-white/50 px-2 py-1 rounded">Live</span>
             </div>
+
+            {/* A stale rate prices every gold item wrongly, so it is called out
+                here and checkout refuses to price against it. */}
+            {(rates?.gold?.isStale || rates?.silver?.isStale) && (
+              <div className="mb-4 p-3 rounded bg-error-container text-on-error-container text-xs font-semibold flex items-start gap-2">
+                <span className="material-symbols-outlined text-[18px] shrink-0">warning</span>
+                <span>
+                  {[rates?.gold?.isStale && "Gold", rates?.silver?.isStale && "Silver"]
+                    .filter(Boolean)
+                    .join(" and ")}{" "}
+                  rate not updated for over {rates?.staleAfterDays ?? 3} days. Checkout will refuse
+                  to price these items until it is refreshed.
+                </span>
+              </div>
+            )}
+
+            {/* A sample price from a real product: a wrong order of magnitude is
+                obvious here in a way a bare rate figure never is. */}
+            {rateSample && (
+              <div className="mb-4 p-3 rounded bg-surface border border-outline-variant/20 text-xs">
+                <span className="font-label-caps text-[10px] uppercase tracking-[0.1em] text-on-surface-variant block mb-1">
+                  Sample price check
+                </span>
+                <span className="text-on-surface">
+                  {rateSample.name} · {rateSample.weight}g {rateSample.metalType} ={" "}
+                  <strong className="text-primary">₹{rateSample.price.toLocaleString("en-IN")}</strong>
+                </span>
+              </div>
+            )}
+
             <div className="space-y-4 flex-1">
               {/* Gold Rate */}
               <div className="bg-surface p-4 rounded border border-outline-variant/10 shadow-sm">
@@ -312,10 +367,14 @@ const AdminDashboard = () => {
                   <span className="text-[10px] uppercase tracking-tighter text-on-surface-variant">per gram</span>
                 </div>
                 <div className="flex items-end gap-2">
-                  <span className="font-display-lg text-headline-md text-primary">
-                    ₹{rates?.gold?.ratePerGram || 0}
+                  <span className={`font-display-lg text-headline-md ${rates?.gold?.isStale ? "text-error" : "text-primary"}`}>
+                    ₹{(rates?.gold?.ratePerGram || 0).toLocaleString("en-IN")}
                   </span>
                 </div>
+                <p className="mt-1 text-[10px] text-on-surface-variant">
+                  Updated {formatRateDate(rates?.gold?.updatedAt)}
+                  {rates?.gold?.ageInDays > 0 && ` · ${rates.gold.ageInDays}d ago`}
+                </p>
                 <div className="mt-4 flex gap-2">
                   <input
                     className="w-full bg-sand-light/20 border border-outline-variant/20 rounded px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:ring-0 transition-colors font-body-base"
@@ -344,10 +403,14 @@ const AdminDashboard = () => {
                   <span className="text-[10px] uppercase tracking-tighter text-on-surface-variant">per gram</span>
                 </div>
                 <div className="flex items-end gap-2">
-                  <span className="font-display-lg text-headline-md text-primary">
-                    ₹{rates?.silver?.ratePerGram || 0}
+                  <span className={`font-display-lg text-headline-md ${rates?.silver?.isStale ? "text-error" : "text-primary"}`}>
+                    ₹{(rates?.silver?.ratePerGram || 0).toLocaleString("en-IN")}
                   </span>
                 </div>
+                <p className="mt-1 text-[10px] text-on-surface-variant">
+                  Updated {formatRateDate(rates?.silver?.updatedAt)}
+                  {rates?.silver?.ageInDays > 0 && ` · ${rates.silver.ageInDays}d ago`}
+                </p>
                 <div className="mt-4 flex gap-2">
                   <input
                     className="w-full bg-sand-light/20 border border-outline-variant/20 rounded px-3 py-1.5 text-sm text-on-surface focus:border-primary focus:ring-0 transition-colors font-body-base"

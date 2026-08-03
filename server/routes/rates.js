@@ -2,6 +2,12 @@ import express from "express";
 import { GoldRate } from "../models/GoldRate.js";
 import { verifyJWT, requireAdmin } from "../middleware/auth.js";
 import { validate, updateRatesSchema } from "../middleware/validate.js";
+import {
+  isRateStale,
+  rateAgeInDays,
+  RATE_STALE_AFTER_DAYS,
+  RATE_BOUNDS,
+} from "../utils/rateGuards.js";
 
 const router = express.Router();
 
@@ -10,23 +16,41 @@ router.get("/", async (req, res) => {
   try {
     const rates = await GoldRate.find().lean();
 
-    // Build response object
+    // Build response object. Each metal carries its own updatedAt — they are
+    // set independently, and the previous code reported gold's timestamp for
+    // silver too.
     let goldRate = 0;
     let silverRate = 0;
-    let updatedAt = new Date();
+    let goldUpdatedAt = null;
+    let silverUpdatedAt = null;
 
     for (const r of rates) {
       if (r.metalType === "gold") {
         goldRate = r.ratePerGram;
-        updatedAt = r.updatedAt;
+        goldUpdatedAt = r.updatedAt || null;
       } else if (r.metalType === "silver") {
         silverRate = r.ratePerGram;
+        silverUpdatedAt = r.updatedAt || null;
       }
     }
 
     res.json({
-      gold: { metalType: "gold", ratePerGram: goldRate, updatedAt },
-      silver: { metalType: "silver", ratePerGram: silverRate, updatedAt },
+      gold: {
+        metalType: "gold",
+        ratePerGram: goldRate,
+        updatedAt: goldUpdatedAt,
+        isStale: isRateStale(goldUpdatedAt),
+        ageInDays: rateAgeInDays(goldUpdatedAt),
+      },
+      silver: {
+        metalType: "silver",
+        ratePerGram: silverRate,
+        updatedAt: silverUpdatedAt,
+        isStale: isRateStale(silverUpdatedAt),
+        ageInDays: rateAgeInDays(silverUpdatedAt),
+      },
+      staleAfterDays: RATE_STALE_AFTER_DAYS,
+      bounds: RATE_BOUNDS,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch rates" });
