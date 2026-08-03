@@ -10,8 +10,15 @@
  * @returns {number|undefined} — computed price, or undefined for quote-only products
  */
 export const computePrice = (product, rateMap) => {
-  // Quote-only products have no price
-  if (product.isQuoteOnly || product.isFixedPrice === false) {
+  // Quote-only products have no price.
+  //
+  // isFixedPrice is deliberately not consulted. The guard used to bail out when
+  // it was false, which is backwards: "not a fixed price" means the piece
+  // should be priced from the live metal rate, not that it has no price. The
+  // effect was that most products fell through to the stored `price` field —
+  // the making charge — and showed that to the customer as the entire price,
+  // omitting metal value, wastage and GST.
+  if (product.isQuoteOnly) {
     return undefined;
   }
 
