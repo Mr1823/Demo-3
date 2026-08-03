@@ -155,7 +155,7 @@ const MyOrders = () => {
                         <div key={item._id || i} className="w-16 h-16 md:w-20 md:h-20 bg-surface-variant border border-sand/30 flex items-center justify-center overflow-hidden rounded-sm">
                           <img 
                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" 
-                            src={item.img || item.image || "https://images.unsplash.com/photo-1599643478524-fb524b0d0f72?q=80&w=2835&auto=format&fit=crop"} 
+                            src={item.img || item.image || "/logo.png"} 
                             alt={item.name || "Product"} 
                           />
                         </div>

@@ -153,7 +153,7 @@ const Payment = () => {
         amount: Math.round(amount * 100), // Razorpay expects amount in paise (1 INR = 100 paise)
         currency: "INR",
         name: "Sri Ram Jewellery",
-        description: "Secure purchase of premium jewelry",
+        description: "Secure purchase of premium jewellery",
         image: getMerchantLogoUrl(),
         order_id: orderId,
         handler: async function (response) {

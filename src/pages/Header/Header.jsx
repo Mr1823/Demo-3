@@ -115,7 +115,7 @@ const Header = () => {
                   <span className={`material-symbols-outlined text-[20px] ${isHome && !scrolled ? 'text-white/70' : 'text-on-surface-variant'}`}>search</span>
                   <input 
                     className={`bg-transparent border-none focus:ring-0 p-0 w-full text-body-base text-sm outline-none ${isHome && !scrolled ? 'text-white placeholder:text-white/40' : 'text-on-surface placeholder:text-on-surface-variant/40'}`} 
-                    placeholder="Search jewelry..." 
+                    placeholder="Search jewellery..." 
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -177,7 +177,7 @@ const Header = () => {
                 <span className="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
                 <input 
                   className="bg-transparent border-none focus:ring-0 p-0 w-full text-body-base text-on-surface text-sm placeholder:text-on-surface-variant/40 outline-none" 
-                  placeholder="Search jewelry..." 
+                  placeholder="Search jewellery..." 
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
