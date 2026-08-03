@@ -108,6 +108,20 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
       });
     }
 
+    // Upsert user by phone
+    let user = await User.findOne({ phone });
+
+    // Admins sign in with email and password only. This path mints a token
+    // carrying whatever role the record holds, so an admin with a phone number
+    // set would otherwise be reachable by OTP — and by the test OTP whenever
+    // that is enabled. Answer exactly as for any other number (no OTP is
+    // stored, so nothing can be verified) rather than confirming the number
+    // belongs to an administrator.
+    if (user?.role === "ADMIN") {
+      console.warn(`Refused OTP request for admin account (phone ${phone}) — admins use password sign-in.`);
+      return res.json({ success: true, message: "OTP sent successfully" });
+    }
+
     const otp = smsConfigured
       ? Math.floor(100000 + Math.random() * 900000).toString()
       : TEST_OTP;
@@ -115,8 +129,6 @@ router.post("/otp/request", otpLimiter, async (req, res) => {
     const otpHash = await bcrypt.hash(otp, BCRYPT_SALT_ROUNDS);
     const otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
 
-    // Upsert user by phone
-    let user = await User.findOne({ phone });
     if (!user) {
       user = new User({ phone, role: "USER" });
     }
@@ -159,6 +171,14 @@ router.post("/otp/verify", otpVerifyLimiter, async (req, res) => {
 
     const user = await User.findOne({ phone });
     if (!user || !user.otpHash || !user.otpExpiresAt) {
+      return res.status(401).json({ error: "Invalid OTP or phone number" });
+    }
+
+    // Second layer: even if a record somehow carries a valid OTP (set before
+    // the account was promoted, or written directly), this path must never
+    // issue an admin token. Same generic message — no confirmation of role.
+    if (user.role === "ADMIN") {
+      console.warn(`Refused OTP verification for admin account (phone ${phone}).`);
       return res.status(401).json({ error: "Invalid OTP or phone number" });
     }
 
