@@ -194,11 +194,14 @@ export const createReviewSchema = z.object({
 // Both handlers pass req.body straight to Mongoose, so an explicit shape here
 // is what stops arbitrary keys reaching the document.
 
+// Field names mirror the Category model exactly. An earlier version used
+// name/img, which the model and the admin form do not use, so every unknown
+// key was stripped and creation failed on a missing "name".
 export const createCategorySchema = z.object({
-  name: requiredString("Category name is required"),
-  img: z.string().optional(),
-  image: z.string().optional(),
-  description: z.string().optional(),
+  categoryName: requiredString("Category name is required", 100),
+  categoryPic: z.string().max(1000).optional().or(z.literal("")),
+  image: z.string().max(1000).optional().or(z.literal("")),
+  productCount: z.coerce.number().min(0).optional(),
 });
 
 export const updateCategorySchema = createCategorySchema.partial();

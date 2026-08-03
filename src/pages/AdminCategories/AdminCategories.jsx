@@ -6,6 +6,8 @@ import { CgCloseO } from "react-icons/cg";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { uploadToCloudinary, MAX_IMAGE_BYTES } from "../../utils/uploadToCloudinary";
+import { getErrorMessage } from "../../utils/errorMessage";
 import AnimateText from "@moxy/react-animate-text";
 
 const AdminCategories = () => {
@@ -15,6 +17,7 @@ const AdminCategories = () => {
   const [totalCount, setTotalCount] = useState({});
   const [selectedCategory, setSelectedCategory] = useState({});
   const [axiosSecure] = useAxiosSecure();
+  const [isUploading, setIsUploading] = useState(false);
 
   const {
     data: categories,
@@ -42,13 +45,13 @@ const AdminCategories = () => {
   }, [categories]);
 
   // add new category
-  const handleAddCategory = (e) => {
+  const handleAddCategory = async (e) => {
     e.preventDefault();
     setCategoryAddError(null);
 
     const form = e.target;
     const categoryName = form.categoryName.value;
-    const categoryPic = form.categoryPicLink.value;
+    const file = form.categoryPicFile?.files?.[0];
 
     const existingCategories = categories?.map((c) =>
       c.categoryName?.toLowerCase()
@@ -63,18 +66,27 @@ const AdminCategories = () => {
       return;
     }
 
-    axiosSecure
-      .post("/categories", { categoryName, categoryPic })
-      .then((res) => {
-        if (res.data.insertedId) {
-          form.reset();
-          toast.success("Category Added Successfully", {
-            position: "bottom-right",
-          });
-          refetch();
-        }
-      })
-      .catch((e) => setCategoryAddError(e));
+    if (file && file.size > MAX_IMAGE_BYTES) {
+      setCategoryAddError("Image must be 2MB or smaller.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      // Uploaded through a server-signed request, the same path the product
+      // form uses, so the Cloudinary secret never reaches the browser.
+      const categoryPic = file ? await uploadToCloudinary(file, axiosSecure) : "";
+      const res = await axiosSecure.post("/categories", { categoryName, categoryPic });
+      if (res.data.success || res.data.insertedId) {
+        form.reset();
+        toast.success("Category Added Successfully", { position: "bottom-right" });
+        refetch();
+      }
+    } catch (err) {
+      setCategoryAddError(getErrorMessage(err, "Failed to add category"));
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // update category data
@@ -84,41 +96,45 @@ const AdminCategories = () => {
     document.getElementById("update-category-modal").showModal();
   };
 
-  const handleUpdateCategory = (e) => {
+  const handleUpdateCategory = async (e) => {
     e.preventDefault();
     setCategoryUpdateError(false);
 
     const form = e.target;
     const categoryName = form.categoryName.value;
-    const categoryPic = form.categoryPicLink.value;
+    const file = form.categoryPicFile?.files?.[0];
 
-    if (
-      categoryName === selectedCategory?.categoryName &&
-      categoryPic === selectedCategory?.categoryPic
-    ) {
+    if (categoryName === selectedCategory?.categoryName && !file) {
       setCategoryUpdateError(true);
       return;
     }
 
-    axiosSecure
-      .patch(`/categories/${selectedCategory?._id}`, {
+    if (file && file.size > MAX_IMAGE_BYTES) {
+      toast.error("Image must be 2MB or smaller.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      // No new file means keep whatever the category already has.
+      const categoryPic = file
+        ? await uploadToCloudinary(file, axiosSecure)
+        : selectedCategory?.categoryPic;
+      const res = await axiosSecure.patch(`/categories/${selectedCategory?._id}`, {
         categoryName: categoryName || selectedCategory?.categoryName,
-        categoryPic: categoryPic || selectedCategory?.categoryPic,
-      })
-      .then((res) => {
-        if (res.data.success) {
-          refetch();
-          document.getElementById("update-category-modal").close();
-          toast.success("Category Updated Successfully", {
-            position: "bottom-right",
-          });
-          setCategoryUpdateError(false);
-        }
-      })
-      .catch((e) => {
-        console.error(e);
-        setCategoryUpdateError(false);
+        categoryPic,
       });
+      if (res.data.success) {
+        refetch();
+        document.getElementById("update-category-modal").close();
+        toast.success("Category Updated Successfully", { position: "bottom-right" });
+        setCategoryUpdateError(false);
+      }
+    } catch (err) {
+      toast.error(getErrorMessage(err, "Failed to update category"));
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -154,8 +170,8 @@ const AdminCategories = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded bg-surface-container flex items-center justify-center overflow-hidden shrink-0 border border-outline-variant/30">
-                          {category.categoryPic ? (
-                            <img src={category.categoryPic} alt="" className="w-full h-full object-cover" />
+                          {category.categoryPic || category.image ? (
+                            <img src={category.categoryPic || category.image} alt="" className="w-full h-full object-cover" />
                           ) : (
                             <span className="material-symbols-outlined text-outline/40">image</span>
                           )}
@@ -221,14 +237,15 @@ const AdminCategories = () => {
             </div>
 
             <div className="flex flex-col">
-              <label className="font-label-caps text-[11px] text-outline mb-2">Category Photo URL</label>
+              <label className="font-label-caps text-[11px] text-outline mb-2">Category Photo</label>
               <input
-                type="text"
-                name="categoryPicLink"
-                placeholder="https://..."
-                className="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 px-0 py-2 text-body-base text-on-surface placeholder:text-outline-variant/50 transition-colors"
+                type="file"
+                name="categoryPicFile"
+                accept="image/*"
                 required
+                className="w-full text-sm text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-sm file:border-0 file:font-label-caps file:text-[11px] file:uppercase file:tracking-[0.1em] file:bg-surface-container file:text-on-surface hover:file:bg-primary hover:file:text-white file:cursor-pointer file:transition-colors"
               />
+              <p className="text-[11px] text-on-surface-variant mt-2">JPG or PNG, up to 2MB. Uploaded to Cloudinary.</p>
             </div>
 
             <button
@@ -275,18 +292,18 @@ const AdminCategories = () => {
             </div>
 
             <div className="flex flex-col">
-              <label className="font-label-caps text-[11px] text-outline mb-2">Category Photo URL</label>
+              <label className="font-label-caps text-[11px] text-outline mb-2">Category Photo</label>
               <input
-                type="text"
-                name="categoryPicLink"
-                defaultValue={selectedCategory?.categoryPic}
-                className="w-full bg-transparent border-0 border-b border-outline-variant/50 focus:border-primary focus:ring-0 px-0 py-2 text-body-base text-on-surface transition-colors"
-                required
+                type="file"
+                name="categoryPicFile"
+                accept="image/*"
+                className="w-full text-sm text-on-surface-variant file:mr-4 file:py-2.5 file:px-4 file:rounded-sm file:border-0 file:font-label-caps file:text-[11px] file:uppercase file:tracking-[0.1em] file:bg-surface-container file:text-on-surface hover:file:bg-primary hover:file:text-white file:cursor-pointer file:transition-colors"
               />
+              <p className="text-[11px] text-on-surface-variant mt-2">Leave empty to keep the current image.</p>
             </div>
 
             <div className="pt-4 flex justify-end">
-              <button type="submit" className="bg-primary text-white px-6 py-3 min-h-11 rounded font-button-text hover:bg-primary/90 transition-colors">
+              <button type="submit" disabled={isUploading} className="disabled:opacity-60 bg-primary text-white px-6 py-3 min-h-11 rounded font-button-text hover:bg-primary/90 transition-colors">
                 Update Category
               </button>
             </div>
