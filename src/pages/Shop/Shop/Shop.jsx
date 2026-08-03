@@ -65,6 +65,26 @@ const Shop = () => {
     return true;
   }) || [];
 
+  const PRICE_LABELS = {
+    under50k: "Under ₹50k",
+    "50k-1l": "₹50k – ₹1L",
+    over1l: "Over ₹1L",
+    on_request: "Price on Request",
+  };
+
+  // Every filter currently narrowing the list, each individually removable.
+  const activeFilters = [
+    metalParam && { key: "metal", label: metalParam },
+    categoryParam && { key: "category", label: categoryParam },
+    priceParam && { key: "price", label: PRICE_LABELS[priceParam] || priceParam },
+  ].filter(Boolean);
+
+  const clearAllFilters = () => {
+    const next = new URLSearchParams(searchParams);
+    ["metal", "category", "price"].forEach((k) => next.delete(k));
+    setSearchParams(next); // sort is a display preference, not a filter — keep it
+  };
+
   const sortedProducts = (() => {
     const items = [...filteredProducts];
 
@@ -206,6 +226,40 @@ const Shop = () => {
             <div className="fixed inset-0 z-20" onClick={closeFilter}></div>
           )}
         </section>
+
+        {/* Result count and active filters. The empty state already offered a
+            way out; this makes the count and the escape hatch visible while
+            results are still showing, so a narrow filter is obvious. */}
+        {!isProductsLoading && (
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+            <p className="font-label-caps text-[11px] uppercase tracking-[0.2em] text-on-surface-variant">
+              {sortedProducts.length === products?.length
+                ? `${sortedProducts.length} pieces`
+                : `${sortedProducts.length} of ${products?.length ?? 0} pieces`}
+            </p>
+
+            {activeFilters.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                {activeFilters.map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => handleParamChange(key, null)}
+                    className="inline-flex items-center gap-1.5 min-h-11 px-3 border border-outline-variant/40 text-on-surface-variant hover:text-primary hover:border-primary transition-colors font-label-caps text-[11px] uppercase tracking-[0.1em]"
+                  >
+                    {label}
+                    <span className="material-symbols-outlined text-[14px]">close</span>
+                  </button>
+                ))}
+                <button
+                  onClick={clearAllFilters}
+                  className="inline-flex items-center min-h-11 px-3 text-primary hover:text-secondary transition-colors font-label-caps text-[11px] uppercase tracking-[0.1em] underline underline-offset-4"
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Product Grid */}
         {isProductsLoading ? (
